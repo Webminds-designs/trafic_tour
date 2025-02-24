@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 
 import connectDB from "./config/dbConfig.js";
 import userRoutes from "./Routes/UserRoutes.js"
+import packageRoutes from "./Routes/PackageRoutes.js";
 
 
 dotenv.config(); // Load environment variables
@@ -31,6 +32,7 @@ app.options('*', cors());
 
 
 app.use('/api/user', userRoutes);
+app.use("/api/packages", packageRoutes);
 
 // Start the server
 app.listen(PORT, () => {
