@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import user from "../assets/user.png";
+import signin_Bg from "../assets/signin_Bg.png"
 import google from "../assets/Google.svg"; 
 import { auth } from "../components/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -114,14 +115,17 @@ const Signup = () => {
 
   return (
     <div className=" -z-50">
-      <div className="flex items-center min-h-screen justify-center  bg-blue-200 relative ">
+      <div
+       style={{ backgroundImage: `url(${signin_Bg})` }}
+       className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
+     >
         <div className="absolute top-4 left-4 text-[16px] font-semibold">
           <h1>
             TRAFFIC
             <br /> TOURS
           </h1>
         </div>
-        <div className="bg-gradient-to-b from-[#c7f2ff] via-white to-white bg-opacity-90 p-8  mt-20 rounded-3xl shadow-lg max-w-md w-full z-100">
+        <div className="bg-gradient-to-b from-[#ffd78f] via-[#F6E7C9] to-white backdrop-blur-lg backdrop-brightness-75 bg-opacity-90 p-8  mt-20 rounded-3xl shadow-lg max-w-md w-full z-100">
           <div className="flex justify-center mb-6">
             <div className="mt-4 bg-white p-4 rounded-2xl shadow-xl">
               <img src={user} width={30} alt="User" />
