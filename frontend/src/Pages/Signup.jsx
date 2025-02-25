@@ -1,15 +1,13 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
-import { useDropzone } from "react-dropzone";
 import user from "../assets/user.png";
-import google from "../assets/Google.svg"; // Google icon
-import facebook from "../assets/facebook.svg"; // Facebook icon
+import google from "../assets/Google.svg"; 
 import { auth } from "../components/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import {
   setPersistence,
   browserSessionPersistence,
-  FacebookAuthProvider,
+ 
 } from "firebase/auth";
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
@@ -21,13 +19,15 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [comfirmpassword, setConfirmPassword] = useState("");
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
   const [error, setError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [conpasswordVisible, setConPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
+  };
+  const toggleConPasswordVisibility = () => {
+    setConPasswordVisible(!conpasswordVisible);
   };
 
   const signInWithGoogle = async () => {
@@ -83,49 +83,7 @@ const Signup = () => {
       setError("Error during sign-in: " + error.message);
     }
   };
-  const signInWithFacebook = async () => {
-    const provider = new FacebookAuthProvider();
 
-    try {
-      // Sign in with Facebook using a popup
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      console.log(user); // Log the entire user object to inspect
-
-      // Handle the user data as needed
-    } catch (error) {
-      console.error(
-        "Error during Facebook sign-in: ",
-        error.code,
-        error.message
-      );
-      setError("Error during Facebook sign-in");
-    }
-  };
-  /*
- const fileInputRef = useRef();
-
-  const handleFileDrop = (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        setImage(file);
-        setPreview(URL.createObjectURL(file)); // For preview
-      };
-    }
-  };
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: handleFileDrop,
-    accept: "image/*",
-    maxSize: 2 * 1024 * 1024, // 2MB limit
-  });
-
-  const handleClick = () => {
-    fileInputRef.current.click();
-  };   */
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -156,13 +114,6 @@ const Signup = () => {
 
   return (
     <div className=" -z-50">
-      {/* circle 
-      <div className="relative  flex items-baseline z-40  justify-center ">
-        <div class="absolute w-[1600px]  top-32  h-[1600px] border-2 border-white rounded-full bg-transparent clip-half-circle"></div>
-        <div class="absolute  w-[1200px] top-96 h-[1200px] border-2 border-white rounded-full bg-transparent clip-half-circle"></div>
-        <div class="absolute  w-[1400px] top-64 h-[1400px] border-2 border-white rounded-full bg-transparent clip-half-circle"></div>
-      </div>
-      */}
       <div className="flex items-center min-h-screen justify-center  bg-blue-200 relative ">
         <div className="absolute top-4 left-4 text-[16px] font-semibold">
           <h1>
@@ -170,7 +121,7 @@ const Signup = () => {
             <br /> TOURS
           </h1>
         </div>
-        <div className="bg-gradient-to-b from-[#c7f2ff] via-white to-white bg-opacity-90 p-8  mt-20 rounded-3xl shadow-lg max-w-[610px] w-full z-100">
+        <div className="bg-gradient-to-b from-[#c7f2ff] via-white to-white bg-opacity-90 p-8  mt-20 rounded-3xl shadow-lg max-w-md w-full z-100">
           <div className="flex justify-center mb-6">
             <div className="mt-4 bg-white p-4 rounded-2xl shadow-xl">
               <img src={user} width={30} alt="User" />
@@ -186,20 +137,6 @@ const Signup = () => {
 
 
           <form onSubmit={handleSignup}>
-            {/* Image Upload 
-          <div {...getRootProps()} className="flex justify-center mb-4 cursor-pointer">
-            <input {...getInputProps()} />
-            <div className="w-24 h-24 bg-white rounded-full shadow-lg flex items-center justify-center overflow-hidden border-2 border-gray-300" onClick={handleClick}>
-              {preview ? (
-                <img src={preview} alt="Preview" className="w-full h-full object-cover rounded-full" />
-              ) : (
-                <p className="text-gray-500 text-sm text-center">Drag or Click to Upload</p>
-              )}
-            </div>
-          </div>
-         
-          <input type="file" ref={fileInputRef} className="hidden" onChange={(e) => handleFileDrop(e.target.files)} />
- */}
             {/* Form Fields */}
 
             <div className="mb-4 relative">
@@ -255,7 +192,7 @@ const Signup = () => {
                   className="absolute left-2 opacity-80"
                 />
                 <input
-                  type={passwordVisible ? "text" : "password"}
+                  type={conpasswordVisible ? "text" : "password"}
                   placeholder="confirm password"
                   className="mx-5 w-full px-4 py-3  focus:outline-hidden   rounded-xl"
                   value={comfirmpassword}
@@ -263,8 +200,8 @@ const Signup = () => {
                   required
                 />
                 <img
-                  src={passwordVisible ? eye : hidden}
-                  onClick={togglePasswordVisibility}
+                  src={conpasswordVisible ? eye : hidden}
+                  onClick={toggleConPasswordVisibility}
                   alt="hidden"
                   width={20}
                   className="absolute right-2 opacity-80"
@@ -297,18 +234,18 @@ const Signup = () => {
                 .map((_, index) => (
                   <span
                     key={index}
-                    className="w-1 h-1 md:mx-[6px] mx-[3px]  bg-gray-300 rounded-full"
+                    className="w-1 h-1 md:mx-[5px] mx-[5px]  bg-gray-300 rounded-full"
                   ></span>
                 ))}
             </div>
-            <span className="mx-4 text-gray-500">or Sign up with</span>
+            <span className="mx-4 text-gray-500">or </span>
             <div className="flex items-center justify-center space-x-2">
               {Array(12)
                 .fill()
                 .map((_, index) => (
                   <span
                     key={index}
-                    className="w-1 h-1 md:mx-[6px] mx-[3px]  bg-gray-300 rounded-full"
+                    className="w-1 h-1 md:mx-[5px] mx-[5px]  bg-gray-300 rounded-full"
                   ></span>
                 ))}
             </div>
@@ -316,10 +253,12 @@ const Signup = () => {
 
           <div className="flex justify-center space-x-4">
             <button
-              className="bg-white   shadow-lg border-1 border-gray-100 rounded-lg w-[300px] h-[40px] flex items-center justify-center p-2"
+              className="bg-white   shadow-lg border-1 border-gray-100 rounded-lg w-full h-[40px] flex items-center justify-center p-2"
               onClick={signInWithGoogle} // Trigger Firebase Google login on click
             >
               <img src={google} alt="Google Logo" className="w-6 h-6" />
+              <div className="m-2 text-gray-900
+            ">Login with Google </div>
             </button>
            
           </div>

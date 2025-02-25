@@ -135,7 +135,7 @@ const Signin = () => {
           <br /> TOURS
         </h1>
       </div>
-      <div className="bg-gradient-to-b from-[#c7f2ff] via-white to-white bg-opacity-90 p-8 mt-20 rounded-3xl shadow-lg max-w-[610px] w-full">
+      <div className="bg-gradient-to-b from-[#c7f2ff] via-white to-white bg-opacity-90 p-8 mt-20 rounded-3xl shadow-lg max-w-md w-full">
         <div className="flex justify-center mb-6">
           <div className="mt-4 bg-white p-4 rounded-2xl shadow-xl">
             <img src={user} width={30} alt="User" />
@@ -220,19 +220,19 @@ const Signin = () => {
               .map((_, index) => (
                 <span
                   key={index}
-                  className="w-1 h-1 md:mx-[6px] mx-[3px]  bg-gray-300 rounded-full"
+                  className="w-1 h-1 md:mx-[5px] mx-[5px]  bg-gray-300 rounded-full"
                 ></span>
               ))}
           </div>
 
-          <span className="mx-4 text-gray-500">or Log in with</span>
+          <span className="mx-4 text-gray-500">or</span>
           <div className="flex items-center justify-center space-x-2">
             {Array(12)
               .fill()
               .map((_, index) => (
                 <span
                   key={index}
-                  className="w-1 h-1 md:mx-[6px] mx-[3px] bg-gray-300 rounded-full"
+                  className="w-1 h-1 md:mx-[5px] mx-[5px] bg-gray-300 rounded-full"
                 ></span>
               ))}
           </div>
@@ -240,10 +240,13 @@ const Signin = () => {
 
         <div className="flex justify-center space-x-4">
           <button
-            className="bg-white   shadow-lg border-1 border-gray-100  rounded-lg w-[300px] h-[40px] flex items-center justify-center p-2"
+            className="bg-white   shadow-lg border-1 border-gray-100  rounded-lg w-full h-[40px] flex items-center justify-center p-2"
             onClick={signInWithGoogle} 
           >
+         
             <img src={google} alt="Google Logo" className="w-6 h-6" />
+            <div className="m-2 text-gray-900
+            ">Login with Google </div>
           </button>
           
         </div>
