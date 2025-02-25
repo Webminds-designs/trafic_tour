@@ -54,9 +54,13 @@ const Signin = () => {
       );
 
       if (emailCheckResponse.data.exists) {
-        alert("Login successfull");
-        // If email exists
-        console.log("Email already registered:");
+        const LoginResponse = await axios.post(
+          "http://localhost:6400/api/user/Googlelogin",
+          userData
+        );
+
+        console.log("Login Successful:", LoginResponse.data);
+        alert("Login Successful");
       } else {
         // registration
         const registrationData = {
