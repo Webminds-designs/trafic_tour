@@ -1,47 +1,28 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
 
-const PackageCard = ({ title, description, imageUrl, onExplore }) => {
+const PackageCard = ({ imageUrl, title, description, onExplore }) => {
     return (
-        <div className="w-full max-w-sm bg-white rounded-lg overflow-hidden flex flex-col">
-            {/* Image */}
-
+        <div className="bg-white rounded-lg overflow-hidden">
+            {/* Image with taller rectangular shape */}
             <img
                 src={imageUrl}
                 alt={title}
-                className="w-full h-[350px] object-cover rounded-t-2xl"
+                className="w-full h-120 object-cover rounded-lg"
             />
 
-
-            {/* Text Content */}
-            <div className="p-1 flex flex-col flex-grow mt-8">
-                <h2 className="text-xl font-base mb-2">{title}</h2>
-                <p className="text-sm text-black flex-grow">{description}</p>
+            {/* Card Content */}
+            <div className="p-6">
+                <h3 className="text-xl font-bold">{title}</h3>
+                <p className="text-base text-gray-600">{description}</p>
                 <button
                     onClick={onExplore}
-                    className="mt-4 w-32 px-2 py-2 bg-black text-white hover:bg-white hover:text-black transition-colors duration-200"
+                    className="mt-4 px-5 py-3 bg-black text-white rounded-lg"
                 >
                     Explore Now
                 </button>
-
             </div>
         </div>
     );
-};
-
-PackageCard.propTypes = {
-    /** Title of the package */
-    title: PropTypes.string.isRequired,
-    /** Short description of the package */
-    description: PropTypes.string.isRequired,
-    /** Image URL for the package card */
-    imageUrl: PropTypes.string.isRequired,
-    /** Callback when "Explore Now" is clicked */
-    onExplore: PropTypes.func,
-};
-
-PackageCard.defaultProps = {
-    onExplore: () => { },
 };
 
 export default PackageCard;

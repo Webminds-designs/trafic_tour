@@ -13,7 +13,7 @@ import templeImage from '../assets/temple.jpg';
 
 const Packages = () => {
     const [selectedSection, setSelectedSection] = useState('ALL PACKAGES');
-    const targetSectionRef = useRef(null); // Ref for the "Find Best Package" section
+    const targetSectionRef = useRef(null);
 
     const sections = [
         'ALL PACKAGES',
@@ -116,10 +116,8 @@ const Packages = () => {
 
     const handleExplore = (title) => {
         console.log(`Explore clicked for ${title}`);
-        // Add your logic here if needed
     };
 
-    // Scroll to the "Find Best Package" section
     const handleFindBestPackage = () => {
         if (targetSectionRef.current) {
             targetSectionRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -130,18 +128,18 @@ const Packages = () => {
         <>
             <Navbar />
             <div
-                className="bg-white mx-auto max-w-7xl px-3 py-8"
+                className="bg-white w-full mt-30"
                 style={{ fontFamily: "'Bebas Neue', sans-serif" }}
             >
-                <div className="min-h-screen text-black">
+                <div className="text-black">
                     {/* Header Section */}
-                    <div className="flex justify-between items-start">
-                        <div className="text-left px-10 pt-20 pb-14">
-                            <h1 className="text-7xl font-base">TRAVEL</h1>
-                            <h1 className="text-7xl font-base">PACKAGES</h1>
+                    <div className="flex flex-col lg:flex-row justify-between items-center px-4 sm:px-6 lg:px-20">
+                        <div className="text-left pt-10 lg:pt-20 pb-6 lg:pb-14">
+                            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-base">TRAVEL</h1>
+                            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-base">PACKAGES</h1>
                         </div>
-                        <div className="text-right max-w-md px-10 pt-36">
-                            <p className="text-sm font-base">
+                        <div className="text-right max-w-md px-4 lg:px-7 pt-6 lg:pt-36">
+                            <p className="text-xs sm:text-sm font-base">
                                 EMBARK ON AN UNFORGETTABLE JOURNEY THROUGH SRI LANKA, WHERE <br />
                                 EVERY EXPERIENCE IS CRAFTED TO INSPIRE, RELAX, AND AWAKEN <br />
                                 YOUR SENSE OF ADVENTURE.
@@ -150,13 +148,13 @@ const Packages = () => {
                     </div>
 
                     {/* Packages Section Bar */}
-                    <div className="flex flex-col items-center mt-10 font-base">
-                        <div className="bg-black text-white flex w-full max-w-7xl">
+                    <div className="flex flex-col items-center mt-6 lg:mt-10 font-base">
+                        <div className="bg-black text-white flex w-full max-w-7xl overflow-x-auto">
                             {sections.map((section, index) => (
                                 <div
                                     key={index}
-                                    className={`flex-1 text-center py-4 text-sm cursor-pointer ${selectedSection === section ? 'bg-white text-black' : ''
-                                        }`}
+                                    className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 
+                        ${selectedSection === section ? 'bg-white text-black border-b-4 border-black' : ''}`}
                                     onClick={() => handleSectionClick(section)}
                                 >
                                     {section}
@@ -166,20 +164,20 @@ const Packages = () => {
                     </div>
 
                     {/* Packages Grid */}
-                    <div className="mt-30 mb-28 px-10">
-                        <h2 className="text-4xl font-base">EXPERIENCE THE THRILL OF</h2>
-                        <h2 className="text-4xl font-base">SRI LANKA'S WILDERNESS</h2>
+                    <div className="mt-10 lg:mt-30 mb-14 lg:mb-28 px-4 sm:px-6 lg:px-20">
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-base">EXPERIENCE THE THRILL OF</h2>
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-base">SRI LANKA'S WILDERNESS</h2>
 
-                        <div className="flex justify-end">
+                        <div className="flex justify-end mt-4">
                             <button
                                 onClick={handleFindBestPackage}
-                                className="text-xl font-base text-teal-600 hover:underline"
+                                className="text-base sm:text-lg lg:text-xl font-base text-teal-600 hover:underline"
                             >
                                 FIND THE BEST PACKAGE
                             </button>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mt-20">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-10 lg:mt-20">
                             {packages[selectedSection].map((pkg, index) => (
                                 <PackageCard
                                     key={index}
@@ -190,92 +188,105 @@ const Packages = () => {
                                 />
                             ))}
                         </div>
-
-                        {/* Find Best Package Section */}
-                        <div
-                            ref={targetSectionRef}
-                            className="relative w-full h-[700px] bg-cover bg-center mt-30 mb-30"
-                            style={{ backgroundImage: `url(${backgroundImage})` }}
-                        >
-                            <div className="absolute -bottom-40 left-1/2 transform -translate-x-1/2 w-3/4 bg-white p-8 rounded-lg shadow-lg">
-                                <h2 className="text-xl font-bold mb-4">FIND THE BEST PACKAGE</h2>
-                                <form
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        // Access the form data here (e.g., from state or via FormData)
-                                        // For demo purposes, let's log the values
-                                        console.log("Form submitted");
-                                        console.log("Destination:", e.target.destination.value);
-                                        console.log("Travel Dates:", e.target.travelDate.value);
-                                        console.log("Trip Duration:", e.target.tripDuration.value);
-                                        console.log("Number of Travelers:", e.target.travelers.value);
-                                        // Place your search logic here, e.g., filtering packages or calling an API
-                                    }}
-                                >
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="text-sm font-semibold" htmlFor="destination">
-                                                DESTINATION
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="destination"
-                                                name="destination"
-                                                placeholder="SIGIRIYA, ELLA, ETC"
-                                                className="w-full p-2 mt-1 border rounded-lg bg-gray-100"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-sm font-semibold" htmlFor="travelDate">
-                                                TRAVEL DATES
-                                            </label>
-                                            <input
-                                                type="date"
-                                                id="travelDate"
-                                                name="travelDate"
-                                                className="w-full p-2 mt-1 border rounded-lg bg-gray-100"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-sm font-semibold" htmlFor="tripDuration">
-                                                TRIP DURATION
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="tripDuration"
-                                                name="tripDuration"
-                                                placeholder="10 DAYS"
-                                                className="w-full p-2 mt-1 border rounded-lg bg-gray-100"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-sm font-semibold" htmlFor="travelers">
-                                                NUMBER OF TRAVELERS
-                                            </label>
-                                            <select
-                                                id="travelers"
-                                                name="travelers"
-                                                className="w-full p-2 mt-1 border rounded-lg bg-gray-100"
-                                            >
-                                                <option value="2 ADULTS">2 ADULTS</option>
-                                                <option value="1 ADULT">1 ADULT</option>
-                                                <option value="3 ADULTS">3 ADULTS</option>
-                                                <option value="FAMILY PACKAGE">FAMILY PACKAGE</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        className="w-full bg-teal-600 text-white py-2 mt-6 rounded-lg hover:bg-teal-700"
-                                    >
-                                        FIND
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
                     </div>
-                </div>
-            </div>
+
+                    {/* Find Best Package Section */}
+                    <div
+                        ref={targetSectionRef}
+                        className="relative w-full h-[400px] lg:h-screen bg-cover bg-center mt-10 lg:mt-30 mb-20 lg:mb-30"
+                        style={{
+                            backgroundImage: `url(${backgroundImage})`,
+                            backgroundPosition: 'center',
+                            backgroundSize: 'cover',
+                        }}
+                    >
+                        <div className="absolute -bottom-20 lg:-bottom-40 left-1/2 transform -translate-x-1/2 w-11/12 lg:w-3/4 bg-white p-6 lg:p-12 rounded-lg">
+                            <h2 className="text-lg lg:text-xl font-bold mb-4">FIND THE BEST PACKAGE</h2>
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    console.log("Form submitted");
+                                    console.log("Destination:", e.target.destination.value);
+                                    console.log("Travel Dates:", e.target.travelDate.value);
+                                    console.log("Trip Duration:", e.target.tripDuration.value);
+                                    console.log("Number of Travelers:", e.target.travelers.value);
+                                }}
+                            >
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Destination Field */}
+                                    <div>
+                                        <label className="text-sm font-semibold" htmlFor="destination">
+                                            DESTINATION
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="destination"
+                                            name="destination"
+                                            placeholder="SIGIRIYA, ELLA, ETC"
+                                            className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                        />
+                                    </div>
+
+                                    {/* Travel Dates Field */}
+                                    <div>
+                                        <label className="text-sm font-semibold" htmlFor="travelDate">
+                                            TRAVEL DATES
+                                        </label>
+                                        <input
+                                            type="date"
+                                            id="travelDate"
+                                            name="travelDate"
+                                            className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                        />
+                                    </div>
+
+                                    {/* Trip Duration Field */}
+                                    <div>
+                                        <label className="text-sm font-semibold" htmlFor="tripDuration">
+                                            TRIP DURATION
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="tripDuration"
+                                            name="tripDuration"
+                                            placeholder="10 DAYS"
+                                            className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                        />
+                                    </div>
+
+                                    {/* Number of Travelers Field */}
+                                    <div>
+                                        <label className="text-sm font-semibold" htmlFor="travelers">
+                                            NUMBER OF TRAVELERS
+                                        </label>
+                                        <select
+                                            id="travelers"
+                                            name="travelers"
+                                            className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                        >
+                                            <option value="2 ADULTS">2 ADULTS</option>
+                                            <option value="1 ADULT">1 ADULT</option>
+                                            <option value="3 ADULTS">3 ADULTS</option>
+                                            <option value="FAMILY PACKAGE">FAMILY PACKAGE</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Submit Button */}
+                                <button
+                                    type="submit"
+                                    className="w-full bg-teal-600 text-white py-2 mt-6 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                >
+                                    FIND
+                                </button>
+                            </form>
+                        </div>
+
+
+                    </div>
+                </div >
+            </div >
         </>
     );
 };
