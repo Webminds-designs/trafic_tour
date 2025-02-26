@@ -8,8 +8,9 @@ import mountainsImage from '../assets/hill.jpg';
 import lakeImage from '../assets/wilpattu.jpg';
 import safariImage from '../assets/adms.jpg';
 import forestImage from '../assets/forest.jpg';
-import beacjImage from '../assets/beach.jpg';
 import templeImage from '../assets/temple.jpg';
+import beacjImage from '../assets/beach.jpg';
+
 
 const Packages = () => {
     const [selectedSection, setSelectedSection] = useState('ALL PACKAGES');
