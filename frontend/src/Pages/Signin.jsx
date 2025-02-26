@@ -138,7 +138,7 @@ const Signin = () => {
           <br /> TOURS
         </h1>
       </div>
-      <div className="bg-gradient-to-b from-[#ffd78f] via-[#F6E7C9] to-white backdrop-blur-lg backdrop-brightness-75 bg-opacity-90 p-8 mt-20 rounded-3xl shadow-lg max-w-md w-full">
+      <div className="bg-gradient-to-b from-[#ffd78f] via-[#F6E7C9] to-white backdrop-blur-lg backdrop-brightness-75 bg-opacity-90  p-4 px-8  mt-10  rounded-3xl shadow-lg max-w-md w-full">
         <div className="flex justify-center mb-6">
           <div className="mt-4 bg-white p-4 rounded-2xl shadow-xl">
             <img src={user} width={30} alt="User" />

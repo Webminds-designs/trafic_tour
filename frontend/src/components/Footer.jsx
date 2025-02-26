@@ -53,7 +53,7 @@ const Footer = () => {
 
             <div className="hidden lg:block">
               <div className="text-[40px] font-light mb-12 ">
-                “I love your build because you made it for people like us who don’t know what we’re doing. It just works.”
+                "I love this travel experience because it's designed for people like us who just want to explore without any hassle. Everything is seamless, and it just works!"
               </div>
               <div className="flex items-center my-7">
                 <img
@@ -71,12 +71,10 @@ const Footer = () => {
               </div>
             </div>
           </div>
-
-
         </div>
         <div className="flex flex-col lg:flex-row justify-between items-start mx-6 lg:items-center">
           <div></div>
-          <div className="grid md:grid-cols-2 grid-cols-4  lg:grid-cols-4 md:gap-16 gap-0 border-t border-neutral-700 ">
+          <div className="grid md:grid-cols-4 grid-cols-4  lg:grid-cols-4 md:gap-16 gap-0 border-t border-neutral-700 ">
             {[
               { title: "Buy", links: ["Inventory", "Rentals", "Find a Dealer"] },
               { title: "Models", links: ["The Lite", "The Pop", "The Plus"] },
