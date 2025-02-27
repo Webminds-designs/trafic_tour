@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import user from "../assets/user.png";
 import google from "../assets/Google.svg";
@@ -6,7 +6,6 @@ import signin_Bg from "../assets/signin_Bg.png"
 import { auth } from "../components/Firebase.js";
 import {
   GoogleAuthProvider,
-  FacebookAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
 import { setPersistence, browserSessionPersistence } from "firebase/auth";
@@ -15,13 +14,16 @@ import eye from "../assets/eye.png";
 import lock from "../assets/lock.png";
 import imgemail from "../assets/email.png";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/authContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [profile, setProfile] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const { setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -58,9 +60,11 @@ const Signin = () => {
           "http://localhost:6400/api/user/Googlelogin",
           userData
         );
-
-        console.log("Login Successful:", LoginResponse.data);
+        localStorage.setItem("user", JSON.stringify(LoginResponse.data.user));
+        setUser(LoginResponse.data.user);
         alert("Login Successful");
+        navigate("/profile");
+
       } else {
         // registration
         const registrationData = {
@@ -81,26 +85,7 @@ const Signin = () => {
     }
   };
 
-  const signInWithFacebook = async () => {
-    const provider = new FacebookAuthProvider();
-
-    try {
-      // Sign in with Facebook using a popup
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      console.log(user); // Log the entire user object to inspect
-
-      // Handle the user data as needed
-    } catch (error) {
-      console.error(
-        "Error during Facebook sign-in: ",
-        error.code,
-        error.message
-      );
-      setError("Error during Facebook sign-in");
-    }
-  };
-
+ 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -115,7 +100,10 @@ const Signin = () => {
       );
 
       console.log("Login Successful:", response.data);
-      alert("Login Successful");
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+        setUser(response.data.user);
+        alert("Login Successful");
+        navigate("/profile");
     } catch (err) {
       console.error(
         "Login Failed:",

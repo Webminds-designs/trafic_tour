@@ -1,13 +1,18 @@
 import "./App.css";
+import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { AuthProvider } from './context/authContext';
 import Home from "./Pages/Home";
 import Signup from "./Pages/Signup";
 import Signin from "./Pages/Signin";
 import Profile from "./components/Profile";
 
+
+
+
 function App() {
   return (
-    <>
+    <AuthProvider>
        <Router> 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -16,7 +21,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
-    </>
+    </AuthProvider>
+  
   );
 }
 

@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
-
+import cookieParser from 'cookie-parser';
 import connectDB from "./config/dbConfig.js";
 import userRoutes from "./Routes/UserRoutes.js"
 import packageRoutes from "./Routes/PackageRoutes.js";
@@ -27,8 +27,13 @@ app.use(cors({
 // Middleware
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.options('*', cors()); 
+const corsOptions = {
+  origin: 'http://localhost:5173',  
+  credentials: true,                
+};
+app.use(cors(corsOptions));
 
 
 app.use('/api/user', userRoutes);

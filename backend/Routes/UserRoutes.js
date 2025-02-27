@@ -1,6 +1,6 @@
 import express from 'express';
-import { registerUser,googleRegisterUser,  loginUser,googleloginUser, getUserProfile, updateUserProfile, deleteUser ,findUserByEmail  } from '../Controllers/UserController.js';
-import { authenticate, authorize } from '../middleware/authMiddleware.js'; // Middleware for authentication
+import { registerUser,googleRegisterUser,  loginUser,googleloginUser, updateUserProfile, deleteUser ,findUserByEmail ,authMiddleware, getCurrentUser, logoutUser } from '../Controllers/UserController.js';
+
 import upload from '../config/MulterConfig.js';
 
 const router = express.Router();
@@ -14,8 +14,9 @@ router.post('/Googlelogin', googleloginUser);
 router.post('/findemail', findUserByEmail);
 
 // Protected routes 
-router.get('/profile',authenticate, authorize("user"), getUserProfile);
-router.put('/profile',authenticate, authorize("user"), updateUserProfile);
-router.delete('/profile',authenticate, authorize("user","admin"), deleteUser);
+router.get('/auth', authMiddleware, getCurrentUser);
+router.post('/logout', logoutUser);
+router.put('/profile',updateUserProfile);
+router.delete('/profile', deleteUser);
 
 export default router;

@@ -107,21 +107,28 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
 
     // Generate token
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ email: user.email}, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.cookie('token', token, {
+     httpOnly: true,  // This prevents client-side access to the cookie
+     secure: process.env.NODE_ENV === 'production',  // Set to true if you're using HTTPS
+     sameSite: 'Strict',  // Prevents the cookie from being sent with cross-site requests
+   });
 
-    res.status(200).json({
-      token,
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        email: user.email,
-        role: user.role,
-      },
-    });
+   res.status(200).json({
+     status: true,
+     message: 'Login successful',
+     user: {
+       id: user._id,
+       firstName: user.firstName,
+       lastName:user.lastName,
+       phone:user.phone,
+       email: user.email,
+       country:user.country,
+       passportId:user.passportId,
+       role: user.role,
+       profileUrl:user.profileUrl,
+     },
+   });
   } catch (error) {
     console.error("Login Error:", error); // Log the actual error
     res.status(500).json({
@@ -140,20 +147,27 @@ export const googleloginUser = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-    // Generate token
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
+     // Generate token
+     const token = jwt.sign({ email: user.email}, process.env.JWT_SECRET, { expiresIn: '1h' });
+     res.cookie('token', token, {
+      httpOnly: true,  // This prevents client-side access to the cookie
+      secure: process.env.NODE_ENV === 'production',  // Set to true if you're using HTTPS
+      sameSite: 'Strict',  // Prevents the cookie from being sent with cross-site requests
+    });
+ 
     res.status(200).json({
-      token,
+      status: true,
+      message: 'Login successful',
       user: {
         id: user._id,
         firstName: user.firstName,
+        lastName:user.lastName,
+        phone:user.phone,
         email: user.email,
+        country:user.country,
+        passportId:user.passportId,
         role: user.role,
+        profileUrl:user.profileUrl,
       },
     });
   } catch (error) {
@@ -222,4 +236,59 @@ export const findUserByEmail = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error", error });
   }
+};
+
+
+//verify user
+export const authMiddleware = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;  // Token is retrieved from cookies
+    if (!token) {
+      return res.json({ status: false, message: "No token provided" });
+    }
+
+    // Verify the token using jsonwebtoken
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;  // Attach user information to the request object
+    next();  // Proceed to the next route handler
+  } catch (err) {
+    console.error("Token verification failed:", err);
+    return res.json({ status: false, message: "Invalid or expired token" });
+  }
+};
+
+// Get the current authenticated user
+export const getCurrentUser = (req, res) => {
+  // Ensure the user information exists in the request (i.e., decoded token)
+  if (!req.user || !req.user.email) {
+    return res.status(401).json({ status: false, message: "Unauthorized" });
+  }
+
+  User.findOne({ email: req.user.email })  // Find the user based on the decoded token's email
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ status: false, message: "User not found" });  // 404 Not Found
+      }
+
+      // Return account summary information
+      res.json({
+        status: true,
+        message: "Authorized",
+        user: {
+          id: user._id,
+          firstName: user.firstName,
+          email: user.email,
+          role: user.role,
+        },
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching user details:", err);
+      res.status(500).json({ status: false, message: "Server error" });  // 500 Internal Server Error
+    });
+};
+
+export const logoutUser = (req, res) => {
+  res.clearCookie('token', { httpOnly: true, secure: true });
+  res.status(200).json({ message: 'Logged out successfully' });
 };

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import user from "../assets/user.png";
 import signin_Bg from "../assets/signin_Bg.png"
@@ -15,6 +15,9 @@ import eye from "../assets/eye.png";
 import lock from "../assets/lock.png";
 import imgemail from "../assets/email.png";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/authContext.jsx";
+import { useNavigate } from "react-router-dom";
+
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +26,8 @@ const Signup = () => {
   const [error, setError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [conpasswordVisible, setConPasswordVisible] = useState(false);
+  const { setUser } = useContext(AuthContext);
+    const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -63,8 +68,11 @@ const Signup = () => {
           userData
         );
 
-        console.log("Login Successful:", LoginResponse.data);
+       
+        localStorage.setItem("user", JSON.stringify(LoginResponse.data.user));
+        setUser(LoginResponse.data.user);
         alert("Login Successful");
+        navigate("/profile");
       } else {
         // registration
         const registrationData = {
