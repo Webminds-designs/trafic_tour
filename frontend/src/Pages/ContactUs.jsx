@@ -5,32 +5,30 @@ import ruwanweliseya from "../assets/ruwanweliseya.png";
 import dambulla from "../assets/dambulla.png";
 import girihanduseya from "../assets/girihanduseya.png";
 import Instagram from "../assets/instergram.jpg";
-
 import Navbar from "../components/Navbar";
 
 const ContactUs = () => {
-
     return (
         <>
             <Navbar />
-            <div className="bg-[#F1F1F1] pt-20">
-                <div className="max-w-6xl mx-auto pt-36">
+            <div className="bg-[#F1F1F1] pt-10 md:pt-20 items-center">
+                <div className="max-w-7xl mx-auto px-2 md:px-6 lg:px-10 pt-20 md:pt-36">
                     {/* Header Section and Contact Info/Form */}
-                    <div className="grid md:grid-cols-2 gap-40 items-start">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 lg:gap-40 items-start">
                         {/* Left Column: Header and Contact Info */}
                         <div>
-                            <h1 className="text-7xl font-base mb-4">LET'S CONNECT</h1>
-                            <div className="mt-12">
-                                <p className="text-lg font-base">E-MAIL ADDRESS</p>
-                                <p className="text-[#009990] mb-6 font-base">TRAFFICTOURS@COMPANYNAME.COM</p>
-                                <p className="text-lg font-base">WORKING HOURS</p>
+                            <h1 className="text-4xl md:text-5xl lg:text-7xl font-base mb-4">LET'S CONNECT</h1>
+                            <div className="mt-8 md:mt-12">
+                                <p className="text-base md:text-lg font-base">E-MAIL ADDRESS</p>
+                                <p className="text-[#009990] mb-4 md:mb-6 font-base">TRAFFICTOURS@COMPANYNAME.COM</p>
+                                <p className="text-base md:text-lg font-base">WORKING HOURS</p>
                                 <p className="text-[#009990] font-base">MON - SAT, 8:00 AM - 5:00 PM (SLT) UTC +5:30</p>
                             </div>
                         </div>
 
                         {/* Right Column: Contact Form */}
-                        <div className="p-6 rounded-md -mt-12">
-                            <form className="p-6 rounded-lg font-base">
+                        <div className="p-4 md:p-6 rounded-md -mt-8 md:-mt-12">
+                            <form className="p-4 md:p-6 rounded-lg font-base">
                                 {/* First & Last Name */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
@@ -38,7 +36,7 @@ const ContactUs = () => {
                                         <input
                                             type="text"
                                             placeholder="ENTER NAME"
-                                            className="w-full bg-[#E2E7EA] p-3 mb-2 rounded-md text-gray-600"
+                                            className="w-full bg-[#E2E7EA] p-2 md:p-3 mb-2 rounded-md text-gray-600"
                                         />
                                     </div>
                                     <div>
@@ -46,7 +44,7 @@ const ContactUs = () => {
                                         <input
                                             type="text"
                                             placeholder="ENTER LAST NAME"
-                                            className="w-full bg-[#E2E7EA] p-3 mb-2 rounded-md text-gray-600"
+                                            className="w-full bg-[#E2E7EA] p-2 md:p-3 mb-2 rounded-md text-gray-600"
                                         />
                                     </div>
                                 </div>
@@ -57,7 +55,7 @@ const ContactUs = () => {
                                     <input
                                         type="email"
                                         placeholder="ENTER YOUR EMAIL"
-                                        className="w-full bg-[#E2E7EA] p-3 mb-2 rounded-md text-gray-600"
+                                        className="w-full bg-[#E2E7EA] p-2 md:p-3 mb-2 rounded-md text-gray-600"
                                     />
                                 </div>
 
@@ -67,7 +65,7 @@ const ContactUs = () => {
                                     <input
                                         type="text"
                                         placeholder="ENTER SUBJECT"
-                                        className="w-full bg-[#E2E7EA] p-3 mb-2 rounded-md text-gray-600"
+                                        className="w-full bg-[#E2E7EA] p-2 md:p-3 mb-2 rounded-md text-gray-600"
                                     />
                                 </div>
 
@@ -77,12 +75,12 @@ const ContactUs = () => {
                                     <textarea
                                         placeholder="ENTER MESSAGE"
                                         rows="4"
-                                        className="w-full bg-[#E2E7EA] p-3 mb-2 rounded-md text-gray-600"
+                                        className="w-full bg-[#E2E7EA] p-2 md:p-3 mb-2 rounded-md text-gray-600"
                                     />
                                 </div>
 
                                 {/* Send Button */}
-                                <button className="w-full bg-[#009990] text-white py-3 rounded-md font-base hover:bg-gray-900 transition">
+                                <button className="w-full bg-[#009990] text-white py-2 md:py-3 rounded-md font-base hover:bg-gray-900 transition">
                                     SEND
                                 </button>
                             </form>
@@ -90,13 +88,19 @@ const ContactUs = () => {
                     </div>
 
                     {/* Divider Text */}
-                    <div className="text-center my-36 font-base text-7xl">
+                    <div className="text-center my-20 md:my-36 font-base text-4xl md:text-5xl lg:text-7xl">
                         <h2>&</h2>
                         <h2>GO PLACES YOU WILL REMEMBER</h2>
                     </div>
 
+
+
+
+
+
+
                     {/* Image Gallery */}
-                    <div className="flex flex-wrap gap-7 mb-2 bg-[#F1F1F1]">
+                    <div className="flex flex-wrap gap-8 mb-20">
                         {/* First Row */}
                         <div className="relative">
                             <img src={riverstone} alt="Riverstone" className="rounded-lg w-[300px] h-[300px] object-cover aspect-[4/3]" />
@@ -126,11 +130,7 @@ const ContactUs = () => {
                             ></div>
 
                             {/* Instagram Image */}
-                            <img
-                                src={Instagram}
-                                alt="Instagram"
-                                className="w-16 h-16 rounded-full object-cover"
-                            />
+                            <img src={Instagram} alt="Instagram" className="w-16 h-16 rounded-full object-cover" />
 
                         </div>
 
