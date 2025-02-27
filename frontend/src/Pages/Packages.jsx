@@ -12,6 +12,7 @@ import templeImage from '../assets/temple.jpg';
 import beacjImage from '../assets/beach.jpg';
 
 
+
 const Packages = () => {
     const [selectedSection, setSelectedSection] = useState('ALL PACKAGES');
     const targetSectionRef = useRef(null);
