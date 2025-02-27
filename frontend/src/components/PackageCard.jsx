@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Popup from "./Popup"; // Import your Popup component
+import Popup from "./Popup";
+import leopardImage from '../assets/yala.jpg';
 
 const PackageCard = ({ imageUrl, title, description, onExplore }) => {
     // State to control popup visibility
@@ -15,6 +16,17 @@ const PackageCard = ({ imageUrl, title, description, onExplore }) => {
     const closePopup = () => {
         setIsPopupVisible(false); // Hide the popup
     };
+
+    const data = {
+        title: 'Yala Safari Expedition',
+        description: [
+            "Venture into the heart of the wild, where golden grasslands meet the call of the untamed. The Yala Safari Expedition is more than a journey—it’s a story whispered by the wind, written in the footprints of leopards, and sung by the rustling trees.",
+            "Feel the thrill of the chase as you ride through Yala National Park, home to Sri Lanka’s elusive big cats and a dazzling array of wildlife. Find serenity in ancient temple visits, where time slows and the echoes of history embrace you. As night falls, retreat to an eco-lodge, where nature cradles your dreams beneath a sky filled with stars."
+        ],
+        imageUrl: leopardImage,
+    };
+
+
 
     return (
         <div className="bg-white rounded-lg overflow-hidden">
@@ -39,7 +51,7 @@ const PackageCard = ({ imageUrl, title, description, onExplore }) => {
 
             {/* Conditionally render the Popup */}
             {isPopupVisible && (
-                <Popup onClose={closePopup}>
+                <Popup onClose={closePopup} data={data}>
                     {/* Add content for the popup here */}
                     <h2 className="text-2xl font-bold mb-4">{title}</h2>
                     <p className="text-base text-gray-600">{description}</p>
