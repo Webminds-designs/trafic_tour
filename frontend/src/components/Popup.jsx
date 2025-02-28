@@ -33,7 +33,7 @@ export default function Popup({ onClose, data }) {
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1 text-black bg-[#009990] rounded-full"
+                    className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1 text-black bg-[#009990] rounded-full transition cursor-pointer"
                 >
                     <FaTimes className="text-xl" />
                 </button>
@@ -101,7 +101,7 @@ export default function Popup({ onClose, data }) {
                                 <li>All transfers & tours on private or sharing basis</li>
 
                                 <div className="text-center mt-8 sm:mt-10">
-                                    <button className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base">
+                                    <button className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base transition cursor-pointer">
                                         BOOK NOW
                                     </button>
                                 </div>
@@ -196,7 +196,7 @@ export default function Popup({ onClose, data }) {
                                             <span className="text-black text-xl sm:text-2xl">TOTAL</span>
                                             <span className="text-black text-xl sm:text-2xl">82,000 LKR / $277</span>
                                         </div>
-                                        <button className="w-full bg-[#009990] text-white font-base px-2 py-2 rounded-md mt-4">BOOK NOW</button>
+                                        <button className="w-full bg-[#009990] text-white font-base px-2 py-2 rounded-md mt-4 transition cursor-pointer">BOOK NOW</button>
                                     </div>
                                 </div>
                             </div>
@@ -206,7 +206,7 @@ export default function Popup({ onClose, data }) {
                             <div className="text-center">
                                 <p className="text-black text-lg sm:text-xl font-base">CONTACT OUR TEAM TO INQUIRE ABOUT THE PRICES</p>
                                 <div className="text-center mt-8 sm:mt-10">
-                                    <button className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base">
+                                    <button className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base transition cursor-pointer">
                                         CONTACT US
                                     </button>
                                 </div>
