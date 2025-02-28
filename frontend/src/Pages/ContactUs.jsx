@@ -112,7 +112,7 @@ const ContactUs = () => {
                         </div>
 
                         {/* Second Row */}
-                        <div className="relative flex items-center justify-center w-20 h-20 md:w-32 md:h-32 lg:w-48 lg:h-48 rounded-full hover:scale-105 transition-transform md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1">
+                        <div className="relative flex items-center justify-center w-70 h-70 md:w-60 md:h-60 lg:w-70 lg:h-70 rounded-full hover:scale-105 transition-transform md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1">
                             {/* Gradient Border */}
                             <div
                                 className="absolute inset-0 rounded-full border-[1px] border-transparent p-[3px]"
@@ -126,7 +126,7 @@ const ContactUs = () => {
                             ></div>
 
                             {/* Instagram Image */}
-                            <img src={Instagram} alt="Instagram" className="w-16 h-16 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full object-cover" />
+                            <img src={Instagram} alt="Instagram" className="w-16 h-16 md:w-16 md:h-16 lg:w-16 lg:h-16 rounded-full object-cover items-center" />
                         </div>
 
                         <div className="relative md:col-span-1 md:row-span-1 lg:col-span-2 lg:row-span-1">
