@@ -95,28 +95,24 @@ const ContactUs = () => {
 
 
 
-
-
-
-
                     {/* Image Gallery */}
-                    <div className="flex flex-wrap gap-8 mb-20">
+                    <div className="flex flex-wrap gap-4 mb-20 md:grid md:grid-cols-3 md:grid-rows-2 lg:grid-cols-4 lg:grid-rows-2">
                         {/* First Row */}
-                        <div className="relative">
+                        <div className="relative md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1">
                             <img src={riverstone} alt="Riverstone" className="rounded-lg w-[300px] h-[300px] object-cover aspect-[4/3]" />
                             <p className="absolute bottom-2 left-2 text-white font-base text-lg">RIVERSTONE</p>
                         </div>
-                        <div className="relative">
-                            <img src={piduruthalagala} alt="Piduruthalagala Rock" className="rounded-lg w-[300px] h-[300px] object-cover" />
+                        <div className="relative md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1">
+                            <img src={piduruthalagala} alt="Piduruthalagala Rock" className="rounded-lg [300px] h-[300px] object-cover" />
                             <p className="absolute top-2 right-2 text-white font-base text-lg">PIDURUTHALAGALA ROCK</p>
                         </div>
-                        <div className="relative">
-                            <img src={ruwanweliseya} alt="Ruwanweli Seya" className="rounded-lg w-[450px] h-[300px] object-cover aspect-[4/3]" />
+                        <div className="relative md:col-span-1 md:row-span-1 lg:col-span-2 lg:row-span-1">
+                            <img src={ruwanweliseya} alt="Ruwanweli Seya" className="rounded-lg w-full h-[300px] object-cover aspect-[4/3]" />
                             <p className="absolute bottom-2 right-2 text-white font-base text-lg">RUWANWELI SEYA</p>
                         </div>
 
                         {/* Second Row */}
-                        <div className="relative flex items-center justify-center w-75 h-75 rounded-full hover:scale-105 transition-transform">
+                        <div className="relative flex items-center justify-center w-20 h-20 md:w-32 md:h-32 lg:w-48 lg:h-48 rounded-full hover:scale-105 transition-transform md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1">
                             {/* Gradient Border */}
                             <div
                                 className="absolute inset-0 rounded-full border-[1px] border-transparent p-[3px]"
@@ -130,19 +126,16 @@ const ContactUs = () => {
                             ></div>
 
                             {/* Instagram Image */}
-                            <img src={Instagram} alt="Instagram" className="w-16 h-16 rounded-full object-cover" />
-
+                            <img src={Instagram} alt="Instagram" className="w-16 h-16 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full object-cover" />
                         </div>
 
-
-
-                        <div className="relative">
-                            <img src={dambulla} alt="Dambulla Rock Temple" className="rounded-lg w-[450px] h-[300px] object-cover aspect-[4/3]" />
+                        <div className="relative md:col-span-1 md:row-span-1 lg:col-span-2 lg:row-span-1">
+                            <img src={dambulla} alt="Dambulla Rock Temple" className="rounded-lg w-full h-[300px] object-cover aspect-[4/3]" />
                             <p className="absolute top-2 left-2 text-white font-base text-lg">DAMBULLA ROCK TEMPLE</p>
                         </div>
 
-                        <div className="relative">
-                            <img src={girihanduseya} alt="Girihandu Seya" className="rounded-lg w-[300px] h-[300px] object-cover aspect-[4/3]" />
+                        <div className="relative md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1">
+                            <img src={girihanduseya} alt="Girihandu Seya" className="rounded-lg [300px] h-[300px] object-cover aspect-[4/3]" />
                             <p className="absolute bottom-2 left-2 text-white font-base text-lg">GIRIHANDU SEYA</p>
                         </div>
                     </div>
