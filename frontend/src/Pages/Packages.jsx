@@ -76,7 +76,7 @@ const Packages = () => {
                         <div className="flex justify-end mt-4">
                             <button
                                 onClick={handleFindBestPackage}
-                                className="text-base sm:text-lg lg:text-xl font-base text-teal-600 hover:underline"
+                                className="text-base sm:text-lg lg:text-xl font-base text-teal-600 hover:underline transition cursor-pointer"
                             >
                                 FIND THE BEST PACKAGE
                             </button>
@@ -179,7 +179,7 @@ const Packages = () => {
                                 {/* Submit Button */}
                                 <button
                                     type="submit"
-                                    className="w-full bg-teal-600 text-white py-2 mt-6 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                    className="w-full bg-teal-600 text-white py-2 mt-6 rounded-lg transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500"
                                 >
                                     FIND
                                 </button>
