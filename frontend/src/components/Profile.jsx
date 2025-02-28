@@ -1,7 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "../context/authContext.jsx";
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDropzone } from 'react-dropzone';
 
 import Footer from '../components/Footer'
 import image1 from "../assets/Packages/image.png";
@@ -15,28 +17,82 @@ import image8 from "../assets/Packages/image8.png";
 import heart from "../assets/heart.png";
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
+import userpic from "../assets/user.png"
 
 
 const Profile = () => {
   const { user } = useContext(AuthContext);
-  
+  const [imagePreview, setImagePreview] = useState(null);
+  const [profileData, setProfileData] = useState(new FormData());
   const [selectedTab, setSelectedTab] = useState('ACCOUNT SETTINGS');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [newpasswordVisible, setNewPasswordVisible] = useState(false);
   const [conpasswordVisible, setConPasswordVisible] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isProfileEditing, setIsProfileEditing] = useState(false);
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    passportId: "",
+    phone: "",
+    profileUrl: "",
+    password:"",
+  });
+
+  const navigate = useNavigate();
+     console.log(userDetails);
+  //get user details
+  useEffect(() => {
+    if (!user.id) {
+      console.log("User not found, navigating to sign-in");
+      navigate('/signin');  // Navigate to sign-in page
+    }
+
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:6400/api/user/${user.id}`);
+        setUserDetails(response.data.user);
+        setLoading(false);
+
+        // Set initial form data with fetched user details
+        setFormData({
+          firstName: response.data.user.firstName || "",
+          lastName: response.data.user.lastName || "",
+          email: response.data.user.email || "",
+          passportId: response.data.user.passportId || "",
+          phone: response.data.user.phone || "",
+          profileUrl: response.data.user.profileUrl || "",
+          password: response.data.user.password || "",
+        });
+
+      } catch (err) {
+        setError('Error fetching user details');
+        setLoading(false);
+      }
+    };
+
+    fetchUserDetails();
+  }, [user.id]);
+
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
+  };
+  const toggleNewPasswordVisibility = () => {
+    setNewPasswordVisible(!newpasswordVisible);
   };
   const toggleConPasswordVisibility = () => {
     setConPasswordVisible(!conpasswordVisible);
   };
- 
-  if (!user) {
-    console.log("User not found, navigating to sign-in");
-    navigate('/signin');  // Navigate to sign-in page
-  } else {
-    console.log(user);  // Log the user details if authenticated
-  }
+
 
   const tabs = [
     'ACCOUNT SETTINGS',
@@ -88,6 +144,154 @@ const Profile = () => {
     }
   ];
 
+  //update profile
+
+  const [isEditing, setIsEditing] = useState(true);
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(
+        "http://localhost:6400/api/user/profile",
+        { userId: user.id, ...formData }
+      );
+      console.log("Profile updated successfully", response.data);
+
+      alert("Profile updated successfully");
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating profile", error);
+    }
+  };
+  const handleCancel = () => {
+    setFormData({
+      firstName: userDetails.firstName || "",
+      lastName: userDetails.lastName || "",
+      email: userDetails.email || "",
+      passportId: userDetails.passportId || "",
+      phone: userDetails.phone || "",
+    
+    });
+    setIsEditing(false);
+  };
+
+
+  //profile update
+  const onDrop = (acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+
+      // Create FormData and append the file
+      const formData = new FormData();
+      formData.append('image', file);  // Append the file with the correct field name
+
+      setProfileData(formData);  // Store FormData in state
+    }
+  };
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: 'image/*',
+  });
+  const handleImageUpload = async () => {
+    try {
+      setLoading(true);  // Set loading state to true when upload starts
+
+      const formData = new FormData();
+      // Append image and user ID to formData
+      formData.append('image', profileData.get('image'));
+      formData.append('userId', user.id);
+
+      const response = await axios.put('http://localhost:6400/api/user/updateurl', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.status === 200) {
+        setIsProfileEditing(false)
+        alert("Image uploaded successfully")
+      } else {
+        console.error('Upload failed:', response.data.message);
+      }
+    } catch (error) {
+      setError('Error uploading image. Please try again.');
+      console.error('Error uploading image:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //Add new password 
+
+  const handleNewPassword = async (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      alert("New password and confirm password do not match.");
+      return;
+    }
+    const userId =user.id;
+    try {
+      setLoading(true);
+      const response = await axios.post("http://localhost:6400/api/user/newpassword", {
+        userId,
+        newPassword,
+      });
+
+      alert(response.data.message);
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      alert(error.response?.data?.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+    //Update password 
+    const handleUpdatePassword = async (e) => {
+      e.preventDefault();
+    
+      const userId = user.id; // Ensure user.id is available
+      if (newPassword !== confirmPassword) {
+        alert("New password and confirm password do not match.");
+        return;
+      }
+    
+      // If old password is required but not provided
+      if (userDetails?.password && !oldPassword) {
+        alert("Please enter the old password.");
+        return;
+      }
+    
+      try {
+        setLoading(true);
+    
+        // Call the backend API to update the password
+        const response = await axios.post("http://localhost:6400/api/user/updatepassword", {
+          userId,
+          oldPassword, // Send old password to backend for verification
+          newPassword, // Send new password
+        });
+    
+        alert(response.data.message);
+    
+        // Clear the password fields
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } catch (error) {
+        alert(error.response?.data?.message || "Something went wrong.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+  
   return (
     <div >
       <div className=' bg-gray-100 lg:px-10 min-h-screen'>
@@ -110,7 +314,8 @@ const Profile = () => {
             <div className="flex items-center space-x-4">
               <button className="bg-black text-white px-4 py-2 rounded-lg hidden md:block">BOOK NOW</button>
               <img
-                src={user?.profileUrl}
+                src={formData?.profileUrl || userpic
+                }
                 alt="Profile"
                 className="rounded-full w-10 h-10 object-cover"
               />
@@ -157,19 +362,62 @@ const Profile = () => {
           <p className="mt-6  md:mx-0 mx-10  md:text-start text-center">TAILOR YOUR EXPERIENCE AND MAKE EVERY MOMENT UNFORGETTABLE.</p>
 
           <div className="flex flex-col md:flex-row items-center mx-4 md:mx-0 my-12">
-          <img
-  src={user?.profileUrl?.includes('=s96-c') ? user.profileUrl.replace(/=s96-c/, "=s400-c") : '/default-avatar.jpg'}
-  alt="Profile"
-  className="rounded-full w-32 h-32 md:w-48 md:h-48 object-cover"
-  onError={() => console.log("Image failed to load")}
-/>
+            <div
+              {...(isProfileEditing ? getRootProps() : {})} // Apply drag-and-drop only if editing
+              className={`cursor-pointer rounded-full w-32 h-32 md:w-48 md:h-48 object-cover ${isProfileEditing ? "border-2 border-dashed border-gray-400" : ""
+                }`} // Optional border styling for edit mode
+            >
+              {isProfileEditing && <input {...getInputProps()} />} {/* Show input only when editing */}
+              <img
+                src={
+                  imagePreview ||
+                  (formData?.profileUrl?.includes("=s96-c")
+                    ? formData.profileUrl.replace(/=s96-c/, "=s400-c")
+                    : formData?.profileUrl || userpic)
+                }
+                alt="Profile"
+                className="rounded-full w-32 h-32 md:w-48 md:h-48 object-cover"
+                onError={() => console.log("Image failed to load")}
+              />
+            </div>
 
             <div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
-              <h2 className="text-lg md:text-xl uppercase font-bold">{user?.firstName}  {user?.lastName}</h2>
-              <p className="text-sm md:text-md uppercase font-bold">{user?.email}</p>
+              <h2 className="text-lg md:text-xl uppercase font-bold">{userDetails?.firstName}  {userDetails?.lastName}</h2>
+              <p className="text-sm md:text-md uppercase font-bold">{userDetails?.email}</p>
               <div className="mt-4 flex justify-center md:justify-start">
-                <button className="bg-white border-1 border-black px-4 py-2 rounded mr-2 text-sm md:text-md">CANCEL</button>
-                <button className="bg-black text-white px-4 py-2 rounded text-sm md:text-md">CHANGE PROFILE</button>
+                {isProfileEditing ? (
+                  <>
+                    <button
+                      onClick={() => setIsProfileEditing(false)}
+                      className="bg-white border border-black px-4 py-2 rounded mr-2 text-sm md:text-md"
+                    >
+                      CANCEL
+                    </button>
+                    <button
+                      onClick={handleImageUpload}
+                      className={`bg-black text-white px-4 py-2 rounded text-sm md:text-md ${loading ? 'bg-gray-600 cursor-not-allowed' : ''}`}
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <span className="flex items-center justify-center">
+                          <div className="animate-spin border-4 border-t-transparent border-white rounded-full w-5 h-5 mr-2" />
+                          Uploading...
+                        </span>
+                      ) : (
+                        "CHANGE PROFILE"
+                      )}
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setIsProfileEditing(true)}
+                    className="bg-black text-white px-4 py-2 rounded text-sm md:text-md"
+                  >
+                    Edit
+                  </button>
+                )}
+
+
               </div>
             </div>
           </div>
@@ -193,7 +441,7 @@ const Profile = () => {
           {selectedTab === 'ACCOUNT SETTINGS' && (
             <div className="">
               <h2 className="text-3xl font-bold m-6 md:mx-0 uppercase">Personal Details</h2>
-              <form className="mx-auto px-4 sm:px-6 md:px-0">
+              <form className="mx-auto px-4 sm:px-6 md:px-0" onSubmit={handleSubmit}>
                 {/* First Name */}
                 <div className="mb-4 flex flex-col md:flex-row">
                   <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="firstName">
@@ -203,7 +451,10 @@ const Profile = () => {
                     className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="firstName"
                     type="text"
+                    value={formData.firstName}
+                    onChange={handleChange}
                     placeholder="Enter your first name"
+                    disabled={!isEditing}
                   />
                 </div>
 
@@ -216,7 +467,10 @@ const Profile = () => {
                     className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="lastName"
                     type="text"
+                    value={formData.lastName}
+                    onChange={handleChange}
                     placeholder="Enter your last name"
+                    disabled={!isEditing}
                   />
                 </div>
 
@@ -226,10 +480,13 @@ const Profile = () => {
                     Email
                   </label>
                   <input
-                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2 disabled:cursor-not-allowed"
                     id="email"
                     type="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="Enter your email"
+                    disabled
                   />
                 </div>
 
@@ -242,7 +499,10 @@ const Profile = () => {
                     className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="passportId"
                     type="text"
+                    value={formData.passportId}
+                    onChange={handleChange}
                     placeholder="Enter your passport ID"
+                    disabled={!isEditing}
                   />
                 </div>
 
@@ -253,16 +513,42 @@ const Profile = () => {
                   </label>
                   <input
                     className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
-                    id="contactNumber"
+                    id="phone"
                     type="text"
+                    value={formData.phone}
+                    onChange={handleChange}
                     placeholder="Enter your contact number"
+
                   />
                 </div>
 
-                {/* Password Section */}
-                <h2 className="text-2xl font-bold mb-6 uppercase">Password</h2>
+                {/* Submit / Edit Button */}
+                <div className="flex items-center justify-end">
 
+                  <>
+
+                    <button
+                      type="button"
+                      className="bg-white border text-black font-bold py-2 px-4 rounded mr-2"
+                      onClick={handleCancel}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-black text-white font-bold py-2 px-4 rounded"
+                    >
+                      Save
+                    </button>
+                  </>
+                </div>
+              </form>
+
+              {/* Password Section */}
+              <h2 className="text-2xl font-bold mb-6 md:m-0 m-5 uppercase">Password</h2>
+              <form className='md:m-0 m-5'  onSubmit={userDetails?.password !== "" ? handleUpdatePassword : handleNewPassword}>
                 {/* Old Password */}
+                {userDetails?.password !== "" && (
                 <div className="mb-4 flex flex-col md:flex-row relative">
                   <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="oldPassword">
                     Old Password
@@ -270,12 +556,38 @@ const Profile = () => {
                   <input
                     className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="oldPassword"
-                    type={conpasswordVisible ? "text" : "password"}
+                    type={passwordVisible ? "text" : "password"}
                     placeholder="Enter old password"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    required
                   />
                   <img
                     src={passwordVisible ? eye : hidden}
                     onClick={togglePasswordVisibility}
+                    alt="hidden"
+                    width={20}
+                    className="absolute right-5 md:mt-3 mt-12 opacity-80"
+                  />
+                </div>)}
+
+                {/* New Password */}
+                <div className="mb-4 flex flex-col md:flex-row relative">
+                  <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="newPassword">
+                    New Password
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                    id="oldPassword"
+                    type={newpasswordVisible ? "text" : "password"}
+                    placeholder="Enter New password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                  />
+                  <img
+                    src={newpasswordVisible ? eye : hidden}
+                    onClick={toggleNewPasswordVisibility}
                     alt="hidden"
                     width={20}
                     className="absolute right-5 md:mt-3 mt-12 opacity-80"
@@ -292,6 +604,9 @@ const Profile = () => {
                     id="confirmPassword"
                     type={conpasswordVisible ? "text" : "password"}
                     placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
                   />
                   <img
                     src={conpasswordVisible ? eye : hidden}
@@ -303,14 +618,21 @@ const Profile = () => {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex items-center  justify-end">
-                  <button className="bg-gray-200 text-gray-700 border-1 mr-5 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-                    Cancel
-                  </button>
-                  <button className="bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-                    Change Password
-                  </button>
-                </div>
+                <div className="flex items-center justify-end">
+          <button
+            className="bg-white text-gray-700 border border-gray-400 mr-5 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            className="bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-600 disabled:cursor-not-allowed"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Updating..." : "Change Password"}
+          </button>
+        </div>
               </form>
 
             </div>

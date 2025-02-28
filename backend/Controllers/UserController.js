@@ -1,5 +1,6 @@
 import User from "../Model/User.js";
 import cloudinary from "../config/CloudinaryConfig.js";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 // Register a new user
@@ -124,6 +125,7 @@ export const loginUser = async (req, res) => {
        phone:user.phone,
        email: user.email,
        country:user.country,
+       password:user.password,
        passportId:user.passportId,
        role: user.role,
        profileUrl:user.profileUrl,
@@ -165,6 +167,7 @@ export const googleloginUser = async (req, res) => {
         phone:user.phone,
         email: user.email,
         country:user.country,
+        password:user.password,
         passportId:user.passportId,
         role: user.role,
         profileUrl:user.profileUrl,
@@ -180,33 +183,158 @@ export const googleloginUser = async (req, res) => {
 };
 
 // Get user profile
-export const getUserProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
+export const getUserDetails = async (req, res) => {
+  const { userId } = req.params; // Get the userId from the URL parameters
 
-    res.status(200).json(user);
+  try {
+    const user = await User.findById(userId); // Find the user in the database by ID
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ user }); // Return the user details as JSON
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 // Update user profile
-export const updateUserProfile = async (req, res) => {
+export const updateUserProfile =  async (req, res) => {
+ 
+  const { userId } = req.body; // Get userId from request body
+  const { firstName, lastName, email, passportId, phone } = req.body; // Get form data from request body
   try {
-    const { firstName, lastName, phone, country, profileUrl } = req.body;
+    const user = await User.findById(userId); // Find the user by userId
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      { firstName, lastName, phone, country, profileUrl },
-      { new: true }
-    ).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-    res.status(200).json(updatedUser);
+    // Update user fields
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+    user.passportId = passportId || user.passportId;
+    user.phone = phone || user.phone;
+
+    await user.save(); // Save the updated user
+
+    res.status(200).json({ message: 'Profile updated successfully', user });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Error updating profile' });
   }
 };
+export const updateImage = async (req, res) => {
+  try {
+    // Log request body and file for debugging
+    console.log('Request Body:', req.body);
+    console.log('Uploaded File:', req.file);
+
+    // Extract userId from the request
+    const { userId } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    if (req.file) {
+      // Upload the image to Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path);
+      const newProfileUrl = result.secure_url;
+
+      // Find the user by userId and update the profile URL
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Update the user's profile URL
+      user.profileUrl = newProfileUrl;
+      await user.save();  // Save the updated user document
+
+      res.status(200).json({ message: 'Profile image uploaded successfully', profileUrl: newProfileUrl });
+    } else {
+      res.status(400).json({ message: 'No image uploaded' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const newpassword =async (req, res) => {
+  const { userId, newPassword } = req.body;
+
+  if (!userId || !newPassword) {
+    return res.status(400).json({ message: 'User ID and new password are required.' });
+  }
+
+  try {
+    // Find user by userId
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user's password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Something went wrong.' });
+  }
+};
+
+export const updatePassword = async (req, res) => {
+  const { userId, oldPassword, newPassword } = req.body;
+  console.log(req.body);
+
+  if (!userId || !newPassword) {
+    return res.status(400).json({ message: 'User ID and new password are required.' });
+  }
+
+  try {
+    // Find user by userId
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // If the old password is provided, compare it with the stored password
+    if (user.password && oldPassword) {
+      // Compare the old password with the stored hashed password
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      console.log("Comparing passwords:", oldPassword, user.password); // Logs the old plain password and the stored hashed password
+      console.log("Password match result:", isMatch); // Logs whether the passwords match
+      
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Old password is incorrect.' });
+      }
+    }
+  
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user's password with the new hashed password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Something went wrong.' });
+  }
+};
+
 
 // Delete user
 export const deleteUser = async (req, res) => {

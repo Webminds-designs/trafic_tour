@@ -13,9 +13,9 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser)); // Set user state with data from localStorage
-      console.log("User loaded from localStorage:", JSON.parse(storedUser));
+     
     } else {
-      console.log("No user data in localStorage");
+      console.log("No user data ");
     }
 
     // Optionally, fetch the user from the API to make sure session is valid
