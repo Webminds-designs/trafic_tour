@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Popup from "./Popup";
-import leopardImage from '../assets/yala.jpg';
 
-const PackageCard = ({ imageUrl, title, description, onExplore }) => {
+const PackageCard = ({ packageItem, onExplore }) => {
+    // Destructure package details from props
+    const { imageUrl, title, description } = packageItem;
+
     // State to control popup visibility
     const [isPopupVisible, setIsPopupVisible] = useState(false);
 
@@ -17,19 +19,18 @@ const PackageCard = ({ imageUrl, title, description, onExplore }) => {
         setIsPopupVisible(false); // Hide the popup
     };
 
-    const data = {
-        title: 'Yala Safari Expedition',
+    // Data for the popup (dynamic based on the package)
+    const popupData = {
+        title: title, // Use the title from props
         description: [
-            "Venture into the heart of the wild, where golden grasslands meet the call of the untamed. The Yala Safari Expedition is more than a journey—it’s a story whispered by the wind, written in the footprints of leopards, and sung by the rustling trees.",
-            "Feel the thrill of the chase as you ride through Yala National Park, home to Sri Lanka’s elusive big cats and a dazzling array of wildlife. Find serenity in ancient temple visits, where time slows and the echoes of history embrace you. As night falls, retreat to an eco-lodge, where nature cradles your dreams beneath a sky filled with stars."
+            description, // Use the description from props
+            "Additional details about the package can go here.", // Add more details if needed
         ],
-        imageUrl: leopardImage,
+        imageUrl: imageUrl, // Use the imageUrl from props
     };
 
-
-
     return (
-        <div className="bg-white rounded-lg overflow-hidden">
+        <div className="bg-white rounded-lg overflow-hidden transition-shadow duration-300">
             {/* Image with taller rectangular shape */}
             <img
                 src={imageUrl}
@@ -39,23 +40,34 @@ const PackageCard = ({ imageUrl, title, description, onExplore }) => {
 
             {/* Card Content */}
             <div className="p-6">
-                <h3 className="text-xl font-bold">{title}</h3>
+                <h3 className="text-xl font-bold mb-2">{title}</h3>
                 <p className="text-base text-gray-600">{description}</p>
                 <button
                     onClick={handleExploreClick}
-                    className="mt-4 px-5 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+                    className="mt-4 px-5 py-3 bg-black text-white rounded-lg transition cursor-pointer"
                 >
                     Explore Now
                 </button>
+
             </div>
 
             {/* Conditionally render the Popup */}
             {isPopupVisible && (
-                <Popup onClose={closePopup} data={data}>
-                    {/* Add content for the popup here */}
-                    <h2 className="text-2xl font-bold mb-4">{title}</h2>
-                    <p className="text-base text-gray-600">{description}</p>
-                    {/* Add more content or custom components as needed */}
+                <Popup onClose={closePopup} data={popupData}>
+                    {/* Popup content */}
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-bold">{popupData.title}</h2>
+                        {popupData.description.map((paragraph, index) => (
+                            <p key={index} className="text-base text-gray-600">
+                                {paragraph}
+                            </p>
+                        ))}
+                        <img
+                            src={popupData.imageUrl}
+                            alt={popupData.title}
+                            className="w-full h-48 object-cover rounded-lg"
+                        />
+                    </div>
                 </Popup>
             )}
         </div>
