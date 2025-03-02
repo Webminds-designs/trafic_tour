@@ -1,15 +1,8 @@
 import React, { useState, useRef } from "react";
 import PackageCard from "../components/PackageCard";
+import packages from "../data/packageData";
 import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/lepord.jpg";
-import leopardImage from "../assets/yala.jpg";
-import elephantImage from "../assets/safari.jpg";
-import mountainsImage from "../assets/hill.jpg";
-import lakeImage from "../assets/wilpattu.jpg";
-import safariImage from "../assets/adms.jpg";
-import forestImage from "../assets/forest.jpg";
-import templeImage from "../assets/temple.jpg";
-import beacjImage from "../assets/beach.jpg";
 
 const Packages = () => {
   const [selectedSection, setSelectedSection] = useState("ALL PACKAGES");
@@ -20,101 +13,6 @@ const Packages = () => {
     "ADVENTURE PACKAGES",
     "EDUCATIONAL PACKAGES",
   ];
-
-  const packages = {
-    "ALL PACKAGES": [
-      {
-        title: "Yala Safari Expedition",
-        description:
-          "Yala Safari: A thrilling wildlife adventure in Sri Lanka.",
-        imageUrl: leopardImage,
-      },
-      {
-        title: "Elephant Sanctuary & Safari",
-        description: "Experience Sri Lanka’s gentle giants up close.",
-        imageUrl: elephantImage,
-      },
-      {
-        title: "Hill Country Exploration",
-        description:
-          "Lush tea plantations, rolling hills, and breathtaking views.",
-        imageUrl: mountainsImage,
-      },
-      {
-        title: "Wilpattu Wilderness Experience",
-        description:
-          "Witness the serene lakes and diverse wildlife of Wilpattu.",
-        imageUrl: lakeImage,
-      },
-      {
-        title: "Ancient & Wildlife Combo Tour",
-        description: "Explore ancient ruins alongside rich wildlife habitats.",
-        imageUrl: safariImage,
-      },
-      {
-        title: "Educational Tour 1",
-        description: "Learn about Sri Lanka’s rich history and culture.",
-        imageUrl: templeImage,
-      },
-      {
-        title: "Educational Tour 2",
-        description: "Explore ancient temples and historical sites.",
-        imageUrl: beacjImage,
-      },
-      {
-        title: "Educational Tour 3",
-        description: "Discover the biodiversity of Sri Lanka’s forests.",
-        imageUrl: forestImage,
-      },
-    ],
-    "ADVENTURE PACKAGES": [
-      {
-        title: "Yala Safari Expedition",
-        description:
-          "Yala Safari: A thrilling wildlife adventure in Sri Lanka.",
-        imageUrl: leopardImage,
-      },
-      {
-        title: "Elephant Sanctuary & Safari",
-        description: "Experience Sri Lanka’s gentle giants up close.",
-        imageUrl: elephantImage,
-      },
-      {
-        title: "Hill Country Exploration",
-        description:
-          "Lush tea plantations, rolling hills, and breathtaking views.",
-        imageUrl: mountainsImage,
-      },
-      {
-        title: "Wilpattu Wilderness Experience",
-        description:
-          "Witness the serene lakes and diverse wildlife of Wilpattu.",
-        imageUrl: lakeImage,
-      },
-      {
-        title: "Ancient & Wildlife Combo Tour",
-        description: "Explore ancient ruins alongside rich wildlife habitats.",
-        imageUrl: safariImage,
-      },
-    ],
-    "EDUCATIONAL PACKAGES": [
-      {
-        title: "Educational Tour 1",
-        description: "Learn about Sri Lanka’s rich history and culture.",
-        imageUrl: templeImage,
-      },
-      {
-        title: "Educational Tour 2",
-        description: "Explore ancient temples and historical sites.",
-        imageUrl: beacjImage,
-      },
-      {
-        title: "Educational Tour 3",
-        description: "Discover the biodiversity of Sri Lanka’s forests.",
-        imageUrl: forestImage,
-      },
-    ],
-  };
 
   const handleSectionClick = (section) => {
     setSelectedSection(section);
@@ -132,7 +30,7 @@ const Packages = () => {
 
   return (
     <>
-      <Navbar fontColor="text-black" />
+      <Navbar />
       <div
         className="bg-white w-full mt-30"
         style={{ fontFamily: "'Bebas Neue', sans-serif" }}
@@ -197,13 +95,13 @@ const Packages = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-10 lg:mt-20">
-              {packages[selectedSection].map((pkg, index) => (
+              {packages["ALL PACKAGES"].map((packageItem) => (
                 <PackageCard
-                  key={index}
-                  title={pkg.title}
-                  description={pkg.description}
-                  imageUrl={pkg.imageUrl}
-                  onExplore={() => handleExplore(pkg.title)}
+                  key={packageItem.title}
+                  packageItem={packageItem} // Pass the entire package object
+                  onExplore={() =>
+                    console.log(`Exploring ${packageItem.title}`)
+                  }
                 />
               ))}
             </div>
