@@ -15,7 +15,11 @@ const Navbar = ({ fontColor }) => {
     >
       {/* Logo Section */}
       <div className="flex items-center space-x-4 md:space-x-8">
-        <img src={logo} alt="logo" className="w-16 md:w-24" />
+        {fontColor === "text-white" ? (
+          <img src={logo} alt="logo" className="w-16 md:w-24" />
+        ) : (
+          <img src={logoBlack} alt="logo" className="w-16 md:w-24" />
+        )}
       </div>
 
       {/* Hamburger Menu for Mobile */}
