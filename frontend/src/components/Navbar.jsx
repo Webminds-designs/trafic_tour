@@ -38,7 +38,11 @@ const Navbar = ({ fontColor }) => {
         {["HOME", "PACKAGES", "ABOUT US", "CONTACT US"].map((item) => (
           <li key={item} className="text-center py-2 md:py-0">
             <Link
-              to={`/${item.toLowerCase().replace(" ", "-")}`}
+              to={
+                item === "HOME"
+                  ? "/"
+                  : `/${item.toLowerCase().replace(" ", "-")}`
+              }
               className={`${
                 active === item ? "underline underline-offset-4" : ""
               } block px-4 py-2 md:inline-block`}
