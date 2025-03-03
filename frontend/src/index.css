@@ -1,9 +1,35 @@
 @import "tailwindcss";
 
 body {
-    font-family: 'Bebas Neue', sans-serif;
+
+  font-family: "Bebas Neue", sans-serif;
+}
+
+.primary {
+  color: #f7f0de;
+}
+
+.secondary {
+  color: #009990;
+}
+
+.tertiary {
+  color: #000000;
+}
+
+.bg-primary {
+  background-color: #f7f0de;
+}
+
+.bg-secondary {
+  background-color: #009990;
+}
+
+.bg-tertiary {
+  background-color: #000000;
 }
 
 .sinhala-text {
     font-family: 'Noto Sans Sinhala', sans-serif;
 }
+
