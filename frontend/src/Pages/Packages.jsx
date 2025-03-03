@@ -107,116 +107,111 @@ const Packages = () => {
             </div>
           </div>
 
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-10 lg:mt-20">
-                            {packages[selectedSection].map((pkg, index) => (
-                                <PackageCard
-                                    key={index}
-                                    data={{ title: pkg.title, description: pkg.description, imageUrl: pkg.imageUrl }}
-
-                                    onExplore={() => handleExplore(pkg.title)}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Find Best Package Section */}
-          {/* <div
-                        ref={targetSectionRef}
-                        className="relative w-full h-[400px] lg:h-screen bg-cover bg-center mt-10 lg:mt-30 mb-20 lg:mb-30"
-                        style={{
-                            backgroundImage: `url(${backgroundImage})`,
-                            backgroundPosition: 'center',
-                            backgroundSize: 'cover',
-                        }} */}
-
-          <div className="absolute -bottom-20 lg:-bottom-40 left-1/2 transform -translate-x-1/2 w-11/12 lg:w-3/4 bg-white p-6 lg:p-12 rounded-lg">
-            <h2 className="text-lg lg:text-xl font-bold mb-4">
-              FIND THE BEST PACKAGE
-            </h2>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                console.log("Form submitted");
-                console.log("Destination:", e.target.destination.value);
-                console.log("Travel Dates:", e.target.travelDate.value);
-                console.log("Trip Duration:", e.target.tripDuration.value);
-                console.log("Number of Travelers:", e.target.travelers.value);
-              }}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Destination Field */}
-                <div>
-                  <label
-                    className="text-sm font-semibold"
-                    htmlFor="destination"
-                  >
-                    DESTINATION
-                  </label>
-                  <input
-                    type="text"
-                    id="destination"
-                    name="destination"
-                    placeholder="SIGIRIYA, ELLA, ETC"
-                    className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  />
-                </div>
-
-                {/* Travel Dates Field */}
-                <div>
-                  <label className="text-sm font-semibold" htmlFor="travelDate">
-                    TRAVEL DATES
-                  </label>
-                  <input
-                    type="date"
-                    id="travelDate"
-                    name="travelDate"
-                    className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  />
-                </div>
-
-                {/* Trip Duration Field */}
-                <div>
-                  <label
-                    className="text-sm font-semibold"
-                    htmlFor="tripDuration"
-                  >
-                    TRIP DURATION
-                  </label>
-                  <input
-                    type="text"
-                    id="tripDuration"
-                    name="tripDuration"
-                    placeholder="10 DAYS"
-                    className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  />
-                </div>
-
-                {/* Number of Travelers Field */}
-                <div>
-                  <label className="text-sm font-semibold" htmlFor="travelers">
-                    NUMBER OF TRAVELERS
-                  </label>
-                  <select
-                    id="travelers"
-                    name="travelers"
-                    className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  >
-                    <option value="2 ADULTS">2 ADULTS</option>
-                    <option value="1 ADULT">1 ADULT</option>
-                    <option value="3 ADULTS">3 ADULTS</option>
-                    <option value="FAMILY PACKAGE">FAMILY PACKAGE</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className="w-full bg-teal-600 text-white py-2 mt-6 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          {/* Find Best Package Section */}
+          <div
+            ref={targetSectionRef}
+            className="relative w-full h-[400px] lg:h-screen bg-cover bg-center mt-10 lg:mt-30 mb-20 lg:mb-30"
+            style={{
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundPosition: "center",
+              backgroundSize: "cover",
+            }}
+          >
+            <div className="absolute -bottom-20 lg:-bottom-40 left-1/2 transform -translate-x-1/2 w-11/12 lg:w-3/4 bg-white p-6 lg:p-12 rounded-lg">
+              <h2 className="text-lg lg:text-xl font-bold mb-4">
+                FIND THE BEST PACKAGE
+              </h2>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  console.log("Form submitted");
+                  console.log("Destination:", e.target.destination.value);
+                  console.log("Travel Dates:", e.target.travelDate.value);
+                  console.log("Trip Duration:", e.target.tripDuration.value);
+                  console.log("Number of Travelers:", e.target.travelers.value);
+                }}
               >
-                FIND
-              </button>
-            </form>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Destination Field */}
+                  <div>
+                    <label
+                      className="text-sm font-semibold"
+                      htmlFor="destination"
+                    >
+                      DESTINATION
+                    </label>
+                    <input
+                      type="text"
+                      id="destination"
+                      name="destination"
+                      placeholder="SIGIRIYA, ELLA, ETC"
+                      className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
+                  </div>
+
+                  {/* Travel Dates Field */}
+                  <div>
+                    <label
+                      className="text-sm font-semibold"
+                      htmlFor="travelDate"
+                    >
+                      TRAVEL DATES
+                    </label>
+                    <input
+                      type="date"
+                      id="travelDate"
+                      name="travelDate"
+                      className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
+                  </div>
+
+                  {/* Trip Duration Field */}
+                  <div>
+                    <label
+                      className="text-sm font-semibold"
+                      htmlFor="tripDuration"
+                    >
+                      TRIP DURATION
+                    </label>
+                    <input
+                      type="text"
+                      id="tripDuration"
+                      name="tripDuration"
+                      placeholder="10 DAYS"
+                      className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
+                  </div>
+
+                  {/* Number of Travelers Field */}
+                  <div>
+                    <label
+                      className="text-sm font-semibold"
+                      htmlFor="travelers"
+                    >
+                      NUMBER OF TRAVELERS
+                    </label>
+                    <select
+                      id="travelers"
+                      name="travelers"
+                      className="w-full p-2 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    >
+                      <option value="2 ADULTS">2 ADULTS</option>
+                      <option value="1 ADULT">1 ADULT</option>
+                      <option value="3 ADULTS">3 ADULTS</option>
+                      <option value="FAMILY PACKAGE">FAMILY PACKAGE</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  className="w-full bg-teal-600 text-white py-2 mt-6 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                >
+                  FIND
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
