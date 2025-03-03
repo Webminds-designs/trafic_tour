@@ -183,9 +183,8 @@ const Packages = () => {
                             {packages[selectedSection].map((pkg, index) => (
                                 <PackageCard
                                     key={index}
-                                    title={pkg.title}
-                                    description={pkg.description}
-                                    imageUrl={pkg.imageUrl}
+                                    data={{ title: pkg.title, description: pkg.description, imageUrl: pkg.imageUrl }}
+
                                     onExplore={() => handleExplore(pkg.title)}
                                 />
                             ))}

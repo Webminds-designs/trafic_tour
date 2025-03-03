@@ -48,7 +48,7 @@ export default function Carousel() {
   }, [nextSlide]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full min-h-screen overflow-hidden">
       {/* Background Image Transition */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -76,7 +76,7 @@ export default function Carousel() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 1, y: -60, scale: 1 }}
                   transition={{ duration: 0.7, ease: "easeInOut" }}
-                  className="md:text-5xl text-3xl font-bold overflow-hidden"
+                  className="md:text-5xl text-4xl font-bold overflow-hidden"
                 >
                   {slide.title}
                 </motion.h1>

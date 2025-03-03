@@ -266,7 +266,8 @@ export const updateImage = async (req, res) => {
   }
 };
 
-export const newpassword =async (req, res) => {
+
+export const newpassword = async (req, res) => {
   const { userId, newPassword } = req.body;
 
   if (!userId || !newPassword) {
@@ -280,26 +281,26 @@ export const newpassword =async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    // Update user's password
-    user.password = hashedPassword;
+    // Update user's password (will be hashed automatically in the pre-save hook)
+    user.password = newPassword;
     await user.save();
 
     res.status(200).json({ message: 'Password updated successfully.' });
   } catch (error) {
-    console.error(error);
+    console.error('Error updating password:', error);
     res.status(500).json({ message: 'Something went wrong.' });
   }
 };
 
 export const updatePassword = async (req, res) => {
   const { userId, oldPassword, newPassword } = req.body;
-  console.log(req.body);
 
-  if (!userId || !newPassword) {
-    return res.status(400).json({ message: 'User ID and new password are required.' });
+  if (!userId || !oldPassword || !newPassword) {
+    return res.status(400).json({ message: 'User ID, old password, and new password are required.' });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
   }
 
   try {
@@ -309,28 +310,19 @@ export const updatePassword = async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // If the old password is provided, compare it with the stored password
-    if (user.password && oldPassword) {
-      // Compare the old password with the stored hashed password
-      const isMatch = await bcrypt.compare(oldPassword, user.password);
-      console.log("Comparing passwords:", oldPassword, user.password); // Logs the old plain password and the stored hashed password
-      console.log("Password match result:", isMatch); // Logs whether the passwords match
-      
-      if (!isMatch) {
-        return res.status(400).json({ message: 'Old password is incorrect.' });
-      }
+    // Check if the old password is correct
+    const isMatch = await user.isPasswordValid(oldPassword);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Old password is incorrect.' });
     }
-  
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update user's password with the new hashed password
-    user.password = hashedPassword;
+    // Update password (will be hashed automatically in the pre-save hook)
+    user.password = newPassword;
     await user.save();
 
     res.status(200).json({ message: 'Password updated successfully.' });
   } catch (error) {
-    console.error(error);
+    console.error('Error updating password:', error);
     res.status(500).json({ message: 'Something went wrong.' });
   }
 };

@@ -17,6 +17,7 @@ import imgemail from "../assets/email.png";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 const Signup = () => {
@@ -71,7 +72,7 @@ const Signup = () => {
        
         localStorage.setItem("user", JSON.stringify(LoginResponse.data.user));
         setUser(LoginResponse.data.user);
-        alert("Login Successful");
+        toast.success("Login Successful");
         navigate("/profile");
       } else {
         // registration
@@ -109,7 +110,7 @@ const Signup = () => {
         formData,
         {}
       );
-      alert("User registered successfully!");
+      toast.success("User registered successfully!");
     } catch (err) {
       console.error(
         "Error during registration: ",
