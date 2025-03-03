@@ -15,7 +15,7 @@ const Home = () => {
       <HomePackageCat />
 
       <Carousel />
-
+      <Footer />
     </>
   );
 };
