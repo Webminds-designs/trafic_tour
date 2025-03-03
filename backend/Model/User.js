@@ -5,11 +5,10 @@ const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: true,
+    
     },
     lastName: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
@@ -20,16 +19,13 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: true,
     },
     country: {
       type: String,
-      required: true,
     },
     passportId: {
       type: String,
-      required: true,
-      unique: true,
+      index: {  sparse: true },
     },
     role: {
       type: String,
@@ -38,8 +34,6 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
-      minlength: 6,
     },
     profileUrl: {
       type: String,
@@ -55,7 +49,7 @@ const userSchema = new mongoose.Schema(
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || !this.password) return next();
 
   try {
     const salt = await bcrypt.genSalt(10);

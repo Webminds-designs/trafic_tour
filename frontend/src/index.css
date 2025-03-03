@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 body {
+
   font-family: "Bebas Neue", sans-serif;
 }
 
@@ -27,3 +28,8 @@ body {
 .bg-tertiary {
   background-color: #000000;
 }
+
+.sinhala-text {
+    font-family: 'Noto Sans Sinhala', sans-serif;
+}
+
