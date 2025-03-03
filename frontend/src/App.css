@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+
+/* remove scroll bar  */
+/* For Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none; /* For IE and Edge */
+}
+
