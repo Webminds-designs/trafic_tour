@@ -11,11 +11,15 @@ const Navbar = ({ fontColor }) => {
 
   return (
     <nav
-      className={`flex items-center justify-between px-4 md:px-24 py-4 md:py-8 bg-transparent absolute top-0 left-0 w-full z-10`}
+      className={`flex items-center justify-between px-1 md:px-4 py-4 md:py-8 bg-transparent absolute top-0 left-0 w-full z-10`}
     >
       {/* Logo Section */}
-      <div className="flex items-center space-x-4 md:space-x-20">
-        <img src={logo} alt="logo" className="w-16 md:w-24" />
+      <div className="flex items-center space-x-4 md:space-x-8">
+        {fontColor === "text-white" ? (
+          <img src={logo} alt="logo" className="w-16 md:w-24" />
+        ) : (
+          <img src={logoBlack} alt="logo" className="w-16 md:w-24" />
+        )}
       </div>
 
       {/* Hamburger Menu for Mobile */}
@@ -29,7 +33,7 @@ const Navbar = ({ fontColor }) => {
       <ul
         className={`${
           isMenuOpen ? "block" : "hidden"
-        } md:flex md:space-x-24 text-lg font-base absolute md:static top-16  ${fontColor} left-0 w-full md:w-auto bg-transparentmd:bg-transparent z-10`}
+        } md:flex lg:space-x-12 text-lg font-base absolute md:static top-16  ${fontColor} left-0 w-full md:w-auto bg-transparentmd:bg-transparent z-10`}
       >
         {["HOME", "PACKAGES", "ABOUT US", "CONTACT US"].map((item) => (
           <li key={item} className="text-center py-2 md:py-0">
