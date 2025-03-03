@@ -6,23 +6,23 @@ import img1 from "../assets/pack01.png";
 
 const HomePackageCat = () => {
   return (
-    <div className="w-full flex flex-col justify-center items-center p-6 md:p-24">
+    <div className="w-full h-screen flex flex-col justify-center items-center p-6 md:px-24">
       {/* Header Section */}
-      <div className="w-full h-auto md:h-96  bg-white flex flex-col md:flex-row justify-between">
-        <p className="flex text-base md:text-lg lg:text-xl w-full md:w-1/2 lg:w-[500px] text-black items-center ">
+      <div className="w-full h-auto md:h-96  bg-white flex flex-col md:flex-row justify-between mb-8">
+        <p className="flex text-base md:text-lg lg:text-lg w-full md:w-1/2 lg:w-[500px] text-black items-center ">
           STEP INTO A LAND WHERE ANCIENT HERITAGE MEETS BREATHTAKING LANDSCAPES.
           FROM MISTY MOUNTAINS TO SUN-KISSED BEACHES, EVERY DESTINATION TELLS A
           STORY. IMMERSE YOURSELF IN A JOURNEY OF CULTURE, ADVENTURE, AND
           UNFORGETTABLE MEMORIES, CAREFULLY CURATED TO MAKE YOUR VISIT TRULY
           EXTRAORDINARY.
         </p>
-        <div className="flex text-3xl md:text-6xl lg:text-8xl w-full md:w-1/2 lg:w-[700px] text-black items-center justify-center p-4">
+        <div className="flex text-3xl md:text-6xl lg:text-6xl w-full md:w-1/2 lg:w-[700px] text-black items-center justify-center p-4">
           UNVEIL DESTINATIONS BEYOND DREAMS
         </div>
       </div>
 
       {/* Packages Grid */}
-      <div className="w-full h-full align-middle grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-8">
+      <div className="w-full h-full align-middle grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-20">
         {/* Always visible card (Mobile and up) */}
         <PackageCatCards
           packageItem={{

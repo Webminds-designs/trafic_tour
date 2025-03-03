@@ -9,14 +9,13 @@ const PackageCatCards = ({ packageItem }) => {
       <img
         src={imageUrl}
         alt={title}
-        className="w-full h-48 md:h-100 lg:h-120 object-cover rounded-lg"
+        className="w-full h-48 md:h-100 lg:h-100 object-cover rounded-lg"
       />
       {/* Card Content */}
-      <div className="p-2">
-        <button className="mt-2 py-2 text-black rounded-lg transition cursor-pointer">
-          see more details &rarr;
-        </button>
-      </div>
+
+      <button className=" py-2 text-black rounded-lg transition cursor-pointer">
+        see more details &rarr;
+      </button>
     </div>
   );
 };
