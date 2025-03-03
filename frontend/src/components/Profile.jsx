@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "../context/authContext.jsx";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
+
 
 import Footer from '../components/Footer'
 import image1 from "../assets/Packages/image.png";
@@ -18,6 +18,9 @@ import heart from "../assets/heart.png";
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
 import userpic from "../assets/user.png"
+import Navbar from './Navbar.jsx';
+import Bookings from './Bookings.jsx';
+import { toast } from 'react-toastify';
 
 
 const Profile = () => {
@@ -25,7 +28,6 @@ const Profile = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [profileData, setProfileData] = useState(new FormData());
   const [selectedTab, setSelectedTab] = useState('ACCOUNT SETTINGS');
-  const [menuOpen, setMenuOpen] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -36,6 +38,18 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isProfileEditing, setIsProfileEditing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+
+  const openModal = (packageItem) => {
+    setSelectedPackage(packageItem);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedPackage(null);
+  };
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -48,7 +62,6 @@ const Profile = () => {
   });
 
   const navigate = useNavigate();
-     console.log(userDetails);
   //get user details
   useEffect(() => {
     if (!user.id) {
@@ -160,7 +173,7 @@ const Profile = () => {
       );
       console.log("Profile updated successfully", response.data);
 
-      alert("Profile updated successfully");
+      toast.success("Profile updated successfully");
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile", error);
@@ -213,7 +226,7 @@ const Profile = () => {
       });
       if (response.status === 200) {
         setIsProfileEditing(false)
-        alert("Image uploaded successfully")
+        toast.success("Image uploaded successfully")
       } else {
         console.error('Upload failed:', response.data.message);
       }
@@ -230,7 +243,7 @@ const Profile = () => {
   const handleNewPassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      alert("New password and confirm password do not match.");
+      toast.error("New password and confirm password do not match.");
       return;
     }
     const userId =user.id;
@@ -241,16 +254,15 @@ const Profile = () => {
         newPassword,
       });
 
-      alert(response.data.message);
+      toast.error(response.data.message);
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong.");
+      toast.error(error.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
   };
-
 
     //Update password 
     const handleUpdatePassword = async (e) => {
@@ -258,13 +270,13 @@ const Profile = () => {
     
       const userId = user.id; // Ensure user.id is available
       if (newPassword !== confirmPassword) {
-        alert("New password and confirm password do not match.");
+        toast.error("New password and confirm password do not match.");
         return;
       }
     
       // If old password is required but not provided
       if (userDetails?.password && !oldPassword) {
-        alert("Please enter the old password.");
+        toast.error("Please enter the old password.");
         return;
       }
     
@@ -278,14 +290,14 @@ const Profile = () => {
           newPassword, // Send new password
         });
     
-        alert(response.data.message);
+        toast.error(response.data.message);
     
         // Clear the password fields
         setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
       } catch (error) {
-        alert(error.response?.data?.message || "Something went wrong.");
+        toast.error(error.response?.data?.message || "Something went wrong.");
       } finally {
         setLoading(false);
       }
@@ -293,71 +305,10 @@ const Profile = () => {
     
   
   return (
-    <div >
-      <div className=' bg-gray-100 lg:px-10 min-h-screen'>
-        <header >
-          <div className="container  px-4 py-4 flex justify-between items-center">
-            {/* Logo */}
-            <div className="text-xl font-bold">
-              TRAFFIC <br /> TOURS
-            </div>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center font-semibold space-x-2">
-              <a className="text-black hover:text-gray-600" href="#">HOME</a>
-              <a className="text-black hover:text-gray-600" href="#">PACKAGES</a>
-              <a className="text-black hover:text-gray-600" href="#">ABOUT US</a>
-              <a className="text-black hover:text-gray-600" href="#">CONTACT US</a>
-            </nav>
-
-            {/* Right Section */}
-            <div className="flex items-center space-x-4">
-              <button className="bg-black text-white px-4 py-2 rounded-lg hidden md:block">BOOK NOW</button>
-              <img
-                src={formData?.profileUrl || userpic
-                }
-                alt="Profile"
-                className="rounded-full w-10 h-10 object-cover"
-              />
-
-              {/* Mobile Menu Button */}
-              <button className="md:hidden text-black" onClick={() => setMenuOpen(!menuOpen)}>
-                <motion.span
-                  initial={{ rotate: 0, opacity: 1 }}
-                  animate={{ rotate: menuOpen ? 180 : 0, opacity: 1 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                >
-                  {menuOpen ? <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                    <path d="M 7.71875 6.28125 L 6.28125 7.71875 L 23.5625 25 L 6.28125 42.28125 L 7.71875 43.71875 L 25 26.4375 L 42.28125 43.71875 L 43.71875 42.28125 L 26.4375 25 L 43.71875 7.71875 L 42.28125 6.28125 L 25 23.5625 Z"></path>
-                  </svg> : <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                    <path d="M 3 9 A 1.0001 1.0001 0 1 0 3 11 L 47 11 A 1.0001 1.0001 0 1 0 47 9 L 3 9 z M 3 24 A 1.0001 1.0001 0 1 0 3 26 L 47 26 A 1.0001 1.0001 0 1 0 47 24 L 3 24 z M 3 39 A 1.0001 1.0001 0 1 0 3 41 L 47 41 A 1.0001 1.0001 0 1 0 47 39 L 3 39 z"></path>
-                  </svg>}
-                </motion.span>
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Navigation */}
-          <AnimatePresence>
-            {menuOpen && (
-              <motion.nav
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="md:hidden flex flex-col items-center   py-4 space-y-4"
-              >
-                <a className="text-black hover:text-gray-600" href="#">HOME</a>
-                <a className="text-black hover:text-gray-600" href="#">PACKAGES</a>
-                <a className="text-black hover:text-gray-600" href="#">ABOUT US</a>
-                <a className="text-black hover:text-gray-600" href="#">CONTACT US</a>
-                <button className="bg-black text-white px-4 py-2 rounded-lg">BOOK NOW</button>
-              </motion.nav>
-            )}
-          </AnimatePresence>
-        </header>
-
-        <main className="container md:mx-auto md:px-4 py-8">
+    < >
+        <Navbar />
+      <div className=' bg-[#F1F1F1] lg:px-10 pt-22'>
+        <main className="container md:mx-auto md:px-4 py-8 ">
           <h1 className="lg:text-5xl md:text-4xl text-2xl font-bold lg:mx-0 md:mx-22 mx-10 ">YOUR ADVENTURE AWAITS</h1>
           <p className="mt-6  md:mx-0 mx-10  md:text-start text-center">TAILOR YOUR EXPERIENCE AND MAKE EVERY MOMENT UNFORGETTABLE.</p>
 
@@ -416,8 +367,6 @@ const Profile = () => {
                     Edit
                   </button>
                 )}
-
-
               </div>
             </div>
           </div>
@@ -427,7 +376,7 @@ const Profile = () => {
                 <button
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
-                  className={`md:py-2 lg:px-27 md:px-10 lg:text-base text-xs ${selectedTab === tab
+                  className={`md:py-2 lg:px-27 md:px-10 lg:text-base text-[10px] px-6 ${selectedTab === tab
                     ? 'text-black bg-gray-100 font-bold text-sm border-b-5 border-black'
                     : ''
                     }`}
@@ -518,15 +467,12 @@ const Profile = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="Enter your contact number"
-
                   />
                 </div>
 
                 {/* Submit / Edit Button */}
                 <div className="flex items-center justify-end">
-
                   <>
-
                     <button
                       type="button"
                       className="bg-white border text-black font-bold py-2 px-4 rounded mr-2"
@@ -545,7 +491,7 @@ const Profile = () => {
               </form>
 
               {/* Password Section */}
-              <h2 className="text-2xl font-bold mb-6 md:m-0 m-5 uppercase">Password</h2>
+              <h2 className="text-2xl font-bold mt-6 pb-5 md:m-0 m-5 uppercase ">Password</h2>
               <form className='md:m-0 m-5'  onSubmit={userDetails?.password !== "" ? handleUpdatePassword : handleNewPassword}>
                 {/* Old Password */}
                 {userDetails?.password !== "" && (
@@ -704,18 +650,32 @@ const Profile = () => {
                     <div className="p-4">
                       <h3 className="font-bold text-lg">{packageItem.title}</h3>
                       <p className="text-black font-semibold text-md mt-2">{packageItem.highlights}</p>
-                      <button className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md">
-                        VIEW
-                      </button>
+                      <button
+                onClick={() => openModal(packageItem)}
+                className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
+              >
+                VIEW
+              </button>
                     </div>
                   </div>
                 ))}
-              </div></>
+              </div>
+              
+                  {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex  justify-center items-center">
+          <div className=" rounded-lg shadow-lg max-w-md w-full p-6">
+           
+            <Bookings  packageItem={selectedPackage} closeModal={closeModal} />
+          </div>
+        </div>
+      )}</>
+
           )}
         </main>
       </div>
       <Footer />
-    </div>
+    </>
   );
 };
 

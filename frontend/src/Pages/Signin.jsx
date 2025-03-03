@@ -16,6 +16,7 @@ import imgemail from "../assets/email.png";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -62,7 +63,7 @@ const Signin = () => {
         );
         localStorage.setItem("user", JSON.stringify(LoginResponse.data.user));
         setUser(LoginResponse.data.user);
-        alert("Login Successful");
+        toast.success("Login Successful");
         navigate("/profile");
 
       } else {
@@ -102,7 +103,7 @@ const Signin = () => {
       console.log("Login Successful:", response.data);
       localStorage.setItem("user", JSON.stringify(response.data.user));
         setUser(response.data.user);
-        alert("Login Successful");
+         toast.success("Login Successful");
         navigate("/profile");
     } catch (err) {
       console.error(
