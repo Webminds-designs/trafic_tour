@@ -6,18 +6,14 @@ import img1 from "../assets/pack01.png";
 
 const HomePackageCat = () => {
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center p-6 md:px-24">
+    <div className="w-full h-min-screen flex flex-col justify-center items-center p-6 md:px-24">
       {/* Header Section */}
-      <div className="w-full h-auto md:h-96  bg-white flex flex-col md:flex-row justify-between mb-8">
-        <p className="flex text-base md:text-lg lg:text-lg w-full md:w-1/2 lg:w-[500px] text-black items-center ">
-          STEP INTO A LAND WHERE ANCIENT HERITAGE MEETS BREATHTAKING LANDSCAPES.
-          FROM MISTY MOUNTAINS TO SUN-KISSED BEACHES, EVERY DESTINATION TELLS A
-          STORY. IMMERSE YOURSELF IN A JOURNEY OF CULTURE, ADVENTURE, AND
-          UNFORGETTABLE MEMORIES, CAREFULLY CURATED TO MAKE YOUR VISIT TRULY
-          EXTRAORDINARY.
+      <div className="w-full h-auto md:h-72  bg-white flex flex-col md:flex-row justify-between mb-8 pt-20">
+        <p className="flex text-base md:text-lg lg:text-lg w-full md:w-1/2 lg:w-[500px] text-black  ">
+        Step into a land where ancient heritage meets stunning landscapes. From misty mountains to sun-kissed beaches, every destination has a story to tell. Immerse yourself in a journey of culture, adventure, and unforgettable memories, carefully curated for an extraordinary experience.
         </p>
-        <div className="flex text-3xl md:text-6xl lg:text-6xl w-full md:w-1/2 lg:w-[700px] text-black items-center justify-center p-4">
-          UNVEIL DESTINATIONS BEYOND DREAMS
+        <div className="flex text-3xl md:text-5xl lg:text-6xl w-full md:w-1/2 lg:w-[720px] text-black  justify-center p-4">
+        Unveil Destinations Beyond Dreams
         </div>
       </div>
 
@@ -57,7 +53,7 @@ const HomePackageCat = () => {
           />
         </div>
       </div>
-      <div className="px-4 py-2 w-fit text-center bg-secondary text-white rounded-sm cursor-pointer mt-4 hover:bg-secondary-dark">
+      <div className="px-4 py-3 w-fit text-center bg-secondary text-white rounded-lg cursor-pointer mt-4 hover:bg-secondary-dark">
         Check more packages
       </div>
     </div>

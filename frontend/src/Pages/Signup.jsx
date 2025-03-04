@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import user from "../assets/user.png";
-import signin_Bg from "../assets/signin_Bg.png"
+import signup_Bg from "../assets/signup.jpg"
 import google from "../assets/Google.svg"; 
 import { auth } from "../components/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import logoBlack from "../assets/logoBlack.png";
 
 
 const Signup = () => {
@@ -28,8 +29,9 @@ const Signup = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [conpasswordVisible, setConPasswordVisible] = useState(false);
   const { setUser } = useContext(AuthContext);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
+  //password visibility
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -37,6 +39,7 @@ const Signup = () => {
     setConPasswordVisible(!conpasswordVisible);
   };
 
+  //google signin
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -62,7 +65,7 @@ const Signup = () => {
         "http://localhost:6400/api/user/findemail",
         userData
       );
-
+//google login
       if (emailCheckResponse.data.exists) {
         const LoginResponse = await axios.post(
           "http://localhost:6400/api/user/Googlelogin",
@@ -94,7 +97,7 @@ const Signup = () => {
     }
   };
 
-
+// basic register
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
@@ -125,16 +128,13 @@ const Signup = () => {
   return (
     <div className=" -z-50">
       <div
-       style={{ backgroundImage: `url(${signin_Bg})` }}
+       style={{ backgroundImage: `url(${signup_Bg})` }}
        className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
      >
         <div className="absolute top-4 left-4 text-[16px] font-semibold">
-          <h1>
-            TRAFFIC
-            <br /> TOURS
-          </h1>
+          <img src={logoBlack} alt="logo" className="w-16 md:w-28" />
         </div>
-        <div className="bg-gradient-to-b from-[#ffd78f] via-[#F6E7C9] to-white backdrop-blur-lg backdrop-brightness-75 bg-opacity-90 p-4 px-8  mt-10 rounded-3xl shadow-lg max-w-md w-full z-100">
+        <div className="bg-gradient-to-b from-[#acc6c0] via-[#c9d9d7] to-white backdrop-blur-lg backdrop-brightness-75 bg-opacity-90 p-4 px-8  mt-10 rounded-3xl shadow-lg max-w-md w-full z-100">
           <div className="flex justify-center ">
             <div className="mt-4 bg-white p-4 rounded-2xl shadow-xl">
               <img src={user} width={30} alt="User" />
@@ -153,6 +153,7 @@ const Signup = () => {
             {/* Form Fields */}
 
             <div className="mb-4 relative">
+              {/* email */}
               <label className="bg-[#e2e7ea] rounded-xl text-gray-700 flex items-center">
                 <img
                   src={imgemail}
@@ -172,6 +173,7 @@ const Signup = () => {
             </div>
 
             <div className="mb-4 relative">
+                {/* password */}
               <label className="bg-[#e2e7ea] rounded-xl text-gray-700 flex items-center">
                 <img
                   src={lock}
@@ -197,6 +199,7 @@ const Signup = () => {
               </label>
             </div>
             <div className="mb-4 relative">
+                {/* comfirm password */}
               <label className="bg-[#e2e7ea] rounded-xl text-gray-700 flex items-center">
                 <img
                   src={lock}
@@ -241,6 +244,7 @@ const Signup = () => {
           </form>
 
           <div className="flex items-center my-6">
+            {/* dots design */}
             <div className="flex items-center justify-center space-x-2">
               {Array(12)
                 .fill()

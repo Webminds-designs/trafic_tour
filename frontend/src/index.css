@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
 body {
-
-  font-family: "Bebas Neue", sans-serif;
+  font-family: "Figtree", sans-serif;
 }
 
 .primary {
@@ -30,6 +29,18 @@ body {
 }
 
 .sinhala-text {
-    font-family: 'Noto Sans Sinhala', sans-serif;
+  font-family: "Noto Sans Sinhala", sans-serif;
 }
 
+.font-figtree {
+  font-family: "Figtree", sans-serif;
+}
+
+@font-face {
+  font-family: "CodeNext-regular";
+  src: url("./assets//fonts/CodeNext-Trial-Regular.ttf") format("truetype");
+}
+
+.font-CodeNext-regular {
+  font-family: "CodeNext-regular", sans-serif;
+}

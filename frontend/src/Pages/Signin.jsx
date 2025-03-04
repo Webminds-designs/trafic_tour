@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import user from "../assets/user.png";
 import google from "../assets/Google.svg";
-import signin_Bg from "../assets/signin_Bg.png"
+import signin_Bg from "../assets/signin.jpg"
 import { auth } from "../components/Firebase.js";
 import {
   GoogleAuthProvider,
@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import logoBlack from "../assets/logoBlack.png";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -26,10 +27,12 @@ const Signin = () => {
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  //password visibility
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  //google signin
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -55,10 +58,10 @@ const Signin = () => {
         "http://localhost:6400/api/user/findemail",
         userData
       );
-
+         // login  in google
       if (emailCheckResponse.data.exists) {
         const LoginResponse = await axios.post(
-          "http://localhost:6400/api/user/Googlelogin",
+          "http://localhost:6400/api/user/Googlelogin",    
           userData
         );
         localStorage.setItem("user", JSON.stringify(LoginResponse.data.user));
@@ -86,7 +89,7 @@ const Signin = () => {
     }
   };
 
- 
+ // basic login
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -117,17 +120,17 @@ const Signin = () => {
   };
 
   return (
+   
     <div
-  style={{ backgroundImage: `url(${signin_Bg})` }}
+  style={{ backgroundImage: `url(${signin_Bg})` }}   
   className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
 >
+    
+  {/* logo */}
       <div className="absolute top-4 left-4 text-[16px] font-semibold">
-        <h1>
-          TRAFFIC
-          <br /> TOURS
-        </h1>
+          <img src={logoBlack} alt="logo" className="w-16 md:w-28" />
       </div>
-      <div className="bg-gradient-to-b from-[#ffd78f] via-[#F6E7C9] to-white backdrop-blur-lg backdrop-brightness-75 bg-opacity-90  p-4 px-8  mt-10  rounded-3xl shadow-lg max-w-md w-full">
+      <div className="bg-gradient-to-b  from-[#acc6c0] via-[#c9d9d7] to-white backdrop-blur-lg backdrop-brightness-75 bg-opacity-90  p-4 px-8  mt-10  rounded-3xl shadow-lg max-w-md w-full">
         <div className="flex justify-center mb-6">
           <div className="mt-4 bg-white p-4 rounded-2xl shadow-xl">
             <img src={user} width={30} alt="User" />
@@ -140,15 +143,16 @@ const Signin = () => {
           Log in to manage your bookings, explore<br></br> new destinations, and
           plan your perfect trip.
         </p>
-
+         {/* Login Form */}
         <form onSubmit={handleLogin}>
           <div className="mb-4 relative">
+             {/* email */}
             <label className="bg-[#e2e7ea] rounded-xl text-gray-700 flex items-center">
               <img
                 src={imgemail}
                 alt="email"
                 width={20}
-                className="absolute left-2 opacity-80"
+                className="absolute left-2 opacity-50"
               />
               <input
                 type="email"
@@ -161,12 +165,13 @@ const Signin = () => {
             </label>
           </div>
           <div className="mb-4 relative">
+               {/* password */}
             <label className="bg-[#e2e7ea] rounded-xl text-gray-700 flex items-center">
               <img
                 src={lock}
                 alt="lock"
                 width={20}
-                className="absolute left-2 opacity-80"
+                className="absolute left-2 opacity-50"
               />
               <input
                 type={passwordVisible ? "text" : "password"}
@@ -176,18 +181,19 @@ const Signin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+                 {/* password visible */}
               <img
                 src={passwordVisible ? eye : hidden}
                 onClick={togglePasswordVisibility}
                 alt="hidden"
                 width={20}
-                className="absolute right-2 opacity-80"
+                className="absolute right-2 opacity-50"
               />
             </label>
 
             <div className=" flex justify-between text-right mt-5">
               <div>
-                {" "}
+                {" "}    {/* erorr showing */}
                 {error && (
                   <p className="text-red-500 text-center mb-4">{error}</p>
                 )}
@@ -197,6 +203,7 @@ const Signin = () => {
               </a>
             </div>
           </div>
+             {/* Login button */}
           <button
             type="submit"
             className="w-full bg-gray-800 text-white py-2 rounded-lg font-semibold hover:bg-gray-800 transition duration-200"
@@ -204,7 +211,7 @@ const Signin = () => {
             Login
           </button>
         </form>
-
+   {/* Dots design */}
         <div className="flex items-center my-6">
           <div className="flex items-center justify-center space-x-2">
             {Array(12)
@@ -229,7 +236,7 @@ const Signin = () => {
               ))}
           </div>
         </div>
-
+          {/* Google signing */}
         <div className="flex justify-center space-x-4">
           <button
             className="bg-white   shadow-lg border-1 border-gray-100  rounded-lg w-full h-[40px] flex items-center justify-center p-2"
