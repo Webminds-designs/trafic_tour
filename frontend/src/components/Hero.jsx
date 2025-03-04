@@ -13,8 +13,8 @@ const Hero = () => {
       ></video>
       <div className="absolute h-2/3 flex flex-col items-start justify-end z-10 text-start w-full md:w-2/3 lg:w-[800px] px-4 md:px-12 gap-8 py-8">
         <div>
-          <h1 className="w-2/3 text-4xl md:text-4xl  font-bold  text-white font-CodeNext-regular">
-            A winbow to New Adventure
+          <h1 className="w-2/3 text-4xl md:text-4xl    text-white font-CodeNext-regular">
+            A window to New Adventure
           </h1>
           <hr className="w-1/3 border-white" />
         </div>
