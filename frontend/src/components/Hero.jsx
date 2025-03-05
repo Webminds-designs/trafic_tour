@@ -11,20 +11,17 @@ const Hero = () => {
         loop
         muted
       ></video>
-      <div className="absolute h-2/3 flex flex-col items-start justify-end z-10 text-start w-full md:w-2/3 lg:w-[800px] px-4 md:px-12 gap-8 py-8">
-        <div>
-          <h1 className="w-2/3 text-4xl md:text-4xl    text-white font-CodeNext-regular">
-            A window to New Adventure
-          </h1>
-          <hr className="w-1/3 border-white" />
-        </div>
-        <p className="text-white text-sm md:text-lg font-CodeNext-regular">
-          The path to discovery is limitless, ofering views of landscapes yet to
-          be explored. Every journey starts with curiosity, and TRAFIC TOURS is
-          here to turn that curiosity into unforgettable experiences.
+
+      <div className="absolute font-codeNext h-2/3 flex flex-col items-start justify-end z-10 text-start w-full md:w-1/2 lg:w-[600px] px-4 md:px-24 gap-8">
+        <h1 className=" text-5xl md:text-5xl font-bold  text-white">
+        A window to new <span className="border-b-1">adventures</span>
+        </h1>
+        <p className="text-white text-sm md:text-sm">
+        The path to discovery is limitless, offering views of landscapes yet to be explored. Every journey starts with curiosity, and Traffic Tours is here to turn that curiosity into unforgettable experiences.
         </p>
-        <div className="px-4 py-2 text-sm bg-white rounded-3xl font-bold hover:bg-black hover:text-white cursor-pointer transform transition duration-300">
-          Start your advanture
+        <div className="px-4 py-2 bg-white rounded-2xl hover:bg-black hover:text-white cursor-pointer transform transition duration-300">
+          Start your Advanture
+
         </div>
       </div>
     </section>

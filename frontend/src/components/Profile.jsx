@@ -27,7 +27,7 @@ const Profile = () => {
   const { user } = useContext(AuthContext);
   const [imagePreview, setImagePreview] = useState(null);
   const [profileData, setProfileData] = useState(new FormData());
-  const [selectedTab, setSelectedTab] = useState('ACCOUNT SETTINGS');
+  const [selectedTab, setSelectedTab] = useState('Account Settings');
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -108,55 +108,54 @@ const Profile = () => {
 
 
   const tabs = [
-    'ACCOUNT SETTINGS',
-    'BOOKING HISTORY',
-    'MY FAVOURITES',
-    'BOOKINGS'
+    'Account Settings',
+    'Booking History',
+    'My Favourites',
+    'Bookings'
   ];
   const tourPackages = [
     {
-      title: "BELIHUL OYA WILDERNESS ESCAPE",
-      highlights:
-        "SCENIC BELIHUL OYA, DIYALUMA FALLS, TREKKING TRAILS, ECO-LODGE STAY, BIRDWATCHING",
+      title: "Belihul Oya Wilderness Escape",
+      highlights: "Scenic Belihul Oya, Diyaluma Falls, Trekking Trails, Eco-Lodge Stay, Birdwatching",
       image: image1
     },
     {
-      title: "CULTURAL HERITAGE ADVENTURE",
-      highlights: "SIGIRIYA ROCK FORTRESS, ANURADHAPURA RUINS, ANCIENT TEMPLES",
+      title: "Cultural Heritage Adventure",
+      highlights: "Sigiriya Rock Fortress, Anuradhapura Ruins, Ancient Temples",
       image: image2,
     },
     {
-      title: "SERENE BEACH ESCAPE",
-      highlights: "BENTOTA BEACH, GALLE FORT, BOAT RIDES IN MADU RIVER",
+      title: "Serene Beach Escape",
+      highlights: "Bentota Beach, Galle Fort, Boat Rides in Madu River",
       image: image3,
     },
     {
-      title: "CULTURAL CAPITAL DISCOVERY",
-      highlights: "KANDY, PINNAWALA ELEPHANT ORPHANAGE, LOCAL ARTS AND CRAFTS",
+      title: "Cultural Capital Discovery",
+      highlights: "Kandy, Pinnawala Elephant Orphanage, Local Arts and Crafts",
       image: image4,
     },
     {
       title: "Southern Paradise Discovery",
-      highlights: "Mirissa beach, whale watching, Hiriketiya, and Tangalle",
+      highlights: "Mirissa Beach, Whale Watching, Hiriketiya, and Tangalle",
       image: image5,
     },
     {
       title: "Temple Trails and Sacred Sites",
-      highlights: "Kandy Temple of the Tooth, Dambulla Cave Temple, Polonnaruwa ruins",
+      highlights: "Kandy Temple of the Tooth, Dambulla Cave Temple, Polonnaruwa Ruins",
       image: image6,
     },
     {
-      title: "ANCIENT CITIES AND HERITAGE TOUR",
-      highlights: "POLONNARUWA, ANURADHAPURA, RITIGALA ANCIENT SITE",
+      title: "Ancient Cities and Heritage Tour",
+      highlights: "Polonnaruwa, Anuradhapura, Ritigala Ancient Site",
       image: image7,
     },
     {
-      title: "NATURE & ADVENTURE EXPEDITION",
-      highlights: "ADAM’S PEAK, KNUCKLES MOUNTAIN RANGE, KANDY LAKE",
+      title: "Nature & Adventure Expedition",
+      highlights: "Adam’s Peak, Knuckles Mountain Range, Kandy Lake",
       image: image8,
     }
   ];
-
+  
   //update profile
 
   const [isEditing, setIsEditing] = useState(true);
@@ -309,8 +308,8 @@ const Profile = () => {
         <Navbar />
       <div className=' bg-[#F1F1F1] lg:px-10 pt-22'>
         <main className="container md:mx-auto md:px-4 py-8 ">
-          <h1 className="lg:text-5xl md:text-4xl text-2xl font-bold lg:mx-0 md:mx-22 mx-10 ">YOUR ADVENTURE AWAITS</h1>
-          <p className="mt-6  md:mx-0 mx-10  md:text-start text-center">TAILOR YOUR EXPERIENCE AND MAKE EVERY MOMENT UNFORGETTABLE.</p>
+        <h1 className="lg:text-5xl md:text-4xl text-2xl font-medium lg:mx-0 md:mx-22 mx-10">Your Adventure <span className='border-b-1'>Awaits</span></h1>
+<p className="mt-6 md:mx-0 mx-10 md:text-start text-center">Tailor your experience and make every moment unforgettable.</p>
 
           <div className="flex flex-col md:flex-row items-center mx-4 md:mx-0 my-12">
             <div
@@ -333,36 +332,36 @@ const Profile = () => {
             </div>
 
             <div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
-              <h2 className="text-lg md:text-xl uppercase font-bold">{userDetails?.firstName}  {userDetails?.lastName}</h2>
-              <p className="text-sm md:text-md uppercase font-bold">{userDetails?.email}</p>
+              <h2 className="text-lg md:text-xl  font-bold">{userDetails?.firstName}  {userDetails?.lastName}</h2>
+              <p className="text-sm md:text-md  font-bold">{userDetails?.email}</p>
               <div className="mt-4 flex justify-center md:justify-start">
                 {isProfileEditing ? (
                   <>
                     <button
                       onClick={() => setIsProfileEditing(false)}
-                      className="bg-white border border-black px-4 py-2 rounded mr-2 text-sm md:text-md"
+                      className="bg-white border border-black px-4 py-2 rounded-3xl mr-2 text-sm md:text-md"
                     >
-                      CANCEL
+                      Cancel
                     </button>
                     <button
                       onClick={handleImageUpload}
-                      className={`bg-black text-white px-4 py-2 rounded text-sm md:text-md ${loading ? 'bg-gray-600 cursor-not-allowed' : ''}`}
+                      className={`bg-black text-white px-4 py-2 rounded-3xl text-sm md:text-md ${loading ? 'bg-gray-600 cursor-not-allowed' : ''}`}
                       disabled={loading}
                     >
                       {loading ? (
                         <span className="flex items-center justify-center">
-                          <div className="animate-spin border-4 border-t-transparent border-white rounded-full w-5 h-5 mr-2" />
+                          <div className="animate-spin border-4 border-t-transparent border-white rounded-3xl-full w-5 h-5 mr-2" />
                           Uploading...
                         </span>
                       ) : (
-                        "CHANGE PROFILE"
+                        "Change Profile"
                       )}
                     </button>
                   </>
                 ) : (
                   <button
                     onClick={() => setIsProfileEditing(true)}
-                    className="bg-black text-white px-4 py-2 rounded text-sm md:text-md"
+                    className="bg-black text-white px-4 py-2 rounded-3xl text-sm md:text-md"
                   >
                     Edit
                   </button>
@@ -387,17 +386,17 @@ const Profile = () => {
             </nav>
           </div>
           {/* Account Settings */}
-          {selectedTab === 'ACCOUNT SETTINGS' && (
+          {selectedTab === 'Account Settings' && (
             <div className="">
-              <h2 className="text-3xl font-bold m-6 md:mx-0 uppercase">Personal Details</h2>
+              <h2 className="text-3xl font-medium m-6 md:mx-0 ">Personal Details</h2>
               <form className="mx-auto px-4 sm:px-6 md:px-0" onSubmit={handleSubmit}>
                 {/* First Name */}
                 <div className="mb-4 flex flex-col md:flex-row">
-                  <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="firstName">
+                  <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="firstName">
                     First Name
                   </label>
                   <input
-                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                    className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="firstName"
                     type="text"
                     value={formData.firstName}
@@ -409,11 +408,11 @@ const Profile = () => {
 
                 {/* Last Name */}
                 <div className="mb-4 flex flex-col md:flex-row">
-                  <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="lastName">
+                  <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="lastName">
                     Last Name
                   </label>
                   <input
-                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                    className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="lastName"
                     type="text"
                     value={formData.lastName}
@@ -425,11 +424,11 @@ const Profile = () => {
 
                 {/* Email Address */}
                 <div className="mb-4 flex flex-col md:flex-row">
-                  <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="email">
+                  <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="email">
                     Email
                   </label>
                   <input
-                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2 disabled:cursor-not-allowed"
+                    className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2 disabled:cursor-not-allowed"
                     id="email"
                     type="email"
                     value={formData.email}
@@ -441,11 +440,11 @@ const Profile = () => {
 
                 {/* Passport ID */}
                 <div className="mb-4 flex flex-col md:flex-row">
-                  <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="passportId">
+                  <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="passportId">
                     Passport ID
                   </label>
                   <input
-                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                    className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="passportId"
                     type="text"
                     value={formData.passportId}
@@ -457,11 +456,11 @@ const Profile = () => {
 
                 {/* Contact Number */}
                 <div className="mb-8 flex flex-col md:flex-row">
-                  <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="contactNumber">
+                  <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="contactNumber">
                     Contact
                   </label>
                   <input
-                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                    className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="phone"
                     type="text"
                     value={formData.phone}
@@ -475,14 +474,14 @@ const Profile = () => {
                   <>
                     <button
                       type="button"
-                      className="bg-white border text-black font-bold py-2 px-4 rounded mr-2"
+                      className="bg-white border text-black font-medium py-2 px-4 rounded-3xl mr-2"
                       onClick={handleCancel}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="bg-black text-white font-bold py-2 px-4 rounded"
+                      className="bg-black text-white font-medium py-2 px-4 rounded-3xl"
                     >
                       Save
                     </button>
@@ -491,16 +490,16 @@ const Profile = () => {
               </form>
 
               {/* Password Section */}
-              <h2 className="text-2xl font-bold mt-6 pb-5 md:m-0 m-5 uppercase ">Password</h2>
+              <h2 className="text-2xl font-medium mt-6 pb-5 md:m-0 m-5  ">Password</h2>
               <form className='md:m-0 m-5'  onSubmit={userDetails?.password !== "" ? handleUpdatePassword : handleNewPassword}>
                 {/* Old Password */}
                 {userDetails?.password !== "" && (
                 <div className="mb-4 flex flex-col md:flex-row relative">
-                  <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="oldPassword">
+                  <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="oldPassword">
                     Old Password
                   </label>
                   <input
-                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                    className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="oldPassword"
                     type={passwordVisible ? "text" : "password"}
                     placeholder="Enter old password"
@@ -513,17 +512,17 @@ const Profile = () => {
                     onClick={togglePasswordVisibility}
                     alt="hidden"
                     width={20}
-                    className="absolute right-5 md:mt-3 mt-12 opacity-80"
+                    className="absolute right-5 md:mt-3 mt-12 opacity-50"
                   />
                 </div>)}
 
                 {/* New Password */}
                 <div className="mb-4 flex flex-col md:flex-row relative">
-                  <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="newPassword">
+                  <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="newPassword">
                     New Password
                   </label>
                   <input
-                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                    className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="oldPassword"
                     type={newpasswordVisible ? "text" : "password"}
                     placeholder="Enter New password"
@@ -536,17 +535,17 @@ const Profile = () => {
                     onClick={toggleNewPasswordVisibility}
                     alt="hidden"
                     width={20}
-                    className="absolute right-5 md:mt-3 mt-12 opacity-80"
+                    className="absolute right-5 md:mt-3 mt-12 opacity-50"
                   />
                 </div>
 
                 {/* Confirm Password */}
                 <div className="mb-8 flex flex-col md:flex-row relative">
-                  <label className="text-gray-700 text-lg font-bold mb-2 md:w-3/12 uppercase" htmlFor="confirmPassword">
+                  <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="confirmPassword">
                     Confirm Password
                   </label>
                   <input
-                    className="shadow appearance-none border rounded py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                    className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
                     id="confirmPassword"
                     type={conpasswordVisible ? "text" : "password"}
                     placeholder="Confirm your password"
@@ -559,20 +558,20 @@ const Profile = () => {
                     onClick={toggleConPasswordVisibility}
                     alt="hidden"
                     width={20}
-                    className="absolute right-5 md:mt-3 mt-12 opacity-80"
+                    className="absolute right-5 md:mt-3 mt-12 opacity-50"
                   />
                 </div>
 
                 {/* Buttons */}
                 <div className="flex items-center justify-end">
           <button
-            className="bg-white text-gray-700 border border-gray-400 mr-5 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-white text-gray-700 border border-gray-400 mr-2 font-medium py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
             type="button"
           >
             Cancel
           </button>
           <button
-            className="bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-600 disabled:cursor-not-allowed"
+            className="bg-black text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline disabled:bg-gray-600 disabled:cursor-not-allowed"
             type="submit"
             disabled={loading}
           >
@@ -584,7 +583,7 @@ const Profile = () => {
             </div>
           )}
           {/* BOOKING HISTORY */}
-          {selectedTab === 'BOOKING HISTORY' && (
+          {selectedTab === 'Booking History' && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 m-6">
                 {tourPackages.slice(0, 4).map((packageItem, index) => (
@@ -609,7 +608,7 @@ const Profile = () => {
               </div></>
           )}
           {/* MY FAVOURITES */}
-          {selectedTab === 'MY FAVOURITES' && (
+          {selectedTab === 'My Favourites' && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 m-6">
                 {tourPackages.slice(4, 6).map((packageItem, index) => (
@@ -634,7 +633,7 @@ const Profile = () => {
               </div></>
           )}
           {/*  BOOKINGS */}
-          {selectedTab === 'BOOKINGS' && (
+          {selectedTab === 'Bookings' && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 m-6">
                 {tourPackages.slice(6, 8).map((packageItem, index) => (
