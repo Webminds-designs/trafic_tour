@@ -1,51 +1,67 @@
 import React from "react";
-import { FaUser, FaBox, FaComments, FaHome } from "react-icons/fa";
-import { BiLogOut } from "react-icons/bi";
+import { Link } from "react-router-dom";
+import { TbLayoutDashboardFilled } from "react-icons/tb";
+import { HiMiniUser } from "react-icons/hi2";
+import { BiSolidPackage } from "react-icons/bi";
+import { AiFillMessage } from "react-icons/ai";
+import { TbHomeFilled } from "react-icons/tb";
+import logo from "../assets/logo.jpg";
+import { IoMdLogOut } from "react-icons/io";
 
 const Sidebar = () => {
     return (
-        <div className="w-64 h-screen bg-white shadow-lg flex flex-col justify-between p-6">
+        <div className="w-72 h-screen bg-white flex flex-col justify-between p-7 font-figtree font-bold sticky top-0">
             <div>
                 {/* Logo */}
-                <h2 className="text-2xl font-bold text-gray-700 mb-6">TRAFFIC TOURS</h2>
+                <img src={logo} alt="Traffic Tours Logo" className="w-28 h-auto mb-12" />
 
                 {/* Navigation Links */}
-                <ul className="space-y-4">
-                    <li className="flex items-center text-teal-600 font-bold">
-                        <FaHome className="mr-2" />
-                        Dashboard
+                <ul className="space-y-8">
+                    <li>
+                        <Link to="/" className="flex items-center text-black text-lg font-bold cursor-pointer">
+                            <TbLayoutDashboardFilled className="mr-2" />
+                            Dashboard
+                        </Link>
                     </li>
-                    <li className="flex items-center text-gray-600 hover:text-teal-600 cursor-pointer">
-                        <FaUser className="mr-2" />
-                        User Management
+                    <li>
+                        <Link to="/users" className="flex items-center text-black text-lg font-bold cursor-pointer">
+                            <HiMiniUser className="mr-3" />
+                            User Management
+                        </Link>
                     </li>
-                    <li className="flex items-center text-gray-600 hover:text-teal-600 cursor-pointer">
-                        <FaBox className="mr-2" />
-                        Package Management
+                    <li>
+                        <Link to="/packages" className="flex items-center text-black text-lg font-bold cursor-pointer">
+                            <BiSolidPackage className="mr-3" />
+                            Package Management
+                        </Link>
                     </li>
-                    <li className="flex items-center text-gray-600 hover:text-teal-600 cursor-pointer">
-                        <FaComments className="mr-2" />
-                        Inquiry Management
+                    <li>
+                        <Link to="/inquiries" className="flex items-center text-black text-lg font-bold cursor-pointer">
+                            <AiFillMessage className="mr-3" />
+                            Inquiry Management
+                        </Link>
                     </li>
-                    <li className="flex items-center text-gray-600 hover:text-teal-600 cursor-pointer">
-                        <FaHome className="mr-2" />
-                        Booking Management
+                    <li>
+                        <Link to="/bookings" className="flex items-center text-black text-lg font-bold cursor-pointer">
+                            <TbHomeFilled className="mr-3" />
+                            Booking Management
+                        </Link>
                     </li>
                 </ul>
 
                 {/* Support Section */}
-                <div className="mt-6 bg-teal-100 p-4 rounded-lg text-center">
-                    <p className="text-gray-700">Support 24/7</p>
-                    <button className="mt-2 bg-teal-600 text-white px-4 py-2 rounded-lg">
+                <div className="mt-15 p-4 rounded-lg text-center">
+                    <p className="text-[#003135]">Check inquiries to help your clients!</p>
+                    <button className="mt-5 bg-[#009990] text-white px-2 py-1 rounded-2xl text-medium cursor-pointer">
                         Check
                     </button>
                 </div>
             </div>
 
             {/* Logout Button */}
-            <button className="flex items-center text-red-600 hover:text-red-800">
-                <BiLogOut className="mr-2" />
-                Log out
+            <button className="flex items-center text-red-900 text-lg font-bold cursor-pointer">
+                <IoMdLogOut className="mr-3 text-bold" />
+                Log Out
             </button>
         </div>
     );
