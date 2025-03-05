@@ -6,7 +6,8 @@ import cookieParser from 'cookie-parser';
 import connectDB from "./config/dbConfig.js";
 import userRoutes from "./Routes/UserRoutes.js"
 import packageRoutes from "./Routes/PackageRoutes.js";
-
+import favoritePackageRoutes from "./Routes/FavoritePackagesRoutes.js"
+import bookingRoutes from "./Routes/BookingRoutes.js"
 
 dotenv.config(); // Load environment variables
 
@@ -35,9 +36,10 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-
 app.use('/api/user', userRoutes);
 app.use("/api/packages", packageRoutes);
+app.use("/api/favorites", favoritePackageRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 // Start the server
 app.listen(PORT, () => {

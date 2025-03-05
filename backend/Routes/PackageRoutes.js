@@ -5,12 +5,11 @@ import {
   getPackageById,
   updatePackage,
   deletePackage,
-  testPackage,
+  
 } from "../Controllers/PackageController.js";
 
 const router = express.Router();
 
-router.get("/test", testPackage);
 router.post("/", createPackage);
 router.get("/", getAllPackages);
 router.get("/:id", getPackageById);
