@@ -58,15 +58,15 @@ const Packages = () => {
 
           {/* Packages Section Bar */}
           <div className="flex flex-col items-center mt-6 lg:mt-10 font-base">
-            <div className="bg-black text-white flex w-full max-w-7xl overflow-x-auto">
+            <div className="bg-black text-white flex w-full max-w-7xl  rounded-3xl overflow-x-auto">
               {sections.map((section, index) => (
                 <div
                   key={index}
                   className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 
                         ${
                           selectedSection === section
-                            ? "bg-white text-black border-b-4 border-black"
-                            : ""
+                            ? "bg-white text-black "
+                            : "  "
                         }`}
                   onClick={() => handleSectionClick(section)}
                 >
