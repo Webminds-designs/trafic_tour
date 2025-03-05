@@ -1,10 +1,11 @@
-import "./App.css";
+import React from "react";
+import DashboardPage from "./pages/DashboardPage"; // Adjusted path
 
 function App() {
   return (
-    <>
-      <div className="w-screen bg-green-300">let's work</div>
-    </>
+    <div className="App">
+      <DashboardPage />
+    </div>
   );
 }
 
