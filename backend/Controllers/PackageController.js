@@ -1,14 +1,7 @@
 import Package from "../Model/Packages.js";
 import cloudinary from "../config/CloudinaryConfig.js";
 
-// Test route
-export const testPackage = async (req, res) => {
-  try {
-    res.status(200).json({ message: "Package controller works" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
+
 
 // Helper function to upload images to Cloudinary
 const uploadImages = async (files) => {
