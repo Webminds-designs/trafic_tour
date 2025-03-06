@@ -9,17 +9,17 @@ import Stamps from "../assets/stamps.png";
 const packages = [
     {
         title: "Cool Hill Tour",
-        highlights: "Trekking to Adam’s Peak, Nine Arches Bridge, eco-resort stay",
+        highlights: "Highlights: Trekking to Adam’s Peak, Nine Arches Bridge, eco-resort stay ",
         image: P1,
     },
     {
         title: "Eastern Tour Package",
-        highlights: "Trekking to Adam’s Peak, Nine Arches Bridge, eco-resort stay",
+        highlights: "Highlights: Trekking to Adam’s Peak, Nine Arches Bridge, eco-resort stay ",
         image: P2,
     },
     {
         title: "Adventure Tour Package",
-        highlights: "Trekking to Adam’s Peak, Nine Arches Bridge, eco-resort stay",
+        highlights: "Highlights: Trekking to Adam’s Peak, Nine Arches Bridge, eco-resort stay ",
         image: P3,
     },
 ];
