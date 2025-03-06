@@ -5,9 +5,9 @@ import forestImage from "../assets/forest.jpg";
 
 const Payment = () => {
   const location = useLocation();
-  const { datanew } = location.state || {};
-  console.log(datanew)
-
+  const { title, description, imageUrl } = location.state || {}; 
+  const [checkInDate, setCheckInDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState("");
   const [formData, setFormData] = useState({
     country: "Sri Lanka",
     firstName: "Malinka",
@@ -36,21 +36,38 @@ const Payment = () => {
     setIsConfirmed(true);
   };
 
-
-
-
   return (
-    <div className="bg-white p-6 px-12">
+    <div className="bg-white p-6 px-24">
       <Navbar />
 
-      <main className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-22">
+      <main className="grid grid-cols-1 md:grid-cols-2 gap-16 pt-22">
         {/* Left Section - Tour Details */}
         <div>
-          <img src={forestImage} alt="image" className="rounded-lg h-[400px] w-full" />
-          <h2 className="text-2xl font-medium mt-4">Mirissa Snorkeling & Fishing Tours</h2>
+          <img src={imageUrl} alt="image" className="rounded-lg h-[400px] w-full" />
+          <h2 className="text-2xl font-medium mt-4">{title}</h2>
           <div className="mt-4 space-y-3 font-medium">
-            <div className="flex justify-between"><span className="text-gray-600">Check-In date</span><span className="text-gray-800">Tue, Jan 20</span></div>
-            <div className="flex justify-between"><span className="text-gray-600">Check-Out date</span><span className="text-gray-800">Tue, Jan 20</span></div>
+          <div className="flex flex-col space-y-2">
+          <div className="flex justify-between">
+            <span className="text-gray-600">Check-In Date</span>
+            <input
+              type="date"
+              className="border text-gray-600 rounded px-2 py-1"
+              value={checkInDate}
+              onChange={(e) => setCheckInDate(e.target.value)}
+            />
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-600">Check-Out Date</span>
+            <input
+              type="date"
+              className="border text-gray-600 rounded px-2 py-1"
+              value={checkOutDate}
+              onChange={(e) => setCheckOutDate(e.target.value)}
+            />
+          </div>
+        </div>
+
             <div className="flex justify-between"><span className="text-gray-600">Package Type</span><span className="text-gray-800">Adventure Package</span></div>
             <div className="flex justify-between"><span className="text-gray-600">Guest</span><span className="text-blue-500">Mari Sheibly</span></div>
             <div className="flex justify-between font-medium text-lg mt-4"><span>Total Amount</span><span>59,0000 LKR / $198</span></div>

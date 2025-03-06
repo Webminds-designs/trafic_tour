@@ -369,14 +369,14 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <div className=" bg-black text-white">
+          <div className=" bg-black text-white rounded-3xl">
             <nav className="flex justify-between  ">
               {tabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
                   className={`md:py-2 lg:px-27 md:px-10 lg:text-base text-[10px] px-6 ${selectedTab === tab
-                    ? 'text-black bg-gray-100 font-bold text-sm border-b-5 border-black'
+                    ? 'text-black bg-gray-100 font-bold text-sm '
                     : ''
                     }`}
                 >

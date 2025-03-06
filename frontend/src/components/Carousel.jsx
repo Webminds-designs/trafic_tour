@@ -53,7 +53,7 @@ export default function Carousel() {
   }, [nextSlide]);
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden">
+    <div className="relative font-CodeNext-regular w-full min-h-screen overflow-hidden">
       
       
       {/* Background Image Transition */}
