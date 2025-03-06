@@ -12,7 +12,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<DashboardPage />} />
-        <Route path="/users" element={<UserManagement />} />
+        <Route path="/UserManagement" element={<UserManagement />} />
         <Route path="/packages" element={<PackageManagement />} />
         <Route path="/inquiries" element={<InquiryManagement />} />
         <Route path="/bookings" element={<BookingManagement />} />
