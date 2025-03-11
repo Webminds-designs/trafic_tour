@@ -49,7 +49,7 @@ const Packages = () => {
       targetSectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-  console.log(packages)
+
   return (
     <>
       <Navbar />

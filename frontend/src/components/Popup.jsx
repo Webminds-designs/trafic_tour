@@ -13,7 +13,6 @@ export default function Popup({ onClose, data }) {
   const [selectedActivity, setSelectedActivity] = useState("");
   const navigate = useNavigate();
 
-
   const icons = [
     { src: foodIcon, alt: "Food" },
     { src: bedIcon, alt: "Bed" },
@@ -28,11 +27,7 @@ export default function Popup({ onClose, data }) {
       document.body.style.overflow = "auto";
     };
   }, []);
-  const datanew = {
-    title: data.title,
-    description: data.description,
-    imageUrl: data.imageUrl,
-  };
+
 
   const handleBooking = () => {
     navigate("/payment", { state: { title: data.title, description: data.description, imageUrl: data.imageUrl } });
@@ -42,7 +37,7 @@ export default function Popup({ onClose, data }) {
   return (
     <div className="fixed inset-0 bg-opacity-90 backdrop-blur-lg z-50 flex items-center justify-center p-4 sm:p-6">
       {/* Popup Container - Scrollable */}
-      <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 lg:p-10 relative max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 lg:p-10 relative max-w-6xl w-full max-h-[95vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -54,10 +49,10 @@ export default function Popup({ onClose, data }) {
         {/* Header */}
         <div className="text-center">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-base">
-            {data.title}
+            {data.name}
           </h1>
           <p className="text-black mt-2 text-sm sm:text-base md:text-lg font-base">
-            03 NIGHTS | 04 DAYS TOUR
+            {data.duration.nights}  NIGHTS |  {data.duration.days} DAYS TOUR
           </p>
         </div>
 
@@ -65,7 +60,7 @@ export default function Popup({ onClose, data }) {
         <div className="relative mt-4 sm:mt-5 rounded-lg overflow-hidden">
           <img
             src={data.imageUrl}
-            alt={data.title}
+            alt={data.name}
             className="w-full h-48 sm:h-64 object-cover"
           />
           <div className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md">
@@ -75,9 +70,8 @@ export default function Popup({ onClose, data }) {
 
         {/* Description */}
         <div className="mt-4 text-black text-sm sm:text-base text-left">
-          <p>{data.description[0]}</p>
+          <p>{data.description}</p>
           <br />
-          <p>{data.description[1]}</p>
         </div>
 
         {/* Icons Section */}
@@ -99,15 +93,14 @@ export default function Popup({ onClose, data }) {
         {/* Tabs Section */}
         <div className="mt-8 sm:mt-10 p-2 rounded-lg">
           <div className="bg-[#009990] text-white flex w-full max-w-2xl overflow-x-auto rounded-2xl">
-            {["INCLUDES", "CUSTOMISE", "PRICES"].map((tab) => (
+            {["INCLUDES"].map((tab) => (
               <div
                 key={tab}
-                className={`flex-1 text-center py-2 text-sm sm:text-base cursor-pointer transition-all duration-300 
-                                    ${
-                                      activeTab === tab
-                                        ? "bg-white text-[#009990]"
-                                        : ""
-                                    }`}
+                className={`flex-1  py-2 text-sm sm:text-base cursor-pointer transition-all duration-300 
+                                    ${activeTab === tab
+                    ? "bg-white text-[#009990]"
+                    : ""
+                  }`}
                 onClick={() => setActiveTab(tab)}
               >
                 {tab}
@@ -118,51 +111,62 @@ export default function Popup({ onClose, data }) {
           {/* Dynamic Content */}
           <div className="mt-8 sm:mt-10 text-black text-sm sm:text-base">
             {activeTab === "INCLUDES" && (
-              <ul className="list-disc pl-4 sm:pl-6">
-                <li>
-                  04 nights' accommodation – eco-lodges & boutique safari
-                  resorts
-                </li>
-                <li>
-                  Daily breakfast & dinner with Sri Lankan & international
-                  cuisine
-                </li>
-                <li>
-                  Half-day safari in Yala National Park – witness leopards,
-                  elephants, and diverse wildlife
-                </li>
-                <li>
-                  Full-day safari experience with a private guide, including
-                  birdwatching & photography stops
-                </li>
-                <li>
-                  Guided temple visits – Kataragama Temple & Sithulpawwa Rock
-                  Temple
-                </li>
-                <li>
-                  Sunset jeep safari with a stop at a scenic viewpoint for
-                  refreshments
-                </li>
-                <li>
-                  Nature walk & birdwatching tour in a nearby forest reserve
-                </li>
-                <li>All transfers & tours on private or sharing basis</li>
+              <>
+                <div className="flex">
+                  {/* Left Side */}
+                  <div className="w-2/3 h-96 p-4 m-4 border-1 border-[#009990] rounded-2xl overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-[#009990] scrollbar-track-transparent">
+                    {data.itinerary.map((dayItem) => (
+                      <div key={dayItem._id} className="mb-8">
+                        <h2 className="text-xl font-medium">{`Day ${dayItem.day}: ${dayItem.title}`}</h2>
 
-                <div className="text-center mt-8 sm:mt-10">
-                 
-                    <button onClick={handleBooking}  className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base">
-                      BOOK NOW
-                    </button>
-                  
+                        <div className="mt-4">
+                          <ul className="list-disc pl-6">
+                            <li>Morning: {dayItem.activities.morning}</li>
+                            <li>Afternoon: {dayItem.activities.afternoon}</li>
+                            <li>Evening: {dayItem.activities.evening}</li>
+                            <li>Overnight: {dayItem.activities.overnight}</li>
+                          </ul>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Right Side */}
+                  <div className="w-1/3 p-4  ">
+                    <div className="bg-emerald-50 rounded-2xl m-4 p-3">
+                      <h2 className="text-xl font-medium">Booking Details</h2>
+                      <div className="flex justify-between">
+                        <div className="py-10">Standed Package</div>
+                        <div className="py-10">LKR :{data.price}</div>
+                      </div>
+                      <div class="border-t border-gray-300 my-4 mt-14"></div>
+                      <div className="flex justify-between">
+                        <div>Standed Package</div>
+                        <div>LKR :{data.price}</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </ul>
+                <div>
+                  <div>Sites</div>
+                  <div>
+                    {data.places_to_visit && data.places_to_visit.length > 0
+                      ? data.places_to_visit.join(', ')
+                      : 'No places to visit available'}
+                  </div>
+                </div>
+                <div className="text-center mt-8 sm:mt-10">
+                  <button onClick={handleBooking} className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base">
+                    BOOK NOW
+                  </button>
+                </div>
+              </>
             )}
-
+            {/*
             {activeTab === "CUSTOMISE" && (
               <div className="max-w-4xl mx-auto p-4 sm:p-6 rounded-lg flex flex-col lg:flex-row">
-                {/* Left Side - Form */}
+              
                 <div className="flex-1 pr-0 lg:pr-6 mb-6 lg:mb-0">
-                  {/* Accommodation Type Dropdown */}
+                
                   <div className="mb-4">
                     <h2 className="text-black font-base">ACCOMMODATION TYPE</h2>
                     <select className="w-full bg-[#F4F5F5] p-2 rounded-md mt-2 text-[#7F7F7F]">
@@ -175,7 +179,7 @@ export default function Popup({ onClose, data }) {
                     </select>
                   </div>
 
-                  {/* Meal Preferences Dropdown */}
+                
                   <div className="mb-4">
                     <h2 className="text-black">MEAL PREFERENCES</h2>
                     <select className="w-full bg-[#F4F5F5] font-base p-2 rounded-md mt-2 text-[#7F7F7F]">
@@ -186,7 +190,7 @@ export default function Popup({ onClose, data }) {
                     </select>
                   </div>
 
-                  {/* Activity Add-Ons */}
+                
                   <div className="mb-4">
                     <h2 className="text-black font-base">ACTIVITY ADD-ONS</h2>
                     <div className="space-y-2 mt-2">
@@ -214,7 +218,7 @@ export default function Popup({ onClose, data }) {
                     </div>
                   </div>
 
-                  {/* Special Requests Textarea */}
+                
                   <div className="mb-4">
                     <h2 className="text-black font-base">SPECIAL REQUESTS</h2>
                     <textarea
@@ -224,9 +228,9 @@ export default function Popup({ onClose, data }) {
                   </div>
                 </div>
 
-                {/* Right Side - Booking Details */}
+              
                 <div className="flex-1 pl-0 lg:pl-6">
-                  {/* Booking Details */}
+              
                   <div className="mb-4">
                     <h2 className="text-black text-xl sm:text-2xl font-base mb-4 sm:mb-8">
                       BOOKING DETAILS
@@ -239,7 +243,7 @@ export default function Popup({ onClose, data }) {
                     </div>
                   </div>
 
-                  {/* Accommodation Upgrades */}
+            
                   <div className="mb-4">
                     <h2 className="text-black text-xl sm:text-2xl font-base mb-4 sm:mb-8">
                       ACCOMMODATION UPGRADES
@@ -260,7 +264,7 @@ export default function Popup({ onClose, data }) {
                     </div>
                   </div>
 
-                  {/* Total Price & Button */}
+                
                   <div className="mt-6 sm:mt-8">
                     <div className="flex justify-between">
                       <span className="text-black text-xl sm:text-2xl">
@@ -279,7 +283,7 @@ export default function Popup({ onClose, data }) {
                   </div>
                 </div>
               </div>
-            )}
+            )}  
 
             {activeTab === "PRICES" && (
               <div className="text-center">
@@ -292,7 +296,7 @@ export default function Popup({ onClose, data }) {
                   </button>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
