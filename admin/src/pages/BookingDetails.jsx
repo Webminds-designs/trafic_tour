@@ -54,7 +54,7 @@ const BookingDetails = () => {
         <div className="flex h-full bg-gray-200 font-figtree">
             <Sidebar />
             <div className="flex-1 p-12">
-                <Topbar title="Booking Details" />
+                <Topbar title="Booking Management" />
 
                 <button
                     className="text-black flex items-center mb-5 cursor-pointer"
