@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import multer from "multer";
 import bodyParser from "body-parser";
 import cookieParser from 'cookie-parser';
 import connectDB from "./config/dbConfig.js";
@@ -31,12 +32,13 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: "*",  // Allow all origins
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization"
+}));
 
-const corsOptions = {
-  origin: 'http://localhost:5173',  
-  credentials: true,                
-};
-app.use(cors(corsOptions));
+
 
 app.use('/api/user', userRoutes);
 app.use("/api/packages", packageRoutes);
