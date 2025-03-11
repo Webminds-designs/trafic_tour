@@ -17,8 +17,9 @@ function App() {
   return (
 
     <>
+     <AuthProvider>
       <ToastContainer position="top-center" containerStyle={{ top: 60 }} />
-    <AuthProvider>
+   
       <Router>
         <Routes>
       

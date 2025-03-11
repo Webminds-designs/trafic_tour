@@ -15,7 +15,7 @@ export const createPayment = async (req, res) => {
   
         // Upload the receipt image to Cloudinary
         const receiptImage = req.file;
-        const uploadedImage = await cloudinary.v2.uploader.upload(receiptImage.path);
+        const uploadedImage = await cloudinary.uploader.upload(receiptImage.path);
   
         paymentReceiptUrl = uploadedImage.secure_url; // Store the Cloudinary URL
       }

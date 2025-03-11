@@ -40,7 +40,7 @@ const Profile = () => {
   const [isProfileEditing, setIsProfileEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
-
+  console.log(user);
   const openModal = (packageItem) => {
     setSelectedPackage(packageItem);
     setIsModalOpen(true);
@@ -62,19 +62,19 @@ const Profile = () => {
   });
 
   const navigate = useNavigate();
-  //get user details
   useEffect(() => {
-    if (!user.id) {
+    if (!user) {
       console.log("User not found, navigating to sign-in");
       navigate('/signin');  // Navigate to sign-in page
+      return; // Stop execution if user is null
     }
-
+  
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:6400/api/user/${user.id}`);
         setUserDetails(response.data.user);
         setLoading(false);
-
+  
         // Set initial form data with fetched user details
         setFormData({
           firstName: response.data.user.firstName || "",
@@ -85,16 +85,18 @@ const Profile = () => {
           profileUrl: response.data.user.profileUrl || "",
           password: response.data.user.password || "",
         });
-
+  
       } catch (err) {
         setError('Error fetching user details');
+        console.error("Error fetching user details:", err.message);
+        navigate('/signin'); 
         setLoading(false);
       }
     };
-
+  
     fetchUserDetails();
-  }, [user.id]);
-
+  }, [user]);  // ✅ Corrected dependency array
+  
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);

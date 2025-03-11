@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import PackageCard from "../components/PackageCard";
-import packages from "../data/packageData";
 import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/lepord.png";
 import Footer from "../components/Footer";
@@ -8,6 +8,26 @@ import Footer from "../components/Footer";
 const Packages = () => {
   const [selectedSection, setSelectedSection] = useState("All Packages");
   const targetSectionRef = useRef(null);
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  //get packages details
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const response = await axios.get("http://localhost:6400/api/packages");
+        setPackages(response.data.packages);
+        // Assuming the response contains an array of packages
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPackages();
+  }, []);
 
   const sections = [
     "All Packages",
@@ -29,7 +49,7 @@ const Packages = () => {
       targetSectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-
+  console.log(packages)
   return (
     <>
       <Navbar />
@@ -49,7 +69,7 @@ const Packages = () => {
             </div>
             <div className="text-right  px-4 lg:px-7 pt-6">
               <p className="text-xs sm:text-sm font-base">
-              Embark on an unforgettable journey through Sri Lanka. {" "}
+                Embark on an unforgettable journey through Sri Lanka. {" "}
                 <br />
                 Where every experience is designed to inspire, relax, and <br /> awaken your sense of adventure.
               </p>
@@ -59,15 +79,16 @@ const Packages = () => {
           {/* Packages Section Bar */}
           <div className="flex flex-col items-center mt-6 lg:mt-10 font-base">
             <div className="bg-black text-white flex w-full max-w-7xl  rounded-3xl overflow-x-auto">
+
+
               {sections.map((section, index) => (
                 <div
                   key={index}
                   className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 
-                        ${
-                          selectedSection === section
-                            ? "bg-white text-black "
-                            : "  "
-                        }`}
+                        ${selectedSection === section
+                      ? "bg-white text-black "
+                      : "  "
+                    }`}
                   onClick={() => handleSectionClick(section)}
                 >
                   {section}
@@ -79,30 +100,71 @@ const Packages = () => {
           {/* Packages Grid */}
           <div className="mt-10 lg:mt-30 mb-14 lg:mb-28 px-4 sm:px-6 lg:px-20">
             <div className="flex justify-between">
-           <div className="font-xl md:text-2xl text-xl">
-           Experience the thrill of  Sri Lanka's
-           <br></br>
-           wilderness.
-           </div>
-            <div className="flex justify-end ">
-              <button
-                onClick={handleFindBestPackage}
-                className="text-base sm:text-lg lg:text-xl font-base text-teal-600 hover:underline"
-              >
-              Find the best package
-              </button>
-            </div>
+              <div className="font-xl md:text-2xl text-xl">
+                Experience the thrill of  Sri Lanka's
+                <br></br>
+                wilderness.
+              </div>
+              <div className="flex justify-end ">
+                <button
+                  onClick={handleFindBestPackage}
+                  className="text-base sm:text-lg lg:text-xl font-base text-teal-600 hover:underline"
+                >
+                  Find the best package
+                </button>
+              </div>
             </div>
             <div className=" bg-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-10 lg:mt-20">
-              {packages["ALL PACKAGES"].map((packageItem) => (
-                <PackageCard
-                  key={packageItem.title}
-                  packageItem={packageItem} // Pass the entire package object
-                  onExplore={() =>
-                    console.log(`Exploring ${packageItem.title}`)
-                  }
-                />
-              ))}
+              {/* All Packages */}
+              {selectedSection === "All Packages" ? (<>
+                {packages
+                  .map((packageItem) => (
+                    <PackageCard
+                      key={packageItem.name}
+                      packageItem={packageItem} // Pass the entire package object
+                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
+                    />
+                  ))}
+              </>) : null}
+
+              {/*Romantic and Relaxation */}
+              {selectedSection === "Romantic and Relaxation" ? (<>
+                {packages
+                  .filter((packageItem) => packageItem.type === "Romantic and Relaxation")
+                  .map((packageItem) => (
+                    <PackageCard
+                      key={packageItem.name}
+                      packageItem={packageItem} // Pass the entire package object
+                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
+                    />
+                  ))}
+              </>) : null}
+
+  {/*Advanture and Wildlife */}
+  {selectedSection === "Advanture and Wildlife" ? (<>
+                {packages
+                  .filter((packageItem) => packageItem.type === "Adventure and Wildlife")
+                  .map((packageItem) => (
+                    <PackageCard
+                      key={packageItem.name}
+                      packageItem={packageItem} // Pass the entire package object
+                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
+                    />
+                  ))}
+              </>) : null}
+
+                {/*Educational and Cultural */}
+  {selectedSection === "Educational and Cultural" ? (<>
+                {packages
+                  .filter((packageItem) => packageItem.type === "Educational and Cultural")
+                  .map((packageItem) => (
+                    <PackageCard
+                      key={packageItem.name}
+                      packageItem={packageItem} // Pass the entire package object
+                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
+                    />
+                  ))}
+              </>) : null}
             </div>
           </div>
 
@@ -121,87 +183,87 @@ const Packages = () => {
                 FIND THE BEST PACKAGE
               </h2>
               <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        console.log("Form submitted");
-                        console.log("Destination:", e.target.destination.value);
-                        console.log("Travel Dates:", e.target.travelDate.value);
-                        console.log("Trip Duration:", e.target.tripDuration.value);
-                        console.log("Number of Travelers:", e.target.travelers.value);
-                    }}
-                >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Destination Field */}
-                        <div>
-                            <label className="text-sm font-medium" htmlFor="destination">
-                                Destination
-                            </label>
-                            <input
-                                type="text"
-                                id="destination"
-                                name="destination"
-                                placeholder="SIGIRIYA, ELLA, ETC"
-                                className="w-full p-2 mt-1  rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                            />
-                        </div>
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  console.log("Form submitted");
+                  console.log("Destination:", e.target.destination.value);
+                  console.log("Travel Dates:", e.target.travelDate.value);
+                  console.log("Trip Duration:", e.target.tripDuration.value);
+                  console.log("Number of Travelers:", e.target.travelers.value);
+                }}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Destination Field */}
+                  <div>
+                    <label className="text-sm font-medium" htmlFor="destination">
+                      Destination
+                    </label>
+                    <input
+                      type="text"
+                      id="destination"
+                      name="destination"
+                      placeholder="SIGIRIYA, ELLA, ETC"
+                      className="w-full p-2 mt-1  rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
+                  </div>
 
-                        {/* Travel Activities*/}
-                        <div>
-                            <label className="text-sm font-medium" htmlFor="travelDate">
-                                Activities & Interests
-                            </label>
-                            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                                <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Wildlife</div>
-                                <div className="px-4 py-2 bg-teal-200 rounded-full text-gray-900">Snorkeling</div>
-                                <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Historical Sites</div>
-                                <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Hiking</div>
-                            </div>
-
-                        </div>
-
-                        {/* Trip Duration Field */}
-                        <div>
-                            <label className="text-sm font-medium" htmlFor="tripDuration">
-                                Trip Duration
-                            </label>
-                            <input
-                                type="text"
-                                id="tripDuration"
-                                name="tripDuration"
-                                placeholder="10 DAYS"
-                                className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                            />
-                        </div>
-
-                        {/* trip Activities */}
-                        <div>
-                            <label className="text-sm font-medium" htmlFor="travelers">
-                                Number of traveles
-                            </label>
-                            <select
-                                id="travelers"
-                                name="travelers"
-                                className="w-full p-2 mt-1 rounded-3xl text-gray-500 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                            >
-                                <option value="2 Adult">2 Adult</option>
-                                <option value="1 Adult">1 Adult</option>
-                                <option value="3 Adult">3 Adult</option>
-                                <option value="FAMILY PACKAGE">Family Package</option>
-                            </select>
-                        </div>
+                  {/* Travel Activities*/}
+                  <div>
+                    <label className="text-sm font-medium" htmlFor="travelDate">
+                      Activities & Interests
+                    </label>
+                    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                      <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Wildlife</div>
+                      <div className="px-4 py-2 bg-teal-200 rounded-full text-gray-900">Snorkeling</div>
+                      <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Historical Sites</div>
+                      <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Hiking</div>
                     </div>
 
-                    {/* Submit Button */}
-                    <div className="flex justify-center">
-                        <button
-                            type="submit"
-                            className="w-1/2 flex text-center bg-teal-600 text-white py-2 mt-6 justify-center rounded-3xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                        >
-                            FIND
-                        </button>
-                    </div>
+                  </div>
 
-                </form>
+                  {/* Trip Duration Field */}
+                  <div>
+                    <label className="text-sm font-medium" htmlFor="tripDuration">
+                      Trip Duration
+                    </label>
+                    <input
+                      type="text"
+                      id="tripDuration"
+                      name="tripDuration"
+                      placeholder="10 DAYS"
+                      className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
+                  </div>
+
+                  {/* trip Activities */}
+                  <div>
+                    <label className="text-sm font-medium" htmlFor="travelers">
+                      Number of traveles
+                    </label>
+                    <select
+                      id="travelers"
+                      name="travelers"
+                      className="w-full p-2 mt-1 rounded-3xl text-gray-500 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    >
+                      <option value="2 Adult">2 Adult</option>
+                      <option value="1 Adult">1 Adult</option>
+                      <option value="3 Adult">3 Adult</option>
+                      <option value="FAMILY PACKAGE">Family Package</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex justify-center">
+                  <button
+                    type="submit"
+                    className="w-1/2 flex text-center bg-teal-600 text-white py-2 mt-6 justify-center rounded-3xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  >
+                    FIND
+                  </button>
+                </div>
+
+              </form>
             </div>
           </div>
         </div>
