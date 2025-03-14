@@ -10,6 +10,7 @@ import packageRoutes from "./Routes/PackageRoutes.js";
 import favoritePackageRoutes from "./Routes/FavoritePackagesRoutes.js"
 import bookingRoutes from "./Routes/BookingRoutes.js"
 import paymentRoutes from "./Routes/PaymentRoutes.js"
+import payhereRoutes from "./Routes/PayhereRoutes.js"
 
 dotenv.config(); // Load environment variables
 
@@ -19,12 +20,6 @@ const PORT = process.env.PORT || 5000;
 connectDB(); // Connect to the database
 
 const app = express();
-
-app.use(cors({
-  origin: 'http://localhost:5173', // Allow only the frontend origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow only these methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow headers that you need
-}));
 
 
 // Middleware
@@ -44,7 +39,9 @@ app.use('/api/user', userRoutes);
 app.use("/api/packages", packageRoutes);
 app.use("/api/favorites", favoritePackageRoutes);
 app.use("/api/bookings", bookingRoutes);
-app.use("/api/payments",paymentRoutes)
+app.use("/api/payments",paymentRoutes);
+app.use("/api/payhere", payhereRoutes);
+
 
 // Start the server
 app.listen(PORT, () => {

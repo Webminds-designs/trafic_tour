@@ -30,7 +30,7 @@ export default function Popup({ onClose, data }) {
 
 
   const handleBooking = () => {
-    navigate("/payment", { state: { title: data.title, description: data.description, imageUrl: data.imageUrl } });
+    navigate("/payment", { state: { data } });
   };
 
 
