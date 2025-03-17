@@ -3,6 +3,7 @@ import {
   createBooking,
   getUserBookings,
   getAllBookings,
+  getBookingById,
   cancelBooking,
 } from "../Controllers/BookingController.js";
 
@@ -16,6 +17,9 @@ router.get("/user/:userId", getUserBookings);
 
 // Get all bookings (admin access)
 router.get("/", getAllBookings);
+
+router.get("/:bookingId", getBookingById);
+
 
 // Cancel a booking
 router.put("/cancel/:bookingId", cancelBooking);
