@@ -154,7 +154,7 @@ const UserManagement = () => {
         }
 
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0; // Return true if no errors
+        return Object.keys(newErrors).length === 0;
     };
 
 
@@ -164,7 +164,7 @@ const UserManagement = () => {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col p-6">
-                <Topbar title="UserManagement" />
+                <Topbar title="User Management" />
 
                 <button className="bg-white text-[#003135] px-4 py-2 rounded-2xl flex items-center ml-auto cursor-pointer" onClick={() => setShowModal(true)}>
                     <ImUserPlus className="mr-2 text-[#003135]" />
