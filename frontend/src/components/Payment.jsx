@@ -16,12 +16,12 @@ const Payment = () => {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [formData, setFormData] = useState({
     country: "Sri Lanka",
-    firstName: "",
-    lastName: "",
+    firstName: user.firstName,
+    lastName: user.lastName,
     address: "",
     city: "",
     postalCode: "",
-    contactNumber: "",
+    contactNumber: user.phone,
     paymentMethod: "card", // Default payment method
   });
 
@@ -40,6 +40,37 @@ const Payment = () => {
     last_name: user?.lastName || "",
     email: user?.email || "",
     passportId: user?.passportId || "",
+  };
+   //order details
+  const bookingData ={
+    userId: user?.id || "",
+    packageId: data?._id || "",
+    guests: 1,
+    checkingDate:checkInDate,
+    checkOutDate:checkOutDate ,
+    billingDetails: {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      address: formData.address,
+      city: formData.city,
+      postalCode: formData.postalCode,
+      country: formData.country,
+      contactNumber: user.phone,
+    },
+  }
+
+  //get check out data
+  const handleCheckInChange = (e) => {
+    const selectedDate = e.target.value;
+    setCheckInDate(selectedDate);
+
+    if (selectedDate) {
+      // Calculate check-out date (5 days later)
+      const checkIn = new Date(selectedDate);
+      checkIn.setDate(checkIn.getDate() + data.duration.days);
+      const formattedCheckOut = checkIn.toISOString().split("T")[0]; // Format to YYYY-MM-DD
+      setCheckOutDate(formattedCheckOut);
+    }
   };
 
   // Handle radio button change for payment method
@@ -87,6 +118,16 @@ const Payment = () => {
       toast.error("Valid Contact Number is required (minimum 10 digits)");
       return;
     }
+    if (!checkInDate) {
+      toast.error("Check-In Date is required");
+      return;
+    }
+    
+    if (!checkOutDate) {
+      toast.error("Check-Out Date is required");
+      return;
+    }
+    
 
     // If all validations pass
     console.log("Billing Details:", formData);
@@ -104,30 +145,29 @@ const Payment = () => {
           <img src={data.imageUrl} alt="image" className="rounded-lg h-[400px] w-full" />
           <h2 className="text-2xl font-medium mt-4">{data.name}</h2>
           <div className="mt-4 space-y-3 font-medium">
-            <div className="flex flex-col space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Check-In Date</span>
-                <input
-                  type="date"
-                  className="border text-gray-600 rounded px-2 py-1"
-                  value={checkInDate}
-                  onChange={(e) => setCheckInDate(e.target.value)}
-                />
-              </div>
+          <div className="flex flex-col space-y-2">
+      <div className="flex justify-between">
+        <span className="text-gray-600">Check-In Date</span>
+        <input
+          type="date"
+          className="border text-gray-600 rounded px-2 py-1"
+          value={checkInDate}
+          onChange={handleCheckInChange}
+        />
+      </div>
 
-              <div className="flex justify-between">
-                <span className="text-gray-600">Check-Out Date</span>
-                <input
-                  type="date"
-                  className="border text-gray-600 rounded px-2 py-1"
-                  value={checkOutDate}
-                  onChange={(e) => setCheckOutDate(e.target.value)}
-                />
-              </div>
-            </div>
-
+      <div className="flex justify-between">
+        <span className="text-gray-600">Check-Out Date</span>
+        <input
+          type="date"
+          className="border text-gray-600 rounded px-2 py-1"
+          value={checkOutDate}
+          readOnly // Prevent user from manually changing it
+        />
+      </div>
+    </div>
             <div className="flex justify-between"><span className="text-gray-600">Package Type</span><span className="text-gray-800">{data.type}</span></div>
-            <div className="flex justify-between"><span className="text-gray-600">Guest</span><span className="text-blue-500">Mari Sheibly</span></div>
+            <div className="flex justify-between"><span className="text-gray-600">Guest</span><span className="text-blue-500">{user.firstName} {user.lastName}</span></div>
             <div className="flex justify-between font-medium text-lg mt-4"><span>Total Amount</span><span>{data.price}</span></div>
           </div>
         </div>
@@ -151,22 +191,13 @@ const Payment = () => {
               <form className="space-y-4 font-medium" onSubmit={handleConfirm}>
                 <div>
                   <label className="block text-gray-900">Country / Region</label>
-                  <select
-                    className="w-full bg-gray-100 text-gray-900 rounded-lg p-2"
-                    value={formData.country}
-                    onChange={handleInputChange}
-                    name="country"
-                  >
-                    <option value="Sri Lanka">Sri Lanka</option>
-                    <option value="United States">United States</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="India">India</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                    <option value="Germany">Germany</option>
-                    <option value="France">France</option>
-                    <option value="Japan">Japan</option>
-                  </select>
+             
+                  <input
+                      className="w-full bg-gray-100 text-gray-500 rounded-lg p-2"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      name="country"
+                    />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -260,7 +291,7 @@ const Payment = () => {
           ) : (
             <>
               {/* Show payment form based on selected method */}
-              {formData.paymentMethod === "card" ? <CardPayment order={orderDetails} formData={formData} /> : <BankTransfer order={orderDetails} formData={formData} />}
+              {formData.paymentMethod === "card" ? <CardPayment order={orderDetails} formData={formData} bookingData={bookingData}/> : <BankTransfer order={orderDetails} formData={formData} bookingData={bookingData}/>}
             </>
           )}
         </div>
@@ -270,10 +301,30 @@ const Payment = () => {
 };
 
 
-const CardPayment = ({ order, formData }) => {
-
-
-
+const CardPayment = ({ order, formData ,bookingData}) => {
+ 
+   //create bookings
+   const createBooking = async (bookingData) => {
+    
+    try {
+      const response = await axios.post("http://localhost:6400/api/bookings", bookingData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.status === 201) {
+        toast.success("Booking successful!");
+        return response.data;
+      } else {
+        toast.error("Booking failed. Please try again.");
+        return null;
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "An error occurred while booking.");
+      return null;
+    }
+  };
 
   const handleCardPayment = async () => {
     const dbDetails = {
@@ -292,6 +343,7 @@ const CardPayment = ({ order, formData }) => {
 
       // Check if the payment was successful
       if (response.status === 201) {
+        createBooking(bookingData)
         toast.success("Payment created successfully!");
       } else {
         throw new Error("Payment creation failed");
@@ -507,11 +559,34 @@ const CardPayment = ({ order, formData }) => {
 };
 
 // Bank Transfer Component
-  const BankTransfer = ({ order }) => {
+  const BankTransfer = ({ order,bookingData }) => {
     const [paymentProof, setPaymentProof] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [referenceNumber, setReferenceNumber] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    console.log(bookingData);
+    //create bookings
+    const createBooking = async (bookingData) => {
+    
+      try {
+        const response = await axios.post("http://localhost:6400/api/bookings", bookingData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (response.status === 201) {
+          toast.success("Booking successful!");
+          return response.data;
+        } else {
+          toast.error("Booking failed. Please try again.");
+          return null;
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message || "An error occurred while booking.");
+        return null;
+      }
+    };
   
     const handleFileChange = (e) => {
       const file = e.target.files[0];
@@ -553,6 +628,7 @@ const CardPayment = ({ order, formData }) => {
           },
         });
         if (response.status === 201) {
+          createBooking(bookingData)
           toast.success("Payment successfully created!");
         }
       } catch (error) {

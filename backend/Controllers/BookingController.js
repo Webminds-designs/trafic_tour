@@ -3,11 +3,25 @@ import Package from "../Model/Packages.js";
 
 export const createBooking = async (req, res) => {
   try {
-    const { userId, packageId, guests, checkingDate, checkOutDate } = req.body;
+    const {
+      userId,
+      packageId,
+      guests,
+      checkingDate,
+      checkOutDate,
+      billingDetails,
+    } = req.body;
 
     // Validate required fields
-    if (!userId || !packageId || !guests || !checkingDate || !checkOutDate) {
+    if (!userId || !packageId || !guests || !checkingDate || !checkOutDate || !billingDetails) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const { firstName, lastName, address, city, postalCode, country, contactNumber } = billingDetails;
+
+    // Validate billing details
+    if (!firstName || !lastName || !address || !city || !postalCode || !country || !contactNumber) {
+      return res.status(400).json({ message: "All billing details are required" });
     }
 
     // Validate package
@@ -24,6 +38,15 @@ export const createBooking = async (req, res) => {
       checkingDate,
       checkOutDate,
       totalPrice,
+      billingDetails: {
+        firstName,
+        lastName,
+        address,
+        city,
+        postalCode,
+        country,
+        contactNumber,
+      },
     });
 
     await newBooking.save();
