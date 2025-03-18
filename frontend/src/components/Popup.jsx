@@ -1,17 +1,57 @@
 import { FaBed, FaUtensils, FaCamera, FaHeart, FaTimes } from "react-icons/fa";
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/authContext";
 import React, { useEffect, useState } from "react";
 import foodIcon from "../assets/dish.png";
 import bedIcon from "../assets/bed.png";
 import carIcon from "../assets/car.png";
 import copeIcon from "../assets/cope.png";
 import userIcon from "../assets/people.png";
-import { Link } from "react-router-dom";
+import { useContext } from "react";
 
 export default function Popup({ onClose, data }) {
   const [activeTab, setActiveTab] = useState("INCLUDES");
-  const [selectedActivity, setSelectedActivity] = useState("");
+  const { user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  if(!user){
+    navigate('./signin')
+  }
+  const userId= user?.id
+  const packageId = data?._id
+  console.log(data._id)
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      try {
+        const response = await axios.get(`http://localhost:6400/api/favorites/${user?.id}`);
+        const favorite = response.data.find(fav => fav.packageId._id === packageId);
+        setIsFavorite(!!favorite);
+      } catch (error) {
+        console.error("Error checking favorite status:", error);
+      }
+    };
+    checkFavoriteStatus();
+  }, [user?.id, packageId]);
+
+  const addFavorite = async () => {
+    try {
+      await axios.post('http://localhost:6400/api/favorites/add', { userId, packageId });
+      setIsFavorite(true);
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+    }
+  };
+
+  const removeFavorite = async () => {
+    try {
+      await axios.delete('http://localhost:6400/api/favorites/remove', { data: { userId, packageId } });
+      setIsFavorite(false);
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
+    }
+  };
 
   const icons = [
     { src: foodIcon, alt: "Food" },
@@ -63,9 +103,9 @@ export default function Popup({ onClose, data }) {
             alt={data.name}
             className="w-full h-48 sm:h-64 object-cover"
           />
-          <div className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md">
-            <FaHeart className="text-xs text-black cursor-pointer" />
-          </div>
+          <div className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md cursor-pointer" onClick={isFavorite ? removeFavorite : addFavorite}>
+        <FaHeart className={`text-xs ${isFavorite ? 'text-red-500' : 'text-black'}`} />
+      </div>
         </div>
 
         {/* Description */}
@@ -121,14 +161,18 @@ export default function Popup({ onClose, data }) {
 
                         <div className="mt-4">
                           <ul className="list-disc pl-6">
-                            <li>Morning: {dayItem.activities.morning}</li>
-                            <li>Afternoon: {dayItem.activities.afternoon}</li>
-                            <li>Evening: {dayItem.activities.evening}</li>
-                            <li>Overnight: {dayItem.activities.overnight}</li>
+                            {(dayItem.activities && Array.isArray(dayItem.activities)) ? (
+                              dayItem.activities.map((activity, index) => (
+                                <li key={index}>{activity}</li>
+                              ))
+                            ) : (
+                              <li>No activities available</li> 
+                            )}
                           </ul>
                         </div>
                       </div>
                     ))}
+
                   </div>
                   {/* Right Side */}
                   <div className="w-1/3 p-4  ">
