@@ -1,4 +1,4 @@
-import { useState, useEffect ,useCallback} from "react";
+import { useState, useEffect, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import PackageCard from "../components/PackageCard";
@@ -27,13 +27,13 @@ const PackageManagement = () => {
             {
                 day: 1,
                 title: "",
-                places: [],
-                activities: { morning: "", afternoon: "", evening: "", overnight: "" },
+
+                activities: [],
             }
         ],
     });
-    
-   
+
+
 
     //get packages details
     useEffect(() => {
@@ -74,7 +74,7 @@ const PackageManagement = () => {
             setImage(file);  // Store the actual file
         }
     };
-    
+
 
     const closeModal = () => {
         setShowModal(false);
@@ -84,8 +84,8 @@ const PackageManagement = () => {
     const [placesToVisit, setPlacesToVisit] = useState([]);
     const [newSite, setNewSite] = useState("");
 
-     // Function to add a site to places_to_visit
-     const handleAddSite = () => {
+    // Function to add a site to places_to_visit
+    const handleAddSite = () => {
         if (newSite.trim() !== "" && !formData.places_to_visit.includes(newSite)) {
             setFormData({
                 ...formData,
@@ -111,8 +111,7 @@ const PackageManagement = () => {
                 {
                     day: prevState.itinerary.length + 1,
                     title: "",
-                    places: [],
-                    activities: { morning: "", afternoon: "", evening: "", overnight: "" },
+                    activities: [],
                 }
             ],
         }));
@@ -140,36 +139,47 @@ const PackageManagement = () => {
             itinerary: updatedItinerary,
         }));
     };
+    const addActivity = (dayIndex) => {
+        const updatedItinerary = [...formData.itinerary];
+        updatedItinerary[dayIndex].activities.push("");
+        setFormData({ ...formData, itinerary: updatedItinerary });
+    };
+
+    const removeActivity = (dayIndex, activityIndex) => {
+        const updatedItinerary = [...formData.itinerary];
+        updatedItinerary[dayIndex].activities.splice(activityIndex, 1);
+        setFormData({ ...formData, itinerary: updatedItinerary });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         // Trim spaces and validate required fields
         if (!formData.name.trim() || !formData.description.trim() || !formData.type.trim()) {
             alert("Name, Description, and Type are required.");
             return;
         }
-    
+
         if (!formData.price || isNaN(formData.price) || formData.price <= 0) {
             alert("Please enter a valid positive price.");
             return;
         }
-    
+
         if (!formData.duration.days || !formData.duration.nights || isNaN(formData.duration.days) || isNaN(formData.duration.nights)) {
             alert("Please enter valid duration days and nights.");
             return;
         }
-    
+
         if (!formData.places_to_visit.length) {
             alert("Please add at least one place to visit.");
             return;
         }
-    
+
         if (!formData.itinerary.length || !formData.itinerary[0].title.trim()) {
             alert("Please provide a valid itinerary.");
             return;
         }
-    
+
         try {
             // Create FormData object
             const formDataToSend = new FormData();
@@ -180,13 +190,13 @@ const PackageManagement = () => {
             formDataToSend.append("duration", JSON.stringify(formData.duration));
             formDataToSend.append("places_to_visit", JSON.stringify(formData.places_to_visit));
             formDataToSend.append("itinerary", JSON.stringify(formData.itinerary));
-    
+
             // Log the FormData entries for debugging
             console.log("FormData Before Sending:");
             for (let pair of formDataToSend.entries()) {
                 console.log(`${pair[0]}:`, pair[1]);
             }
-    
+
             // Handle image if exists
             if (image) {
                 console.log("Adding Image File:", image);
@@ -195,15 +205,15 @@ const PackageManagement = () => {
                 alert("Please provide a Image.");
                 return;
             }
-    
+
             // Send FormData to the backend
             const response = await axios.post("http://localhost:6400/api/packages", formDataToSend, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-    
+
             console.log("Package created:", response.data);
             alert("Package added successfully!");
-    
+
             // Reset form fields after successful submission
             setFormData({
                 name: "",
@@ -217,16 +227,15 @@ const PackageManagement = () => {
                     {
                         day: 1,
                         title: "",
-                        places: [],
-                        activities: { morning: "", afternoon: "", evening: "", overnight: "" },
+                        activities: [],
                     }
                 ],
             });
-    
+
             setImage(null);
         } catch (error) {
             console.error("Error adding package:", error);
-    
+
             if (error.response) {
                 console.error("Server Response:", error.response.data);
                 alert(`Failed to add package: ${error.response.data.error || "Unknown error"}`);
@@ -235,8 +244,8 @@ const PackageManagement = () => {
             }
         }
     };
-    
-    
+
+
 
     return (
 
@@ -317,39 +326,39 @@ const PackageManagement = () => {
                                 </select>
 
                                 <label className="text-black">Sites</label>
-            <div className="flex items-center gap-2 mt-2">
-                <input
-                    type="text"
-                    name="newSite"
-                    placeholder="Enter a site"
-                    value={newSite}
-                    onChange={(e) => setNewSite(e.target.value)}
-                    className="bg-gray-100 p-2 rounded w-full"
-                />
-                <button
-                    type="button"
-                    onClick={handleAddSite}
-                    className="border p-2 rounded-full bg-gray-500 text-white cursor-pointer w-10 h-10 flex items-center justify-center"
-                >
-                    +
-                </button>
-            </div>
+                                <div className="flex items-center gap-2 mt-2">
+                                    <input
+                                        type="text"
+                                        name="newSite"
+                                        placeholder="Enter a site"
+                                        value={newSite}
+                                        onChange={(e) => setNewSite(e.target.value)}
+                                        className="bg-gray-100 p-2 rounded w-full"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleAddSite}
+                                        className="border p-2 rounded-full bg-gray-500 text-white cursor-pointer w-10 h-10 flex items-center justify-center"
+                                    >
+                                        +
+                                    </button>
+                                </div>
 
-            {/* Display added sites as tags */}
-            <div className="mt-4 flex flex-wrap gap-2">
-    {formData.places_to_visit.map((site, index) => (
-        <div key={index} className="flex items-center bg-gray-300 px-3 py-1 rounded-full">
-            <span className="text-black">{site}</span>
-            <button
-                type="button"
-                onClick={() => handleRemoveSite(site)}
-                className="ml-2 text-red-600 font-bold cursor-pointer"
-            >
-                ×
-            </button>
-        </div>
-    ))}
-</div>
+                                {/* Display added sites as tags */}
+                                <div className="mt-4 flex flex-wrap gap-2">
+                                    {formData.places_to_visit.map((site, index) => (
+                                        <div key={index} className="flex items-center bg-gray-300 px-3 py-1 rounded-full">
+                                            <span className="text-black">{site}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveSite(site)}
+                                                className="ml-2 text-red-600 font-bold cursor-pointer"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
 
                                 <label className="text-black col-span-1">Duration</label>
                                 <div className="flex space-x-2 col-span-2">
@@ -388,7 +397,7 @@ const PackageManagement = () => {
                                 <h2 className="text-lg font-bold col-span-3">Itinerary</h2>
 
                                 {formData.itinerary.map((day, index) => (
-                                    <div key={index} className="col-span-3  p-4 rounded-lg shadow-md grid grid-cols-3 gap-3">
+                                    <div key={index} className="col-span-3 p-4 rounded-lg shadow-md grid grid-cols-3 gap-3">
                                         <label className="text-black col-span-1">Day {day.day}</label>
                                         <input
                                             type="text"
@@ -398,32 +407,37 @@ const PackageManagement = () => {
                                             className="bg-gray-100 p-2 rounded col-span-2 w-full"
                                         />
 
-                                        <label className="text-black col-span-1">Places to Visit</label>
-                                        <input
-                                            type="text"
-                                            placeholder="E.g. Beach, Museum"
-                                            value={day.places.join(", ")}
-                                            onChange={(e) => handleItineraryChange(index, "places", e.target.value.split(","))}
-                                            className="bg-gray-100 p-2 rounded col-span-2 w-full"
-                                        />
 
-                                        <h4 className="text-black font-semibold col-span-3">Activities</h4>
-                                        {['morning', 'afternoon', 'evening', 'overnight'].map((time) => (
-                                            <>
-                                                <label key={`label-${time}`} className="text-black col-span-1">{time.charAt(0).toUpperCase() + time.slice(1)}</label>
+                                        {day.activities.map((activity, activityIndex) => (
+
+                                            <div key={activityIndex} className="relative col-span-3 flex justify-end items-center gap-2">
+                                                <h4 className="text-black w-5/10">Activities {activityIndex + 1}</h4>
                                                 <input
-                                                    key={time}
                                                     type="text"
-                                                    placeholder={time.charAt(0).toUpperCase() + time.slice(1)}
-                                                    value={day.activities[time]}
-                                                    onChange={(e) => handleActivityChange(index, time, e.target.value)}
-                                                    className="bg-gray-100 p-2 rounded col-span-2 w-full"
+                                                    placeholder={activityIndex + 1}
+                                                    value={activity}
+                                                    onChange={(e) => handleActivityChange(index, activityIndex, e.target.value)}
+                                                    className="w-full p-2 bg-gray-100 rounded flex-grow"
                                                 />
-                                            </>
+                                                <button
+                                                    className="absolute right-2 mt-1 text-black px-2 py-1 rounded"
+                                                    onClick={() => removeActivity(index, activityIndex)}
+                                                >
+                                                    X
+                                                </button>
+                                            </div>
                                         ))}
-                                        <div className="flex ">
+                                        <div className="col-span-2"></div>
+                                        <div className="flex justify-end">
                                             <button
-                                                className="border-1 border-black text-black px-3 py-1 rounded-3xl mt-2 col-span-3"
+                                                className="px-3 mx-4 py-1 bg-black text-white rounded-3xl cursor-pointer"
+                                                onClick={() => addActivity(index)}
+                                            >
+                                                Add Activity
+                                            </button>
+
+                                            <button
+                                                className="px-2 py-1 bg-black text-white rounded-3xl cursor-pointer"
                                                 onClick={() => removeItineraryDay(index)}
                                             >
                                                 Remove Day
@@ -432,12 +446,14 @@ const PackageManagement = () => {
                                     </div>
                                 ))}
                                 <div className="flex ">
-                                    <button
-                                        className="px-2 py-1 bg-black text-white rounded-3xl cursor-pointer"
-                                        onClick={addItineraryDay}
-                                    >
-                                        Add New Day
-                                    </button>
+                                    <div>
+                                        <button
+                                            className="px-2 py-1 bg-black text-white rounded-3xl cursor-pointer"
+                                            onClick={addItineraryDay}
+                                        >
+                                            Add New Day
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -446,7 +462,7 @@ const PackageManagement = () => {
                         {/* Buttons - Bottom Right */}
                         <div className="flex justify-end gap-4 mt-6">
                             <button onClick={() => setShowModal(false)} className="px-2 py-1 border rounded-3xl cursor-pointer">Cancel</button>
-                            <button  type="submit" onClick={handleSubmit} className="px-2 py-1 bg-black text-white rounded-3xl cursor-pointer">Save changes</button>
+                            <button type="submit" onClick={handleSubmit} className="px-2 py-1 bg-black text-white rounded-3xl cursor-pointer">Save changes</button>
                         </div>
                     </div>
 

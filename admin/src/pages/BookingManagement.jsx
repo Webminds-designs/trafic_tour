@@ -58,7 +58,7 @@ console.log(booking);
                                 >
                                     <td className="flex items-center py-2 px-4">
                                         <img
-                                            src={booking.packageId.imageUrl}
+                                            src={booking?.packageId.imageUrl}
                                             alt="Package"
                                             className="w-8 h-8 rounded-full mr-4"
                                         />
@@ -66,7 +66,7 @@ console.log(booking);
                                     </td>
                                     <td className="py-2 px-4">{booking.packageId.type}</td>
                                     <td className="py-2 px-4 flex items-center justify-center space-x-2">
-                                        {booking.paymentStatus === "Paid" ? (
+                                        {booking.paymentStatus === "completed" ? (
                                             <MdCheckCircle className="text-[#009990]" />
                                         ) : (
                                             <MdCancel className="text-red-900" />

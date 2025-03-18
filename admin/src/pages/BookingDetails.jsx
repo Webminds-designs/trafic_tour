@@ -86,7 +86,7 @@ const BookingDetails = () => {
 
                         <p className="font-semibold col-span-1">Payment Status:</p>
                         <div className="flex items-center space-x-2 col-span-2">
-                            {booking.paymentStatus === "Paid" ? (
+                            {booking.paymentStatus === "completed" ? (
                                 <MdCheckCircle className="text-[#009990]" />
                             ) : (
                                 <MdCancel className="text-red-900" />

@@ -9,7 +9,9 @@ export const createBooking = async (req, res) => {
       guests,
       checkingDate,
       checkOutDate,
+      paymentStatus,
       billingDetails,
+      
     } = req.body;
 
     // Validate required fields
@@ -38,6 +40,7 @@ export const createBooking = async (req, res) => {
       checkingDate,
       checkOutDate,
       totalPrice,
+      paymentStatus,
       billingDetails: {
         firstName,
         lastName,

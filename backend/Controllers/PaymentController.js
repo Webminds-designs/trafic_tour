@@ -4,7 +4,7 @@ import cloudinary from "cloudinary";
 // Create a new payment
 export const createPayment = async (req, res) => {
     try {
-      const { userId, packageId, amount, paymentMethod, transactionId } = req.body;
+      const { userId, packageId, amount, paymentMethod, transactionId ,status } = req.body;
       let paymentReceiptUrl = null;
   
       // Check if payment method is bank transfer and a receipt file is provided
@@ -26,6 +26,7 @@ export const createPayment = async (req, res) => {
         amount,
         paymentMethod,
         transactionId,
+        status,
         paymentReceiptUrl,
       });
   

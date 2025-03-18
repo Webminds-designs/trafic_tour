@@ -41,13 +41,7 @@ const CustomServicesSchema = new Schema({
 const ItinerarySchema = new Schema({
   day: { type: Number, required: true },
   title: { type: String, required: true },
-  places: [{ type: String, required: true }],
-  activities: {
-    morning: { type: String, required: true },
-    afternoon: { type: String, required: false },
-    evening: { type: String, required: false },
-    overnight: { type: String, required: false }
-  }
+  activities: [{ type: String, required: true }],
 });
 
 // Tour Package Schema

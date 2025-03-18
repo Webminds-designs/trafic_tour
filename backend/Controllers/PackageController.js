@@ -4,30 +4,31 @@ import cloudinary from "../config/CloudinaryConfig.js";
 // Controller to create a new Package
 export const createPackage = async (req, res) => {
   try {
-    const { name, description, duration, places_to_visit, itinerary, price, type } = req.body;
+    const { name, description, duration, places_to_visit, itinerary, price, type, status } = req.body;
     const { file } = req;
 
     console.log("Raw req.body:", req.body);
 
-    // Convert duration, places_to_visit, and itinerary from string to JSON
+    // Parse JSON fields
     const parsedDuration = JSON.parse(duration);
     const parsedPlacesToVisit = JSON.parse(places_to_visit);
     const parsedItinerary = JSON.parse(itinerary);
 
-    console.log("Parsed duration:", parsedDuration);
-    console.log("Parsed places_to_visit:", parsedPlacesToVisit);
-    console.log("Parsed itinerary:", parsedItinerary);
 
     // Validate required fields
     if (!name || !description || !parsedDuration || !parsedPlacesToVisit || !parsedItinerary || !price || !type) {
       return res.status(400).json({ message: "All fields are required." });
     }
+    const parsedDays = Number(parsedDuration.days); 
 
-    // Validate itinerary length
-    
+   // Validate itinerary length
+if (parsedDays !== parsedItinerary.length) {
+  return res.status(400).json({
+    message: `Number of days (${parsedDays}) must match the number of itineraries (${parsedItinerary.length}).`
+  });
+}
 
     let imageUrl = "";
-
     // Upload image to Cloudinary
     if (file) {
       const uploadedImage = await cloudinary.uploader.upload(file.path);
@@ -38,11 +39,12 @@ export const createPackage = async (req, res) => {
     const newPackage = new Package({
       name,
       description,
-      duration: parsedDuration, // Store as object
-      places_to_visit: parsedPlacesToVisit, // Store as array
-      itinerary: parsedItinerary, // Store as array
+      duration: parsedDuration,
+      places_to_visit: parsedPlacesToVisit,
+      itinerary: parsedItinerary,
       price,
       type,
+      status,
       imageUrl,
     });
 
@@ -52,13 +54,11 @@ export const createPackage = async (req, res) => {
       message: "Tour package created successfully",
       tourPackage: newPackage,
     });
-
   } catch (error) {
     console.error("Error in createPackage:", error);
     return res.status(500).json({ message: "Error creating package", error: error.message });
   }
 };
-
 
 // Controller to get all Packages
 export const getAllPackages = async (req, res) => {
@@ -88,25 +88,30 @@ export const getPackageById = async (req, res) => {
 // Controller to update a Package by ID
 export const updatePackage = async (req, res) => {
   try {
-    const { name, description, duration, places_to_visit, itinerary, price, type } = req.body;
+    const { name, description, duration, places_to_visit, itinerary, price, type, status } = req.body;
     const { file } = req;
 
-    // Validate itinerary length
-    if (duration && itinerary && duration.days !== itinerary.length) {
+    let parsedDuration, parsedPlacesToVisit, parsedItinerary;
+    if (duration) parsedDuration = JSON.parse(duration);
+    if (places_to_visit) parsedPlacesToVisit = JSON.parse(places_to_visit);
+    if (itinerary) parsedItinerary = JSON.parse(itinerary);
+
+    // Validate itinerary length if both are present
+    if (parsedDuration && parsedItinerary && parsedDuration.days !== parsedItinerary.length) {
       return res.status(400).json({
-        message: `Number of days (${duration.days}) must match the number of itineraries (${itinerary.length}).`
+        message: `Number of days (${parsedDuration.days}) must match the number of itineraries (${parsedItinerary.length}).`
       });
     }
 
     let imageUrl = null;
     if (file) {
       const uploadedImage = await cloudinary.uploader.upload(file.path);
-      imageUrl = uploadedImageS.secure_url;
+      imageUrl = uploadedImage.secure_url;
     }
 
     const updatedPackage = await Package.findByIdAndUpdate(
       req.params.id,
-      { name, description, duration, places_to_visit, itinerary, price, type, imageUrl },
+      { name, description, duration: parsedDuration, places_to_visit: parsedPlacesToVisit, itinerary: parsedItinerary, price, type, status, imageUrl },
       { new: true }
     );
 
