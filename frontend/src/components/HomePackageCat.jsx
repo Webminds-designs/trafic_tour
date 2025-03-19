@@ -3,7 +3,7 @@ import PackageCatCards from "./PackageCatCards";
 import img3 from "../assets/pack03.jpg";
 import img2 from "../assets/pack02.png";
 import img1 from "../assets/pack01.png";
-import dancer from "../assets/dancer.png"
+import dancer from "../assets/Dancer.png"
 
 const HomePackageCat = () => {
   return (
