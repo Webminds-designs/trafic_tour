@@ -1,4 +1,5 @@
 import { FaBed, FaUtensils, FaCamera, FaHeart, FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import foodIcon from "../assets/dish.png";
 import bedIcon from "../assets/bed.png";
@@ -10,6 +11,8 @@ import { Link } from "react-router-dom";
 export default function Popup({ onClose, data }) {
   const [activeTab, setActiveTab] = useState("INCLUDES");
   const [selectedActivity, setSelectedActivity] = useState("");
+  const navigate = useNavigate();
+
 
   const icons = [
     { src: foodIcon, alt: "Food" },
@@ -30,6 +33,11 @@ export default function Popup({ onClose, data }) {
     description: data.description,
     imageUrl: data.imageUrl,
   };
+
+  const handleBooking = () => {
+    navigate("/payment", { state: { title: data.title, description: data.description, imageUrl: data.imageUrl } });
+  };
+
 
   return (
     <div className="fixed inset-0 bg-opacity-90 backdrop-blur-lg z-50 flex items-center justify-center p-4 sm:p-6">
@@ -90,14 +98,14 @@ export default function Popup({ onClose, data }) {
 
         {/* Tabs Section */}
         <div className="mt-8 sm:mt-10 p-2 rounded-lg">
-          <div className="bg-[#009990] text-white flex w-full max-w-2xl overflow-x-auto">
+          <div className="bg-[#009990] text-white flex w-full max-w-2xl overflow-x-auto rounded-2xl">
             {["INCLUDES", "CUSTOMISE", "PRICES"].map((tab) => (
               <div
                 key={tab}
                 className={`flex-1 text-center py-2 text-sm sm:text-base cursor-pointer transition-all duration-300 
                                     ${
                                       activeTab === tab
-                                        ? "bg-white text-[#009990] border-b-3 border-[#009990]"
+                                        ? "bg-white text-[#009990]"
                                         : ""
                                     }`}
                 onClick={() => setActiveTab(tab)}
@@ -141,16 +149,11 @@ export default function Popup({ onClose, data }) {
                 <li>All transfers & tours on private or sharing basis</li>
 
                 <div className="text-center mt-8 sm:mt-10">
-                  <Link
-                    to={{
-                      pathname: "/payment",
-                      state: { datanew }, // passing data correctly
-                    }}
-                  >
-                    <button className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base">
+                 
+                    <button onClick={handleBooking}  className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base">
                       BOOK NOW
                     </button>
-                  </Link>
+                  
                 </div>
               </ul>
             )}
@@ -268,16 +271,11 @@ export default function Popup({ onClose, data }) {
                       </span>
                     </div>
 
-                    <Link
-                      to={{
-                        pathname: "/payment",
-                        state: { datanew }, // passing data correctly
-                      }}
-                    >
-                      <button className="w-full bg-[#009990] text-white font-base px-2 py-2 rounded-md mt-4">
+                    
+                      <button onClick={handleBooking}  className="w-full bg-[#009990] text-white font-base px-2 py-2 rounded-md mt-4">
                         BOOK NOW
                       </button>
-                    </Link>
+                  
                   </div>
                 </div>
               </div>

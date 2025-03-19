@@ -44,7 +44,7 @@ const PackageCard = ({ packageItem, onExplore }) => {
         <p className="text-base text-gray-600">{description}</p>
         <button
           onClick={handleExploreClick}
-          className="mt-4 px-5 py-3 bg-black text-white rounded-lg transition cursor-pointer"
+          className="mt-4 px-5 py-3 bg-black text-white rounded-xl transition cursor-pointer"
         >
           Explore Now
         </button>

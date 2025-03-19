@@ -7,7 +7,7 @@ import dancer from "../assets/dancer.png"
 
 const HomePackageCat = () => {
   return (
-    <div className="relative z-10 w-full h-min-screen flex flex-col justify-center items-center p-6 md:px-24">
+    <div className="relative font-CodeNext-regular z-10 w-full h-min-screen flex flex-col justify-center items-center p-6 md:px-24">
       <div className="relative">
       {/* Header Section */}
       <div className="w-full h-auto md:h-96  bg-white flex flex-col md:flex-row justify-between mb-8 pt-20">
