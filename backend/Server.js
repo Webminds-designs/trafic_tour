@@ -11,6 +11,7 @@ import favoritePackageRoutes from "./Routes/FavoritePackagesRoutes.js"
 import bookingRoutes from "./Routes/BookingRoutes.js"
 import paymentRoutes from "./Routes/PaymentRoutes.js"
 import payhereRoutes from "./Routes/PayhereRoutes.js"
+import inquiriesRoutes from "./Routes/InquiriesRoutes.js"
 
 dotenv.config(); // Load environment variables
 
@@ -41,6 +42,7 @@ app.use("/api/favorites", favoritePackageRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/payments",paymentRoutes);
 app.use("/api/payhere", payhereRoutes);
+app.use("/api/send-email", inquiriesRoutes);
 
 
 // Start the server

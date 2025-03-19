@@ -16,15 +16,14 @@ export default function Popup({ onClose, data }) {
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
 
-  if(!user){
-    navigate('./signin')
-  }
+ 
   const userId= user?.id
   const packageId = data?._id
-  console.log(data._id)
+  console.log(user)
   useEffect(() => {
     const checkFavoriteStatus = async () => {
       try {
+       
         const response = await axios.get(`http://localhost:6400/api/favorites/${user?.id}`);
         const favorite = response.data.find(fav => fav.packageId._id === packageId);
         setIsFavorite(!!favorite);
@@ -36,6 +35,9 @@ export default function Popup({ onClose, data }) {
   }, [user?.id, packageId]);
 
   const addFavorite = async () => {
+    if(!user){
+      navigate('/signin')
+    }
     try {
       await axios.post('http://localhost:6400/api/favorites/add', { userId, packageId });
       setIsFavorite(true);
@@ -45,6 +47,9 @@ export default function Popup({ onClose, data }) {
   };
 
   const removeFavorite = async () => {
+    if(!user){
+      navigate('/signin')
+    }
     try {
       await axios.delete('http://localhost:6400/api/favorites/remove', { data: { userId, packageId } });
       setIsFavorite(false);

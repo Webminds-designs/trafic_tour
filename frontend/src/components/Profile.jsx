@@ -1,3 +1,4 @@
+import { FaHeart } from "react-icons/fa";
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from "../context/authContext.jsx";
 import axios from 'axios';
@@ -40,7 +41,11 @@ const Profile = () => {
   const [isProfileEditing, setIsProfileEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
-  console.log(user);
+
+  const [favorites, setFavorites] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const userId = user.id
+  
   const openModal = (packageItem) => {
     setSelectedPackage(packageItem);
     setIsModalOpen(true);
@@ -58,7 +63,7 @@ const Profile = () => {
     passportId: "",
     phone: "",
     profileUrl: "",
-    password:"",
+    password: "",
   });
 
   const navigate = useNavigate();
@@ -68,13 +73,13 @@ const Profile = () => {
       navigate('/signin');  // Navigate to sign-in page
       return; // Stop execution if user is null
     }
-  
+
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:6400/api/user/${user.id}`);
         setUserDetails(response.data.user);
         setLoading(false);
-  
+
         // Set initial form data with fetched user details
         setFormData({
           firstName: response.data.user.firstName || "",
@@ -85,18 +90,18 @@ const Profile = () => {
           profileUrl: response.data.user.profileUrl || "",
           password: response.data.user.password || "",
         });
-  
+
       } catch (err) {
         setError('Error fetching user details');
         console.error("Error fetching user details:", err.message);
-        navigate('/signin'); 
+        navigate('/signin');
         setLoading(false);
       }
     };
-  
+
     fetchUserDetails();
   }, [user]);  // ✅ Corrected dependency array
-  
+
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -157,7 +162,7 @@ const Profile = () => {
       image: image8,
     }
   ];
-  
+
   //update profile
 
   const [isEditing, setIsEditing] = useState(true);
@@ -187,7 +192,7 @@ const Profile = () => {
       email: userDetails.email || "",
       passportId: userDetails.passportId || "",
       phone: userDetails.phone || "",
-    
+
     });
     setIsEditing(false);
   };
@@ -247,7 +252,7 @@ const Profile = () => {
       toast.error("New password and confirm password do not match.");
       return;
     }
-    const userId =user.id;
+    const userId = user.id;
     try {
       setLoading(true);
       const response = await axios.post("http://localhost:6400/api/user/newpassword", {
@@ -265,53 +270,84 @@ const Profile = () => {
     }
   };
 
-    //Update password 
-    const handleUpdatePassword = async (e) => {
-      e.preventDefault();
-    
-      const userId = user.id; // Ensure user.id is available
-      if (newPassword !== confirmPassword) {
-        toast.error("New password and confirm password do not match.");
-        return;
-      }
-    
-      // If old password is required but not provided
-      if (userDetails?.password && !oldPassword) {
-        toast.error("Please enter the old password.");
-        return;
-      }
-    
+  //Update password 
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+
+    const userId = user.id; // Ensure user.id is available
+    if (newPassword !== confirmPassword) {
+      toast.error("New password and confirm password do not match.");
+      return;
+    }
+
+    // If old password is required but not provided
+    if (userDetails?.password && !oldPassword) {
+      toast.error("Please enter the old password.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Call the backend API to update the password
+      const response = await axios.post("http://localhost:6400/api/user/updatepassword", {
+        userId,
+        oldPassword, // Send old password to backend for verification
+        newPassword, // Send new password
+      });
+
+      toast.error(response.data.message);
+
+      // Clear the password fields
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // get Favorites Packages
+  useEffect(() => {
+    const fetchFavorites = async () => {
       try {
-        setLoading(true);
-    
-        // Call the backend API to update the password
-        const response = await axios.post("http://localhost:6400/api/user/updatepassword", {
-          userId,
-          oldPassword, // Send old password to backend for verification
-          newPassword, // Send new password
-        });
-    
-        toast.error(response.data.message);
-    
-        // Clear the password fields
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      } catch (error) {
-        toast.error(error.response?.data?.message || "Something went wrong.");
+        const response = await fetch(`http://localhost:6400/api/favorites/${userId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch favorites");
+        }
+        const data = await response.json();
+        setFavorites(data);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-    
-  
+
+    if (userId) {
+      fetchFavorites();
+    }
+  }, [userId]);
+
+  //remove faviorites
+  const removeFavorite = async (packageId) => {
+    try {
+      await axios.delete("http://localhost:6400/api/favorites/remove", { data: { userId, packageId } });
+      setFavorites((prevFavorites) => prevFavorites.filter((fav) => fav.packageId._id !== packageId));
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
+    }
+  };
+
   return (
     < >
-        <Navbar />
+      <Navbar />
       <div className=' bg-[#F1F1F1] lg:px-10 pt-22'>
         <main className="container md:mx-auto md:px-4 py-8 ">
-        <h1 className="lg:text-5xl md:text-4xl text-2xl font-medium lg:mx-0 md:mx-22 mx-10">Your Adventure <span className='border-b-1'>Awaits</span></h1>
-<p className="mt-6 md:mx-0 mx-10 md:text-start text-center">Tailor your experience and make every moment unforgettable.</p>
+          <h1 className="lg:text-5xl md:text-4xl text-2xl font-medium lg:mx-0 md:mx-22 mx-10">Your Adventure <span className='border-b-1'>Awaits</span></h1>
+          <p className="mt-6 md:mx-0 mx-10 md:text-start text-center">Tailor your experience and make every moment unforgettable.</p>
 
           <div className="flex flex-col md:flex-row items-center mx-4 md:mx-0 my-12">
             <div
@@ -378,7 +414,7 @@ const Profile = () => {
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
                   className={`md:py-2 lg:px-27 md:px-10 lg:text-base text-[10px] px-6 ${selectedTab === tab
-                    ? 'text-black bg-gray-100 font-bold text-sm '
+                    ? 'text-black bg-[#F1F1F1] font-bold text-sm '
                     : ''
                     }`}
                 >
@@ -493,30 +529,30 @@ const Profile = () => {
 
               {/* Password Section */}
               <h2 className="text-2xl font-medium mt-6 pb-5 md:m-0 m-5  ">Password</h2>
-              <form className='md:m-0 m-5'  onSubmit={userDetails?.password !== "" ? handleUpdatePassword : handleNewPassword}>
+              <form className='md:m-0 m-5' onSubmit={userDetails?.password !== "" ? handleUpdatePassword : handleNewPassword}>
                 {/* Old Password */}
                 {userDetails?.password !== "" && (
-                <div className="mb-4 flex flex-col md:flex-row relative">
-                  <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="oldPassword">
-                    Old Password
-                  </label>
-                  <input
-                    className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
-                    id="oldPassword"
-                    type={passwordVisible ? "text" : "password"}
-                    placeholder="Enter old password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    required
-                  />
-                  <img
-                    src={passwordVisible ? eye : hidden}
-                    onClick={togglePasswordVisibility}
-                    alt="hidden"
-                    width={20}
-                    className="absolute right-5 md:mt-3 mt-12 opacity-50"
-                  />
-                </div>)}
+                  <div className="mb-4 flex flex-col md:flex-row relative">
+                    <label className="text-gray-700 text-lg font-medium mb-2 md:w-3/12 " htmlFor="oldPassword">
+                      Old Password
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded-3xl py-2 px-3 w-full md:w-9/12 text-gray-400 focus:outline-none focus:ring-2"
+                      id="oldPassword"
+                      type={passwordVisible ? "text" : "password"}
+                      placeholder="Enter old password"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      required
+                    />
+                    <img
+                      src={passwordVisible ? eye : hidden}
+                      onClick={togglePasswordVisibility}
+                      alt="hidden"
+                      width={20}
+                      className="absolute right-5 md:mt-3 mt-12 opacity-50"
+                    />
+                  </div>)}
 
                 {/* New Password */}
                 <div className="mb-4 flex flex-col md:flex-row relative">
@@ -566,23 +602,23 @@ const Profile = () => {
 
                 {/* Buttons */}
                 <div className="flex items-center justify-end">
-          <button
-            className="bg-white text-gray-700 border border-gray-400 mr-2 font-medium py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
-            type="button"
-          >
-            Cancel
-          </button>
-          <button
-            className="bg-black text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline disabled:bg-gray-600 disabled:cursor-not-allowed"
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? "Updating..." : "Change Password"}
-          </button>
-        </div>
+                  <button
+                    className="bg-white text-gray-700 border border-gray-400 mr-2 font-medium py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline"
+                    type="button"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-black text-white font-bold py-2 px-4 rounded-3xl focus:outline-none focus:shadow-outline disabled:bg-gray-600 disabled:cursor-not-allowed"
+                    type="submit"
+                    disabled={loading}
+                  >
+                    {loading ? "Updating..." : "Change Password"}
+                  </button>
+                </div>
               </form>
-
             </div>
+
           )}
           {/* BOOKING HISTORY */}
           {selectedTab === 'Booking History' && (
@@ -613,19 +649,19 @@ const Profile = () => {
           {selectedTab === 'My Favourites' && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 m-6">
-                {tourPackages.slice(4, 6).map((packageItem, index) => (
+                {favorites.map((packageItem, index) => (
                   <div key={index} className="relative  overflow-hidden m-4">
                     <img
-                      src={packageItem.image}
-                      alt={packageItem.title}
+                      src={packageItem.packageId.imageUrl}
+                      alt={packageItem.packageId.name}
                       className="w-full h-92 object-cover rounded-xl"
                     />
-                    <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                      <img src={heart} alt='heart' width={20} />
+                    <button onClick={() => removeFavorite(packageItem.packageId._id)} className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
+                      <FaHeart  className="text-red-500" alt='heart' width={20} />
                     </button>
                     <div className="p-4">
-                      <h3 className="font-bold text-lg">{packageItem.title}</h3>
-                      <p className="text-black font-semibold text-md mt-2">{packageItem.highlights}</p>
+                      <h3 className="font-bold text-lg">{packageItem.packageId.name}</h3>
+                      <p className="text-black font-semibold text-md mt-2">{packageItem.packageId.description}</p>
                       <button className="mt-4 bg-black text-white px-4 py-2 rounded-md">
                         EXPLORE NOW
                       </button>
@@ -652,25 +688,25 @@ const Profile = () => {
                       <h3 className="font-bold text-lg">{packageItem.title}</h3>
                       <p className="text-black font-semibold text-md mt-2">{packageItem.highlights}</p>
                       <button
-                onClick={() => openModal(packageItem)}
-                className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
-              >
-                VIEW
-              </button>
+                        onClick={() => openModal(packageItem)}
+                        className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
+                      >
+                        VIEW
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
-              
-                  {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex  justify-center items-center">
-          <div className=" rounded-lg shadow-lg max-w-md w-full p-6">
-           
-            <Bookings  packageItem={selectedPackage} closeModal={closeModal} />
-          </div>
-        </div>
-      )}</>
+
+              {/* Modal */}
+              {isModalOpen && (
+                <div className="fixed inset-0 flex  justify-center items-center">
+                  <div className=" rounded-lg shadow-lg max-w-md w-full p-6">
+
+                    <Bookings packageItem={selectedPackage} closeModal={closeModal} />
+                  </div>
+                </div>
+              )}</>
 
           )}
         </main>
