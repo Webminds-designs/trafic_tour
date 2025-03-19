@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
-
+/*
 const AccommodationSchema = new Schema({
   accommodationType: {
     type: String,
@@ -34,17 +34,33 @@ const CustomServicesSchema = new Schema({
   note: { type: String },
 });
 
-const PackageSchema = new Schema({
+*/
+
+
+// Itinerary Subschema
+const ItinerarySchema = new Schema({
+  day: { type: Number, required: true },
   title: { type: String, required: true },
-  subtitle: { type: String, required: true },
-  category: { type: String, required: true },
-  durationNight: { type: Number, required: true },
-  durationDay: { type: Number, required: true },
-  price: { type: Number, required: true },
+  activities: [{ type: String, required: true }],
+});
+
+// Tour Package Schema
+const PackageSchema = new Schema({
+  name: { type: String, required: true },
   description: { type: String, required: true },
-  includes: [String],
-  images: [String],
-  customServices: CustomServicesSchema,
+  imageUrl: { type: String, required: false },  
+  duration: {
+    days: { type: Number, required: true },
+    nights: { type: Number, required: true }
+  },
+  price: { type: Number, required: true }, 
+  type: { 
+    type: String, 
+    required: true, 
+    enum: ["Romantic and Relaxation", "Adventure and Wildlife", "Educational and Cultural", "Other"] 
+  },
+  places_to_visit: [{ type: String }], 
+  itinerary: [ItinerarySchema]  // Using the itinerary subschema
 });
 
 export default model("Package", PackageSchema);

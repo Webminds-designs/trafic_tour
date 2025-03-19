@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 import elephant from "../assets/elephant.png";
 import girl from "../assets/girl.png";
 import devil from "../assets/devil.png";
-import backgroundImage from "../assets/dancers.png";
+import backgroundImage from "../assets/dencersGroup.svg";
 import JourneyImage from "../assets/journey.png";
 import voice1 from "../assets/voice1.png";
 import voice2 from "../assets/voice2.png";
@@ -14,30 +14,32 @@ import bring1 from "../assets/bring1.png";
 import bring2 from "../assets/bring2.png";
 import bring3 from "../assets/bring3.png";
 import bring4 from "../assets/bring4.png";
+import Footer from "../components/Footer";
 
 const AboutUs = () => {
     const content = [
         {
             img: bring1,
-            title: "WANDER WITHOUT LIMITS",
-            text: "Let the winding roads of Sri Lanka lead you to hidden gems, from mist-kissed mountains to golden shores, as we craft journeys that speak to your soul.",
+            title: "Explore Without Limits",
+            text: "Let the roads of Sri Lanka lead you to hidden treasures, from misty mountains to golden beaches, as we create journeys that touch your heart.",
         },
         {
             img: bring2,
-            title: "GUIDED BY STORIES, NOT JUST MAPS",
-            text: "Travel with expert guides who unveil the heart of Sri Lanka—where every temple whispers legends, and every forest hums with life.",
+            title: "Guided by Stories,Not Just Maps",
+            text: "Travel with experienced guides who reveal the soul of Sri Lanka—where every temple tells a story, and every forest is alive with nature.",
         },
         {
             img: bring3,
-            title: "FEAST ON FLAVORS, SAVOR THE CULTURE",
-            text: "From fragrant rice & curry to the finest Ceylon tea, every bite tells a story. Join us for spice-laden adventures and market strolls where the aromas of tradition linger.",
+            title: "Taste the Flavors, Feel the Culture",
+            text: "From rice and curry to Ceylon tea, every bite tells a tale. Join us for spice-filled adventures and strolls through markets filled with tradition.",
         },
         {
             img: bring4,
-            title: "WHERE ADVENTURE ROAMS WILD & FREE",
-            text: "Witness the untamed beauty of Yala’s leopards, chase waterfalls in the heart of Ella, and dive into azure waters teeming with vibrant marine life.",
+            title: "Where Adventure Runs Free",
+            text: "See the wild beauty of Yala’s leopards, chase waterfalls in Ella, and dive into clear waters full of marine life.",
         },
     ];
+    
 
     // Animation variants for text
     const textVariants = {
@@ -53,15 +55,16 @@ const AboutUs = () => {
     return (
         <>
             <Navbar />
-            <div className="bg-[#C8C7C6] text-black font-sans" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+            <div className="bg-gray-100 text-black font-sans">
                 {/* Header Section */}
                 <header className="text-center py-10 md:py-20">
                     <div
-                        className="inline-block px-4 py-3 md:px-8 md:py-6 relative bg-cover bg-center"
+                        className="inline-block px-4 py-3 md:px-8 md:py-6 relative bg-cover bg-center h-full"
                         style={{
                             backgroundImage: `url(${backgroundImage})`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
+                            width:"700px"
                         }}
                     >
                         <motion.h1
@@ -71,7 +74,7 @@ const AboutUs = () => {
                             variants={textVariants}
                             transition={{ duration: 0.8 }}
                         >
-                            REFRESHINGLY SRI LANKA
+                           Refreshingly Sri Lanka
                         </motion.h1>
                         <motion.p
                             className="text-sm md:text-lg mt-2 md:mt-3 font-base relative z-10"
@@ -80,7 +83,7 @@ const AboutUs = () => {
                             variants={textVariants}
                             transition={{ duration: 0.8, delay: 0.3 }}
                         >
-                            WHERE EVERY JOURNEY FEELS LIKE A NEW DISCOVERY, BLENDING NATURE, CULTURE AND ADVENTURE IN THE HEART OF THE ISLAND
+                            Where every journey feels like a new discovery, blending nature, culture, and adventure in the heart of the island.
                         </motion.p>
                     </div>
 
@@ -103,14 +106,14 @@ const AboutUs = () => {
                     >
                         <span className="relative inline-block">
                             A
-                            <span className="absolute -top-1 left-1/2 -translate-x-1/2 text-5xl md:text-6xl lg:text-7xl">˜</span>
+                            <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-5xl md:text-6xl lg:text-7xl">˜</span>
                         </span>
-                        YUB
+                      yob
                         <span className="relative inline-block">
-                            O
+                            o
                             <span className="absolute -top-1 left-1/2 -translate-x-1/2 text-5xl md:text-6xl lg:text-7xl">˜</span>
                         </span>
-                        WAN
+                        wan
                     </motion.p>
                 </header>
 
@@ -159,7 +162,7 @@ const AboutUs = () => {
                         variants={textVariants}
                         transition={{ duration: 0.8 }}
                     >
-                        WHAT WE BRING TO YOU
+                        What We <span className="border-b-2">Bring</span> to You
                     </motion.h2>
                     <div className="flex flex-col items-center p-4 md:p-8">
                         {content.map((item, index) => (
@@ -175,7 +178,7 @@ const AboutUs = () => {
                                 <motion.img
                                     src={item.img}
                                     alt={item.title}
-                                    className="w-full md:w-1/3 h-40 object-cover rounded-lg"
+                                    className="w-full md:w-50 h-50 object-cover rounded-lg"
                                     whileHover="hover"
                                     variants={hoverVariants}
                                 />
@@ -199,10 +202,10 @@ const AboutUs = () => {
                             variants={textVariants}
                             transition={{ duration: 0.8 }}
                         >
-                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-base mb-2">
-                                WHERE EVERY <br />
-                                JOURNEY TELLS A <br />
-                                STORY
+                            <h2 className="text-4xl md:text-5xl lg:text-5xl font-base mb-2">
+                                Whare Every <br />
+                                Journey Tells a <br />
+                                Story
                             </h2>
                             <p className="mt-4 text-black text-left leading-relaxed max-w-xl">
                                 Beyond the map, beyond the miles—travel is a feeling, a rhythm, a story waiting to unfold. From misty highlands to golden shores, we don’t just take you places—we awaken your sense of wonder. Whether you’re a soul that roams or a dreamer taking your first step, let’s journey together, discovering the magic of the Pearl of the Indian Ocean.
@@ -238,14 +241,14 @@ const AboutUs = () => {
                             variants={textVariants}
                             transition={{ duration: 0.8 }}
                         >
-                            VOICES BEHIND OUR STORIES
+                            The voices behind our stories
                         </motion.h2>
                     </div>
                     <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-8 max-w-5xl mx-auto text-center">
                         {[
-                            { name: "SHELI RASHMIKA", img: voice1 },
-                            { name: "HANSAJA RATHNAYAKE", img: voice2 },
-                            { name: "SHIVANI PALIWAL", img: voice3 },
+                            { name: "Sheli Rashmika", img: voice1 },
+                            { name: "Hassaja Rathnayake", img: voice2 },
+                            { name: "Shivani Paliwal", img: voice3 },
                         ].map((person, index) => (
                             <motion.div
                                 key={index}
@@ -274,6 +277,7 @@ const AboutUs = () => {
                         ))}
                     </div>
                 </section>
+                <Footer />
             </div>
         </>
     );

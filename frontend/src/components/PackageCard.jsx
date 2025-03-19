@@ -3,8 +3,9 @@ import Popup from "./Popup";
 
 const PackageCard = ({ packageItem, onExplore }) => {
   // Destructure package details from props
-  const { imageUrl, title, description } = packageItem;
+  const { imageUrl, name, description } = packageItem;
 
+  
   // State to control popup visibility
   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
@@ -19,32 +20,23 @@ const PackageCard = ({ packageItem, onExplore }) => {
     setIsPopupVisible(false); // Hide the popup
   };
 
-  // Data for the popup (dynamic based on the package)
-  const popupData = {
-    title: title, // Use the title from props
-    description: [
-      description, // Use the description from props
-      "Additional details about the package can go here.", // Add more details if needed
-    ],
-    imageUrl: imageUrl, // Use the imageUrl from props
-  };
 
   return (
     <div className="bg-white rounded-lg overflow-hidden transition-shadow duration-300">
       {/* Image with taller rectangular shape */}
       <img
         src={imageUrl}
-        alt={title}
+        alt={name}
         className="w-full h-120 object-cover rounded-lg"
       />
 
       {/* Card Content */}
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-2">{title}</h3>
+        <h3 className="text-xl font-bold mb-2">{name}</h3>
         <p className="text-base text-gray-600">{description}</p>
         <button
           onClick={handleExploreClick}
-          className="mt-4 px-5 py-3 bg-black text-white rounded-lg transition cursor-pointer"
+          className="mt-4 px-5 py-3 bg-black text-white rounded-xl transition cursor-pointer"
         >
           Explore Now
         </button>
@@ -52,18 +44,18 @@ const PackageCard = ({ packageItem, onExplore }) => {
 
       {/* Conditionally render the Popup */}
       {isPopupVisible && (
-        <Popup onClose={closePopup} data={popupData}>
+        <Popup onClose={closePopup} data={packageItem}>
           {/* Popup content */}
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{popupData.title}</h2>
-            {popupData.description.map((paragraph, index) => (
-              <p key={index} className="text-base text-gray-600">
-                {paragraph}
+            <h2 className="text-2xl font-bold">{packageItem.name}</h2>
+          
+              <p className="text-base text-gray-600">
+                {packageItem.description}
               </p>
-            ))}
+          
             <img
-              src={popupData.imageUrl}
-              alt={popupData.title}
+              src={packageItem.imageUrl}
+              alt={packageItem.name}
               className="w-full h-48 object-cover rounded-lg"
             />
           </div>

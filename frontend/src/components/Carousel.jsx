@@ -1,32 +1,35 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import Adamspeak from '../assets/Carousel/Adamspeak.jpg'
+import Mirissa from '../assets/Carousel/Mirissa.png'
+import Ruwanweli from '../assets/Carousel/Ruwanweli.jpg'
+import Temple from '../assets/Carousel/Temple.png'
+
 const slides = [
   {
-    title: "SIGIRIYA",
+    title: "Adam's Peak",
     description:
-      "Sigiriya, also known as the Lion's Rock, is an ancient rock fortress located in the central part of Sri Lanka. It is one of the country's most iconic landmarks and a UNESCO World Heritage site. The fortress rises nearly 200 meters above the surrounding plain and is renowned for its stunning views, rich history, and impressive architecture.",
-    background:
-      "https://media.istockphoto.com/id/2171272665/photo/aerial-view-of-sigiriya-lions-rock-sigiriya-or-sinhagiri-lion-rock-ancient-rock-fortress-near.jpg?s=2048x2048&w=is&k=20&c=JVyxYrOAEYQWEPhmADCiDC5P7JsWZQsgxewYohVeAYw=",
+      "Adam's Peak (Sri Pada) is a sacred mountain in Sri Lanka, standing at 2,243 meters (7,359 feet) above sea level. It is a popular pilgrimage site known for the Sri Pada (Sacred Footprint) at its summit, which different religious traditions attribute to Lord Buddha, Lord Shiva, Adam, or Saint Thomas.",
+    background: Adamspeak,
   },
   {
-    title: "COLOMBO",
-    description: "Colombo is the commercial capital and largest city of Sri Lanka, located on the western coast of the island. It is a bustling metropolis that blends modernity with colonial charm, featuring a mix of skyscrapers, historic buildings, and scenic coastal views. The city is known for its vibrant markets, cultural landmarks, and diverse cuisine.",
-    background:
-      "https://storage.googleapis.com/a1aa/image/NCQczxwXKpsFcZBwznKOWsFinhkzcJlicnQ3Mg-tyR0.jpg",
-  },
-  {
-    title: "GALLE",
+    title: "Temple of the Tooth",
     description:
-      "Galle is a historic coastal city in southern Sri Lanka, known for its well-preserved colonial architecture, stunning beaches, and vibrant culture. It is most famous for the Galle Fort, a UNESCO World Heritage Site built by the Portuguese in the 16th century and later expanded by the Dutch. The fort features and beautiful ocean views.",
-    background:
-      "https://images.unsplash.com/photo-1589373797397-d19670f47549?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "The Temple of the Tooth Relic, located in Kandy, Sri Lanka, is one of the most sacred Buddhist sites in the world. It houses a relic believed to be the tooth of the Buddha, attracting pilgrims and visitors from all over the globe.",
+    background: Temple,
   },
   {
-    title: "ADAM'S PEAK",
-    description: "Adam's Peak (Sri Pada) is a sacred mountain in Sri Lanka, standing at 2,243 meters (7,359 feet) above sea level. It is a popular pilgrimage site known for the Sri Pada (Sacred Footprint) at its summit, which different religious traditions attribute to Lord Buddha, Lord Shiva, Adam, or Saint Thomas.",
-    background:
-      "https://storage.googleapis.com/a1aa/image/ifrnCqVsmXwBBmo_RHK5LCyInZf1LkJwuyaFjPgOzM4.jpg",
+    title: "Mirissa Beach",
+    description:
+      "Mirissa, a stunning coastal town in southern Sri Lanka, is famous for its golden beaches, turquoise waters, and vibrant marine life. It is one of the best places for whale watching and offers a perfect getaway for surfers and beach lovers.",
+    background: Mirissa,
+  },
+  {
+    title: "Ruwanwelisaya Stupa",
+    description:
+      "The Ruwanwelisaya Stupa, located in Anuradhapura, Sri Lanka, is one of the most significant Buddhist stupas in the world. Built by King Dutugemunu in 140 B.C., it stands as a symbol of Sri Lanka's rich cultural and religious heritage.",
+    background: Ruwanweli,
   },
 ];
 
@@ -40,6 +43,8 @@ export default function Carousel() {
   const prevSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
   }, []);
+  const nextIndex = (currentIndex - 1) % slides.length;
+
 
   // Auto-play
   useEffect(() => {
@@ -48,21 +53,29 @@ export default function Carousel() {
   }, [nextSlide]);
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden">
+    <div className="relative font-CodeNext-regular w-full min-h-screen overflow-hidden">
+      
+      
       {/* Background Image Transition */}
       <AnimatePresence mode="wait">
-        <motion.div
-          key={slides[currentIndex].title}
-          className="absolute inset-0 w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${slides[currentIndex].background})` }}
-          initial={{ opacity: 0.7 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0.7 }}
-          transition={{ duration: 0.1 }}
-        >
-          <div className="absolute inset-0 bg-black/20"></div>
-        </motion.div>
-      </AnimatePresence>
+    <motion.div
+      key={slides[currentIndex].title}
+      className="absolute inset-0 w-full h-full bg-cover bg-center"
+      style={{ backgroundImage: `url(${slides[currentIndex].background})` }}
+      initial={{ opacity: 0.7 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0.7 }}
+      transition={{ duration: 0.1 }}
+    >
+      {/* Dark Overlay to Enhance Text Readability */}
+      <div className="absolute inset-0 bg-black/40"></div>
+    </motion.div>
+  </AnimatePresence>
+
+{/* topic */}
+<div className="absolute top-1/12 left-1/2 transform -translate-x-1/2 z-50 text-black text-3xl md:text-6xl font-medium drop-shadow-lg text-center hidden md:block">
+  Essence of Ceylon
+</div>
 
       {/* Slide Content */}
       {slides.map((slide, index) => (
@@ -94,7 +107,7 @@ export default function Carousel() {
                 </div>
                 <div className="   flex inset-0  justify-self-start items-center  md:mt-16">
         <button className="bg-white text-black md:mt-0 mt-4 py-3 px-6 rounded-md md:text-xl text-sm shadow-lg transform transition-all duration-300 hover:scale-110 hover:shadow-2xl focus:outline-none">
-          SEE MORE SITES
+          See More Sites
         </button>
       </div>
               </div>
