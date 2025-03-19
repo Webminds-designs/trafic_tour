@@ -4,7 +4,11 @@ import upload from '../config/MulterConfig.js';
 const router = express.Router();
 
 
-router.post('/', upload.single('image'), createPackage);
+router.post('/', upload.single('image'), (req, res, next) => {
+    console.log("Uploaded file:", req.file);
+    next();
+}, createPackage);
+
 router.get('/', getAllPackages);
 router.get('/:id', getPackageById);
 router.put('/:id', upload.single('image'), updatePackage);

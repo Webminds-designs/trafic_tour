@@ -10,7 +10,10 @@ import upload from '../config/MulterConfig.js';
 
 const router = express.Router();
 
-router.post("/",upload.single('images'), createPayment);
+router.post("/",upload.single('paymentProof'), (req, res, next) => {
+  console.log("Uploaded file:", req.file);
+  next();
+}, createPayment);
 router.get("/", getAllPayments);
 router.get("/:id", getPaymentById);
 router.put("/:id", updatePaymentStatus);

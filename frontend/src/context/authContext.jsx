@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (err) {
         console.error('Error fetching user:', err.message);
-        setError('Failed to fetch user. Please try again.');
       } finally {
         setLoading(false);
       }
