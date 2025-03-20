@@ -1,20 +1,17 @@
-import express from "express";
-import {
-  createPackage,
-  getAllPackages,
-  getPackageById,
-  updatePackage,
-  deletePackage,
-  testPackage,
-} from "../Controllers/PackageController.js";
-
+import express from 'express';
+import { createPackage, getAllPackages, getPackageById, updatePackage, deletePackage } from '../Controllers/PackageController.js';
+import upload from '../config/MulterConfig.js';
 const router = express.Router();
 
-router.get("/test", testPackage);
-router.post("/", createPackage);
-router.get("/", getAllPackages);
-router.get("/:id", getPackageById);
-router.put("/:id", updatePackage);
-router.delete("/:id", deletePackage);
+
+router.post('/', upload.single('image'), (req, res, next) => {
+    console.log("Uploaded file:", req.file);
+    next();
+}, createPackage);
+
+router.get('/', getAllPackages);
+router.get('/:id', getPackageById);
+router.put('/:id', upload.single('image'), updatePackage);
+router.delete('/:id', deletePackage);
 
 export default router;

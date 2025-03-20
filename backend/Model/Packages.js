@@ -1,21 +1,46 @@
-// Activity Subschema
-// const ActivitySchema = new Schema({
-//   activity_name: { type: String, required: true }, // morning , overday
-//   activity: { type: String, required: true },
-// });
+import mongoose from "mongoose";
+
+const { Schema, model } = mongoose;
+/*
+const AccommodationSchema = new Schema({
+  accommodationType: {
+    type: String,
+    required: true,
+    enum: ["LUXURY", "PREMIUM", "DELUXE", "STANDARD", "DEFAULT"],
+    default: "DEFAULT",
+  },
+  price: { type: Number, required: true },
+});
+
+const MealsSchema = new Schema({
+  mealsType: {
+    type: String,
+    required: true,
+    enum: ["Non-Veg", "Vegan", "Veg", "Veg & Non-Veg", "DEFAULT"],
+    default: "DEFAULT",
+  },
+  price: { type: Number, required: true },
+});
+
+const ActivitiesSchema = new Schema({
+  activityName: { type: String, required: true },
+  price: { type: Number, required: true },
+});
+
+const CustomServicesSchema = new Schema({
+  accommodation: AccommodationSchema,
+  meals: MealsSchema,
+  activities: [ActivitiesSchema],
+  note: { type: String },
+});
+
+*/
 
 // Itinerary Subschema
-// const ItinerarySchema = new Schema({
-//   day: { type: Number, required: true },
-//   title: { type: String, required: true },
-//   places: [{ type: String, required: true }],
-//   activities: [ActivitySchema],
-// });
-
-const IncludesSchema = new Schema({
+const ItinerarySchema = new Schema({
   day: { type: Number, required: true },
   title: { type: String, required: true },
-  activites: [{ type: String, required: true }],
+  activities: [{ type: String, required: true }],
 });
 
 // Tour Package Schema
@@ -39,12 +64,7 @@ const PackageSchema = new Schema({
     ],
   },
   places_to_visit: [{ type: String }],
-  // itinerary: [ItinerarySchema], // Using the itinerary subschema
-  includes: [IncludesSchema],
+  itinerary: [ItinerarySchema], // Using the itinerary subschema
 });
 
-// Create Models
-const Activity = model("Activity", ActivitySchema);
-const Package = model("Package", PackageSchema);
-
-export { Activity, Package };
+export default model("Package", PackageSchema);

@@ -1,12 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import multer from "multer";
 import bodyParser from "body-parser";
 import cookieParser from 'cookie-parser';
 import connectDB from "./config/dbConfig.js";
 import userRoutes from "./Routes/UserRoutes.js"
 import packageRoutes from "./Routes/PackageRoutes.js";
-
+import favoritePackageRoutes from "./Routes/FavoritePackagesRoutes.js"
+import bookingRoutes from "./Routes/BookingRoutes.js"
+import paymentRoutes from "./Routes/PaymentRoutes.js"
+import payhereRoutes from "./Routes/PayhereRoutes.js"
+import inquiriesRoutes from "./Routes/InquiriesRoutes.js"
 
 dotenv.config(); // Load environment variables
 
@@ -17,27 +22,28 @@ connectDB(); // Connect to the database
 
 const app = express();
 
-app.use(cors({
-  origin: 'http://localhost:5173', // Allow only the frontend origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow only these methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow headers that you need
-}));
-
 
 // Middleware
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-const corsOptions = {
-  origin: 'http://localhost:5173',  
-  credentials: true,                
-};
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: "*",  // Allow all origins
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization"
+}));
+
 
 
 app.use('/api/user', userRoutes);
 app.use("/api/packages", packageRoutes);
+app.use("/api/favorites", favoritePackageRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/payments",paymentRoutes);
+app.use("/api/payhere", payhereRoutes);
+app.use("/api/send-email", inquiriesRoutes);
+
 
 // Start the server
 app.listen(PORT, () => {

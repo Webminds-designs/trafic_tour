@@ -1,135 +1,140 @@
 import Package from "../Model/Packages.js";
 import cloudinary from "../config/CloudinaryConfig.js";
 
-// Test route
-export const testPackage = async (req, res) => {
-  try {
-    res.status(200).json({ message: "Package controller works" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-// Helper function to upload images to Cloudinary
-const uploadImages = async (files) => {
-  const imageUrls = [];
-  for (const file of files) {
-    const result = await cloudinary.uploader.upload(file.path);
-    imageUrls.push(result.secure_url);
-  }
-  return imageUrls;
-};
-
-// Create a package
+// Controller to create a new Package
 export const createPackage = async (req, res) => {
   try {
-    const {
-      title,
-      subtitle,
-      category,
-      durationNight,
-      durationDay,
-      images,
-      description,
-      price,
-      includes,
-      accommodation,
-      meals,
-      activities,
-      note,
-    } = req.body;
+    const { name, description, duration, places_to_visit, itinerary, price, type, status } = req.body;
+    const { file } = req;
 
-    if (!title || !subtitle || !category || !durationNight || !durationDay || !description || !price || !includes) {
-      return res.status(400).json({ message: "All required fields must be filled." });
+    console.log("Raw req.body:", req.body);
+
+    // Parse JSON fields
+    const parsedDuration = JSON.parse(duration);
+    const parsedPlacesToVisit = JSON.parse(places_to_visit);
+    const parsedItinerary = JSON.parse(itinerary);
+
+
+    // Validate required fields
+    if (!name || !description || !parsedDuration || !parsedPlacesToVisit || !parsedItinerary || !price || !type) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+    const parsedDays = Number(parsedDuration.days); 
+
+   // Validate itinerary length
+if (parsedDays !== parsedItinerary.length) {
+  return res.status(400).json({
+    message: `Number of days (${parsedDays}) must match the number of itineraries (${parsedItinerary.length}).`
+  });
+}
+
+    let imageUrl = "";
+    // Upload image to Cloudinary
+    if (file) {
+      const uploadedImage = await cloudinary.uploader.upload(file.path);
+      imageUrl = uploadedImage.secure_url;
     }
 
-    const imageUrls = req.files?.length ? await uploadImages(req.files) : images;
-
-    const customServices = { accommodation, meals, activities: activities || [], note };
-
+    // Save the package
     const newPackage = new Package({
-      title,
-      subtitle,
-      category,
-      durationNight,
-      durationDay,
-      images: imageUrls,
+      name,
       description,
+      duration: parsedDuration,
+      places_to_visit: parsedPlacesToVisit,
+      itinerary: parsedItinerary,
       price,
-      includes,
-      customServices,
+      type,
+      status,
+      imageUrl,
     });
 
     await newPackage.save();
-    res.status(201).json({ message: "Package created successfully", package: newPackage });
+
+    return res.status(201).json({
+      message: "Tour package created successfully",
+      tourPackage: newPackage,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Error in createPackage:", error);
+    return res.status(500).json({ message: "Error creating package", error: error.message });
   }
 };
 
-// Get all packages
+// Controller to get all Packages
 export const getAllPackages = async (req, res) => {
   try {
     const packages = await Package.find();
-    res.status(200).json(packages);
+    return res.status(200).json({ message: "Packages retrieved successfully", packages });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error(error);
+    return res.status(500).json({ message: "Error retrieving packages", error: error.message });
   }
 };
 
-// Get package by ID
+// Controller to get a single Package by ID
 export const getPackageById = async (req, res) => {
   try {
-    const packageData = await Package.findById(req.params.id);
-    if (!packageData) return res.status(404).json({ message: "Package not found" });
-    res.status(200).json(packageData);
+    const tourPackage = await Package.findById(req.params.id);
+    if (!tourPackage) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+    return res.status(200).json({ message: "Package retrieved successfully", tourPackage });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error(error);
+    return res.status(500).json({ message: "Error retrieving package", error: error.message });
   }
 };
 
-// Update package
+// Controller to update a Package by ID
 export const updatePackage = async (req, res) => {
   try {
-    const {
-      title,
-      subtitle,
-      category,
-      durationNight,
-      durationDay,
-      images,
-      description,
-      price,
-      includes,
-      accommodation,
-      meals,
-      activities,
-      note,
-    } = req.body;
+    const { name, description, duration, places_to_visit, itinerary, price, type, status } = req.body;
+    const { file } = req;
 
-    const customServices = { accommodation, meals, activities: activities || [], note };
-    const imageUrls = req.files?.length ? await uploadImages(req.files) : images;
+    let parsedDuration, parsedPlacesToVisit, parsedItinerary;
+    if (duration) parsedDuration = JSON.parse(duration);
+    if (places_to_visit) parsedPlacesToVisit = JSON.parse(places_to_visit);
+    if (itinerary) parsedItinerary = JSON.parse(itinerary);
+
+    // Validate itinerary length if both are present
+    if (parsedDuration && parsedItinerary && parsedDuration.days !== parsedItinerary.length) {
+      return res.status(400).json({
+        message: `Number of days (${parsedDuration.days}) must match the number of itineraries (${parsedItinerary.length}).`
+      });
+    }
+
+    let imageUrl = null;
+    if (file) {
+      const uploadedImage = await cloudinary.uploader.upload(file.path);
+      imageUrl = uploadedImage.secure_url;
+    }
 
     const updatedPackage = await Package.findByIdAndUpdate(
       req.params.id,
-      { title, subtitle, category, durationNight, durationDay, images: imageUrls, description, price, includes, customServices },
+      { name, description, duration: parsedDuration, places_to_visit: parsedPlacesToVisit, itinerary: parsedItinerary, price, type, status, imageUrl },
       { new: true }
     );
 
-    if (!updatedPackage) return res.status(404).json({ message: "Package not found" });
-    res.status(200).json({ message: "Package updated successfully", package: updatedPackage });
+    if (!updatedPackage) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+    return res.status(200).json({ message: "Package updated successfully", tourPackage: updatedPackage });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error(error);
+    return res.status(500).json({ message: "Error updating package", error: error.message });
   }
 };
 
-// Delete package
+// Controller to delete a Package by ID
 export const deletePackage = async (req, res) => {
   try {
     const deletedPackage = await Package.findByIdAndDelete(req.params.id);
-    if (!deletedPackage) return res.status(404).json({ message: "Package not found" });
-    res.status(200).json({ message: "Package deleted successfully" });
+    if (!deletedPackage) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+    return res.status(200).json({ message: "Package deleted successfully", tourPackage: deletedPackage });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error(error);
+    return res.status(500).json({ message: "Error deleting package", error: error.message });
   }
 };

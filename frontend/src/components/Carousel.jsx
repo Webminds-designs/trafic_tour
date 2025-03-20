@@ -56,6 +56,7 @@ export default function Carousel() {
       <div className="absolute top-1/12 left-1/2 transform -translate-x-1/2 z-50 text-black text-3xl md:text-6xl font-medium drop-shadow-lg text-center hidden md:block">
         Essence of Ceylon
       </div>
+
       {/* Background Image Transition */}
       <AnimatePresence mode="wait">
         <motion.div
