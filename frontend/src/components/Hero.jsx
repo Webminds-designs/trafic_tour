@@ -5,14 +5,14 @@ const Hero = () => {
   return (
     <section className="flex flex-col items-start justify-end h-screen bg-hero-pattern bg-cover bg-center bg-no-repeat bg-black">
       <video
-        className="w-full h-screen object-cover opacity-70"
+        className="w-full h-screen object-cover "
         src={video}
         autoPlay
         loop
         muted
       ></video>
 
-      <div className="absolute font-codeNext h-2/3 flex flex-col items-start justify-end z-10 text-start w-full md:w-1/2 lg:w-[600px] px-4 md:px-24 gap-8">
+      <div className="absolute font-codeNext-r h-2/3 flex flex-col items-start justify-end z-10 text-start w-full md:w-1/2 lg:w-[600px] px-4 md:px-24 gap-8 ">
         <h1 className=" text-5xl md:text-5xl font-bold  text-white">
           A window to new <span className="border-b-1">adventures</span>
         </h1>

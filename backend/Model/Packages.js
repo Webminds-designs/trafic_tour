@@ -1,50 +1,50 @@
-import mongoose from "mongoose";
+// Activity Subschema
+// const ActivitySchema = new Schema({
+//   activity_name: { type: String, required: true }, // morning , overday
+//   activity: { type: String, required: true },
+// });
 
-const { Schema, model } = mongoose;
+// Itinerary Subschema
+// const ItinerarySchema = new Schema({
+//   day: { type: Number, required: true },
+//   title: { type: String, required: true },
+//   places: [{ type: String, required: true }],
+//   activities: [ActivitySchema],
+// });
 
-const AccommodationSchema = new Schema({
-  accommodationType: {
-    type: String,
-    required: true,
-    enum: ["LUXURY", "PREMIUM", "DELUXE", "STANDARD", "DEFAULT"],
-    default: "DEFAULT",
-  },
-  price: { type: Number, required: true },
-});
-
-const MealsSchema = new Schema({
-  mealsType: {
-    type: String,
-    required: true,
-    enum: ["Non-Veg", "Vegan", "Veg", "Veg & Non-Veg", "DEFAULT"],
-    default: "DEFAULT",
-  },
-  price: { type: Number, required: true },
-});
-
-const ActivitiesSchema = new Schema({
-  activityName: { type: String, required: true },
-  price: { type: Number, required: true },
-});
-
-const CustomServicesSchema = new Schema({
-  accommodation: AccommodationSchema,
-  meals: MealsSchema,
-  activities: [ActivitiesSchema],
-  note: { type: String },
-});
-
-const PackageSchema = new Schema({
+const IncludesSchema = new Schema({
+  day: { type: Number, required: true },
   title: { type: String, required: true },
-  subtitle: { type: String, required: true },
-  category: { type: String, required: true },
-  durationNight: { type: Number, required: true },
-  durationDay: { type: Number, required: true },
-  price: { type: Number, required: true },
-  description: { type: String, required: true },
-  includes: [String],
-  images: [String],
-  customServices: CustomServicesSchema,
+  activites: [{ type: String, required: true }],
 });
 
-export default model("Package", PackageSchema);
+// Tour Package Schema
+const PackageSchema = new Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  imageUrl: { type: String, required: false },
+  duration: {
+    days: { type: Number, required: true },
+    nights: { type: Number, required: true },
+  },
+  price: { type: Number, required: true },
+  type: {
+    type: String,
+    required: true,
+    enum: [
+      "Romantic and Relaxation",
+      "Adventure and Wildlife",
+      "Educational and Cultural",
+      "Other",
+    ],
+  },
+  places_to_visit: [{ type: String }],
+  // itinerary: [ItinerarySchema], // Using the itinerary subschema
+  includes: [IncludesSchema],
+});
+
+// Create Models
+const Activity = model("Activity", ActivitySchema);
+const Package = model("Package", PackageSchema);
+
+export { Activity, Package };

@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import Adamspeak from '../assets/Carousel/Adamspeak.jpg'
-import Mirissa from '../assets/Carousel/Mirissa.png'
-import Ruwanweli from '../assets/Carousel/Ruwanweli.jpg'
-import Temple from '../assets/Carousel/Temple.png'
+import Adamspeak from "../assets/Carousel/Adamspeak.jpg";
+import Mirissa from "../assets/Carousel/Mirissa.png";
+import Ruwanweli from "../assets/Carousel/Ruwanweli.jpg";
+import Temple from "../assets/Carousel/Temple.png";
 
 const slides = [
   {
@@ -45,7 +45,6 @@ export default function Carousel() {
   }, []);
   const nextIndex = (currentIndex - 1) % slides.length;
 
-
   // Auto-play
   useEffect(() => {
     const interval = setInterval(nextSlide, 6000);
@@ -54,28 +53,26 @@ export default function Carousel() {
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
-      
-      
+      <div className="absolute top-1/12 left-1/2 transform -translate-x-1/2 z-50 text-black text-3xl md:text-6xl font-medium drop-shadow-lg text-center hidden md:block">
+        Essence of Ceylon
+      </div>
       {/* Background Image Transition */}
       <AnimatePresence mode="wait">
-    <motion.div
-      key={slides[currentIndex].title}
-      className="absolute inset-0 w-full h-full bg-cover bg-center"
-      style={{ backgroundImage: `url(${slides[currentIndex].background})` }}
-      initial={{ opacity: 0.7 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0.7 }}
-      transition={{ duration: 0.1 }}
-    >
-      {/* Dark Overlay to Enhance Text Readability */}
-      <div className="absolute inset-0 bg-black/40"></div>
-    </motion.div>
-  </AnimatePresence>
+        <motion.div
+          key={slides[currentIndex].title}
+          className="absolute inset-0 w-full h-full bg-cover bg-center"
+          style={{ backgroundImage: `url(${slides[currentIndex].background})` }}
+          initial={{ opacity: 0.7 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0.7 }}
+          transition={{ duration: 0.1 }}
+        >
+          {/* Dark Overlay to Enhance Text Readability */}
+          <div className="absolute inset-0 bg-black/40"></div>
+        </motion.div>
+      </AnimatePresence>
 
-{/* topic */}
-<div className="absolute top-1/12 left-1/2 transform -translate-x-1/2 z-50 text-black text-3xl md:text-6xl font-medium drop-shadow-lg text-center hidden md:block">
-  Essence of Ceylon
-</div>
+      {/* topic */}
 
       {/* Slide Content */}
       {slides.map((slide, index) => (
@@ -99,34 +96,38 @@ export default function Carousel() {
                     initial={{ opacity: 0, y: 120, scale: 1 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -80, scale: 1 }}
-                    transition={{ duration: 0.5, ease: "easeIn", exit: { duration: 0.2, ease: "easeIn" } }}
+                    transition={{
+                      duration: 0.5,
+                      ease: "easeIn",
+                      exit: { duration: 0.2, ease: "easeIn" },
+                    }}
                     className="overflow-hidden"
                   >
                     <p className="md:text-lg text-lg">{slide.description}</p>
                   </motion.h1>
                 </div>
                 <div className="   flex inset-0  justify-self-start items-center  md:mt-16">
-        <button className="bg-white text-black md:mt-0 mt-4 py-3 px-6 rounded-md md:text-xl text-sm shadow-lg transform transition-all duration-300 hover:scale-110 hover:shadow-2xl focus:outline-none">
-          See More Sites
-        </button>
-      </div>
+                  {/* <button className="bg-white text-black md:mt-0 mt-4 py-3 px-6 rounded-md md:text-xl text-sm shadow-lg transform transition-all duration-300 hover:scale-110 hover:shadow-2xl focus:outline-none">
+                    See More Sites
+                  </button> */}
+                </div>
               </div>
-             
             </div>
           )}
         </AnimatePresence>
       ))}
-     
+
       {/* Slide Indicators */}
       <div className="absolute top-1/2 left-10 transform -translate-y-1/2  flex-col items-center hidden lg:block">
         <div className="w-[2px] h-12 bg-white/50 ml-[11px]" />
         {slides.map((_, index) => (
           <div key={index} className="flex flex-col items-center">
             <div
-              className={` rounded-full text-center ${index === currentIndex
+              className={` rounded-full text-center ${
+                index === currentIndex
                   ? "bg-white/80 w-6 h-6"
                   : "bg-white w-3 h-3"
-                }`}
+              }`}
             />
             {index !== slides.length - 1 && (
               <div className="w-[2px] h-12 bg-white/50 p-0" />
@@ -145,10 +146,11 @@ export default function Carousel() {
             src={slide.background}
             alt={slide.title}
             className={`object-cover rounded-2xl transition-transform -left-4/4 duration-700 ease-in-out transform cursor-pointer 
-        ${index === currentIndex
-                ? "lg:w-[290px] lg:h-[380px] md:w-[240px]  md:h-[250px] w-[140px] h-[160px] scale-110 shadow-xl opacity-100 absolute"
-                : "lg:w-[220px] lg:h-[240px] md:w-[210px] md:h-[200px] w-[70px] h-[70px] mx-3"
-              }`}
+        ${
+          index === currentIndex
+            ? "lg:w-[290px] lg:h-[380px] md:w-[240px]  md:h-[250px] w-[140px] h-[160px] scale-110 shadow-xl opacity-100 absolute"
+            : "lg:w-[220px] lg:h-[240px] md:w-[210px] md:h-[200px] w-[70px] h-[70px] mx-3"
+        }`}
             onClick={() => setCurrentIndex(index)}
           />
         ))}
