@@ -53,7 +53,7 @@ export default function Carousel() {
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
-      <div className="absolute top-1/12 left-1/2 transform -translate-x-1/2 z-50 text-black text-3xl md:text-6xl font-medium drop-shadow-lg text-center hidden md:block">
+      <div className="absolute top-1/12 left-1/2 transform -translate-x-1/2 z-50 text-white bg-blend-darken text-3xl md:text-6xl font-medium drop-shadow-lg text-center hidden md:block">
         Essence of Ceylon
       </div>
 
