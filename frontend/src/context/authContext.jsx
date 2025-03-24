@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
+
     // If no user data in localStorage, fetch the user from the API
     if (!storedUser) {
       fetchUser();
@@ -51,8 +52,21 @@ export const AuthProvider = ({ children }) => {
     }
   }, []); // Run only once when the component mounts
 
+    // Logout function
+    const logout = async () => {
+      try {
+        await axios.post("http://localhost:6400/api/user/logout", {}, { withCredentials: true });
+  
+        setUser(null); // Clear user state
+        localStorage.removeItem("user"); // Remove user data from localStorage
+        console.log("User logged out successfully.");
+      } catch (err) {
+        console.error("Error logging out:", err.message);
+      }
+    };
+  
   return (
-    <AuthContext.Provider value={{ user, loading, error, setUser }}>
+    <AuthContext.Provider value={{ user, loading, error, setUser ,logout }}>
       {loading ? (
         <div>Loading...</div> // Show a loading indicator while fetching user data
       ) : error ? (

@@ -25,7 +25,7 @@ import { toast } from 'react-toastify';
 
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser, logout } = useContext(AuthContext);
   const [imagePreview, setImagePreview] = useState(null);
   const [profileData, setProfileData] = useState(new FormData());
   const [selectedTab, setSelectedTab] = useState('Account Settings');
@@ -41,11 +41,11 @@ const Profile = () => {
   const [isProfileEditing, setIsProfileEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
-
+  const [bookings, setBookings] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
   const userId = user.id
-  
+
   const openModal = (packageItem) => {
     setSelectedPackage(packageItem);
     setIsModalOpen(true);
@@ -100,7 +100,7 @@ const Profile = () => {
     };
 
     fetchUserDetails();
-  }, [user]);  // ✅ Corrected dependency array
+  }, [user]);  //Corrected dependency array
 
 
   const togglePasswordVisibility = () => {
@@ -120,49 +120,7 @@ const Profile = () => {
     'My Favourites',
     'Bookings'
   ];
-  const tourPackages = [
-    {
-      title: "Belihul Oya Wilderness Escape",
-      highlights: "Scenic Belihul Oya, Diyaluma Falls, Trekking Trails, Eco-Lodge Stay, Birdwatching",
-      image: image1
-    },
-    {
-      title: "Cultural Heritage Adventure",
-      highlights: "Sigiriya Rock Fortress, Anuradhapura Ruins, Ancient Temples",
-      image: image2,
-    },
-    {
-      title: "Serene Beach Escape",
-      highlights: "Bentota Beach, Galle Fort, Boat Rides in Madu River",
-      image: image3,
-    },
-    {
-      title: "Cultural Capital Discovery",
-      highlights: "Kandy, Pinnawala Elephant Orphanage, Local Arts and Crafts",
-      image: image4,
-    },
-    {
-      title: "Southern Paradise Discovery",
-      highlights: "Mirissa Beach, Whale Watching, Hiriketiya, and Tangalle",
-      image: image5,
-    },
-    {
-      title: "Temple Trails and Sacred Sites",
-      highlights: "Kandy Temple of the Tooth, Dambulla Cave Temple, Polonnaruwa Ruins",
-      image: image6,
-    },
-    {
-      title: "Ancient Cities and Heritage Tour",
-      highlights: "Polonnaruwa, Anuradhapura, Ritigala Ancient Site",
-      image: image7,
-    },
-    {
-      title: "Nature & Adventure Expedition",
-      highlights: "Adam’s Peak, Knuckles Mountain Range, Kandy Lake",
-      image: image8,
-    }
-  ];
-
+  
   //update profile
 
   const [isEditing, setIsEditing] = useState(true);
@@ -233,6 +191,7 @@ const Profile = () => {
       if (response.status === 200) {
         setIsProfileEditing(false)
         toast.success("Image uploaded successfully")
+        setUser(response.data.user)
       } else {
         console.error('Upload failed:', response.data.message);
       }
@@ -341,6 +300,33 @@ const Profile = () => {
     }
   };
 
+  //get bookings
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axios.get(`http://localhost:6400/api/bookings/user/${userId}`, {
+          withCredentials: true, // Ensure authentication cookies are included
+        });
+
+        setBookings(response.data); // Update state with booking data
+      } catch (err) {
+        console.error("Error fetching bookings:", err);
+        setError(err.response?.data?.message || "Failed to fetch bookings");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+  
+  const filteredBookings = bookings.filter((packageItem) => {
+    const checkOutDate = new Date(packageItem?.checkOutDate);
+    const currentDate = new Date();
+  
+    // Check if the checkOutDate is in the past
+    return checkOutDate < currentDate;
+  });
   return (
     < >
       <Navbar />
@@ -348,7 +334,7 @@ const Profile = () => {
         <main className="container md:mx-auto md:px-4 py-8 ">
           <h1 className="lg:text-5xl md:text-4xl text-2xl font-medium lg:mx-0 md:mx-22 mx-10">Your Adventure <span className='border-b-1'>Awaits</span></h1>
           <p className="mt-6 md:mx-0 mx-10 md:text-start text-center">Tailor your experience and make every moment unforgettable.</p>
-
+        
           <div className="flex flex-col md:flex-row items-center mx-4 md:mx-0 my-12">
             <div
               {...(isProfileEditing ? getRootProps() : {})} // Apply drag-and-drop only if editing
@@ -367,7 +353,7 @@ const Profile = () => {
                 className="rounded-full w-32 h-32 md:w-48 md:h-48 object-cover"
                 onError={() => console.log("Image failed to load")}
               />
-            </div>
+            </div> 
 
             <div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
               <h2 className="text-lg md:text-xl  font-bold">{userDetails?.firstName}  {userDetails?.lastName}</h2>
@@ -377,7 +363,7 @@ const Profile = () => {
                   <>
                     <button
                       onClick={() => setIsProfileEditing(false)}
-                      className="bg-white border border-black px-4 py-2 rounded-3xl mr-2 text-sm md:text-md"
+                      className="bg-white cursor-pointer border border-black px-4 py-2 rounded-3xl mr-2 text-sm md:text-md"
                     >
                       Cancel
                     </button>
@@ -399,11 +385,12 @@ const Profile = () => {
                 ) : (
                   <button
                     onClick={() => setIsProfileEditing(true)}
-                    className="bg-black text-white px-4 py-2 rounded-3xl text-sm md:text-md"
+                    className="bg-black cursor-pointer text-white px-4 py-2 rounded-3xl text-sm md:text-md"
                   >
                     Edit
                   </button>
                 )}
+                  <button onClick={logout}   className="bg-black cursor-pointer text-white ml-5 px-4 py-2 rounded-3xl text-sm md:text-md">Logout </button>
               </div>
             </div>
           </div>
@@ -413,7 +400,7 @@ const Profile = () => {
                 <button
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
-                  className={`md:py-2 lg:px-27 md:px-10 lg:text-base text-[10px] px-6 ${selectedTab === tab
+                  className={`md:py-2 lg:px-27 md:px-10 lg:text-base text-[10px] cursor-pointer px-6 ${selectedTab === tab
                     ? 'text-black bg-[#F1F1F1] font-bold text-sm '
                     : ''
                     }`}
@@ -624,26 +611,47 @@ const Profile = () => {
           {selectedTab === 'Booking History' && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 m-6">
-                {tourPackages.slice(0, 4).map((packageItem, index) => (
-                  <div key={index} className="relative  overflow-hidden m-4">
-                    <img
-                      src={packageItem.image}
-                      alt={packageItem.title}
-                      className="w-full h-92 object-cover rounded-xl"
-                    />
-                    <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                      <img src={heart} alt='heart' width={20} />
-                    </button>
-                    <div className="p-4">
-                      <h3 className="font-bold text-lg">{packageItem.title}</h3>
-                      <p className="text-black font-semibold text-md mt-2">{packageItem.highlights}</p>
-                      <button className="mt-4 bg-black text-white px-4 py-2 rounded-md">
-                        BOOK AGAIN
-                      </button>
-                    </div>
+    {filteredBookings.length === 0 ? (
+      <div className="col-span-full text-center text-xl text-gray-500">
+        No booking history available for past check-out dates.
+      </div>
+    ) : (
+      filteredBookings.map((packageItem, index) => (
+        <div key={index} className="relative overflow-hidden m-4">
+          <img
+            src={packageItem?.packageId.imageUrl}
+            alt={packageItem?.packageId.description}
+            className="w-full h-92 object-cover rounded-xl"
+          />
+          <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
+            <img src={heart} alt="heart" width={20} />
+          </button>
+          <div className="p-4">
+            <h3 className="font-bold text-lg">{packageItem.packageId.description}</h3>
+            <p className="text-black font-semibold text-md mt-2">
+              {packageItem.packageId.places_to_visit}
+            </p>
+            <button
+              onClick={() => openModal(packageItem)}
+              className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
+            >
+              VIEW
+            </button>
+          </div>
+        </div>
+      ))
+    )}
+  </div>
+
+              {/* Modal */}
+              {isModalOpen && (
+                <div className="fixed inset-0 flex justify-center items-center">
+                  <div className="rounded-lg shadow-lg max-w-md w-full p-6">
+                    <Bookings packageItem={selectedPackage} closeModal={closeModal} />
                   </div>
-                ))}
-              </div></>
+                </div>
+              )}
+            </>
           )}
           {/* MY FAVOURITES */}
           {selectedTab === 'My Favourites' && (
@@ -657,7 +665,7 @@ const Profile = () => {
                       className="w-full h-92 object-cover rounded-xl"
                     />
                     <button onClick={() => removeFavorite(packageItem.packageId._id)} className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                      <FaHeart  className="text-red-500" alt='heart' width={20} />
+                      <FaHeart className="text-red-500" alt='heart' width={20} />
                     </button>
                     <div className="p-4">
                       <h3 className="font-bold text-lg">{packageItem.packageId.name}</h3>
@@ -674,39 +682,47 @@ const Profile = () => {
           {selectedTab === 'Bookings' && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 m-6">
-                {tourPackages.slice(6, 8).map((packageItem, index) => (
-                  <div key={index} className="relative  overflow-hidden m-4">
-                    <img
-                      src={packageItem.image}
-                      alt={packageItem.title}
-                      className="w-full h-92 object-cover rounded-xl"
-                    />
-                    <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                      <img src={heart} alt='heart' width={20} />
-                    </button>
-                    <div className="p-4">
-                      <h3 className="font-bold text-lg">{packageItem.title}</h3>
-                      <p className="text-black font-semibold text-md mt-2">{packageItem.highlights}</p>
-                      <button
-                        onClick={() => openModal(packageItem)}
-                        className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
-                      >
-                        VIEW
-                      </button>
-                    </div>
+                {bookings.length === 0 ? (
+                  <div className="col-span-full text-center text-xl text-gray-500">
+                    No bookings available.
                   </div>
-                ))}
+                ) : (
+                  bookings.map((packageItem, index) => (
+                    <div key={index} className="relative overflow-hidden m-4">
+                      <img
+                        src={packageItem?.packageId.imageUrl}
+                        alt={packageItem?.packageId.description}
+                        className="w-full h-92 object-cover rounded-xl"
+                      />
+                      <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
+                        <img src={heart} alt="heart" width={20} />
+                      </button>
+                      <div className="p-4">
+                        <h3 className="font-bold text-lg">{packageItem.packageId.description}</h3>
+                        <p className="text-black font-semibold text-md mt-2">
+                          {packageItem.packageId.places_to_visit}
+                        </p>
+                        <button
+                          onClick={() => openModal(packageItem)}
+                          className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
+                        >
+                          VIEW
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
 
               {/* Modal */}
               {isModalOpen && (
-                <div className="fixed inset-0 flex  justify-center items-center">
-                  <div className=" rounded-lg shadow-lg max-w-md w-full p-6">
-
+                <div className="fixed inset-0 flex justify-center items-center">
+                  <div className="rounded-lg shadow-lg max-w-md w-full p-6">
                     <Bookings packageItem={selectedPackage} closeModal={closeModal} />
                   </div>
                 </div>
-              )}</>
+              )}
+            </>
 
           )}
         </main>

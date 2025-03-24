@@ -29,7 +29,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: "*",  // Allow all origins
+  origin: ["http://localhost:5173" ,"http://localhost:5174","http://localhost:5175"],
+  credentials: true, 
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type,Authorization"
 }));
