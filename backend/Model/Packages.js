@@ -36,7 +36,6 @@ const CustomServicesSchema = new Schema({
 
 */
 
-
 // Itinerary Subschema
 const ItinerarySchema = new Schema({
   day: { type: Number, required: true },
@@ -48,19 +47,24 @@ const ItinerarySchema = new Schema({
 const PackageSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  imageUrl: { type: String, required: false },  
+  imageUrl: { type: String, required: false },
   duration: {
     days: { type: Number, required: true },
-    nights: { type: Number, required: true }
+    nights: { type: Number, required: true },
   },
-  price: { type: Number, required: true }, 
-  type: { 
-    type: String, 
-    required: true, 
-    enum: ["Romantic and Relaxation", "Adventure and Wildlife", "Educational and Cultural", "Other"] 
+  price: { type: Number, required: true },
+  type: {
+    type: String,
+    required: true,
+    enum: [
+      "Romantic and Relaxation",
+      "Adventure and Wildlife",
+      "Educational and Cultural",
+      "Other",
+    ],
   },
-  places_to_visit: [{ type: String }], 
-  itinerary: [ItinerarySchema]  // Using the itinerary subschema
+  places_to_visit: [{ type: String }],
+  itinerary: [ItinerarySchema], // Using the itinerary subschema
 });
 
 export default model("Package", PackageSchema);
