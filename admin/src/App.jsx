@@ -5,11 +5,11 @@ import PackageManagement from "./pages/PackageManagement";
 import InquiryManagement from "./pages/InquiryManagement";
 import BookingManagement from "./pages/BookingManagement";
 import BookingDetails from "./pages/BookingDetails";
-
+import { ToastContainer } from 'react-toastify';
 function App() {
   return (
     <Router>
-
+     <ToastContainer position="top-center" containerStyle={{ top: 60 }} />
 
       <Routes>
         <Route path="/" element={<DashboardPage />} />

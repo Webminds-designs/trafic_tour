@@ -88,7 +88,7 @@ export const getPackageById = async (req, res) => {
 // Controller to update a Package by ID
 export const updatePackage = async (req, res) => {
   try {
-    const { name, description, duration, places_to_visit, itinerary, price, type, status } = req.body;
+    const { name, description, duration, places_to_visit, itinerary, price, type, status ,oldimageUrl } = req.body;
     const { file } = req;
 
     let parsedDuration, parsedPlacesToVisit, parsedItinerary;
@@ -103,7 +103,7 @@ export const updatePackage = async (req, res) => {
       });
     }
 
-    let imageUrl = null;
+    let imageUrl = oldimageUrl;
     if (file) {
       const uploadedImage = await cloudinary.uploader.upload(file.path);
       imageUrl = uploadedImage.secure_url;

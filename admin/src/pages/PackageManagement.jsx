@@ -159,7 +159,7 @@ const PackageManagement = () => {
         updatedItinerary[dayIndex].activities.splice(activityIndex, 1);
         setFormData({ ...formData, itinerary: updatedItinerary });
     };
-
+console.log(selectedPackage)
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -202,16 +202,21 @@ const PackageManagement = () => {
 
             // Handle image if exists
             if (image) {
-                console.log("Adding Image File:", image);
+                console.log("Adding New Image File:", image);
                 formDataToSend.append("image", image);
-            } else if (!selectedPackage?.imageUrl) {
+            } else if (selectedPackage?.imageUrl) {
+                console.log("Retaining Existing Image:", selectedPackage.imageUrl);
+                formDataToSend.append("oldimageUrl", selectedPackage.imageUrl); // existing image
+            } else {
                 toast.error("Please provide an image.");
                 return;
             }
+    
 
             let response;
 
             if (selectedPackage) {
+               
                 // **Update Existing Package**
                 response = await axios.put(
                     `http://localhost:6400/api/packages/${selectedPackage._id}`,
