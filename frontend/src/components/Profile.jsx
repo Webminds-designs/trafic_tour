@@ -7,14 +7,6 @@ import { useDropzone } from 'react-dropzone';
 
 
 import Footer from '../components/Footer'
-import image1 from "../assets/Packages/image.png";
-import image2 from "../assets/Packages/image1.png";
-import image3 from "../assets/Packages/image2.png";
-import image4 from "../assets/Packages/image4.png";
-import image5 from "../assets/Packages/image5.png";
-import image6 from "../assets/Packages/image6.png";
-import image7 from "../assets/Packages/image7.png";
-import image8 from "../assets/Packages/image8.png";
 import heart from "../assets/heart.png";
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
@@ -394,21 +386,22 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <div className=" bg-black text-white rounded-3xl">
-            <nav className="flex justify-between  ">
+          <div className="flex flex-col items-center mt-6 lg:mt-10 font-base">
+            <div className="bg-black text-white flex w-full max-w-7xl  rounded-3xl overflow-x-auto">
+
               {tabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
-                  className={`md:py-2 lg:px-27 md:px-10 lg:text-base text-[10px] cursor-pointer px-6 ${selectedTab === tab
-                    ? 'text-black bg-[#F1F1F1] font-bold text-sm '
+                  className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 ${selectedTab === tab
+                    ? 'bg-teal-600 text-black'
                     : ''
                     }`}
                 >
                   {tab}
                 </button>
               ))}
-            </nav>
+            </div>
           </div>
           {/* Account Settings */}
           {selectedTab === 'Account Settings' && (

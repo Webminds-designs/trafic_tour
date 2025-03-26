@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import PackageCard from "../components/PackageCard";
 import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/lepord.png";
@@ -49,6 +50,78 @@ const Packages = () => {
       targetSectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+  const navigate = useNavigate(); 
+
+  const allActivities = [
+    "Wildlife",
+    "Snorkeling",
+    "Historical Sites",
+    "Hiking",
+    "Surfing",
+    "Camping",
+    "Scuba Diving",
+    "Cycling",
+    "Kayaking",
+    "Rock Climbing",
+    "Paragliding",
+    "Jet Skiing",
+    "Fishing",
+    "Caving",
+    "Stargazing",
+    "Eco Tours",
+    "Museums",
+    "Cultural Festivals",
+    "Hot Springs",
+  ];
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedActivities, setSelectedActivities] = useState([]);
+  const [destination, setDestination] = useState("");
+  const [tripDuration, setTripDuration] = useState("");
+
+
+  // Filter activities based on search term
+  const filteredActivities = allActivities.filter((activity) =>
+    activity.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Toggle activity selection
+  const toggleActivity = (activity) => {
+    setSelectedActivities((prev) =>
+      prev.includes(activity)
+        ? prev.filter((item) => item !== activity)
+        : [...prev, activity]
+    );
+  };
+
+  // Handle form submission
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    // Construct query parameters
+    const params = {
+      place: destination.trim(),
+      days: tripDuration ? parseInt(tripDuration) : "", // Convert trip duration to number
+      activity: selectedActivities.join(","),
+    };
+
+    console.log("Search Params:", params); // Debugging log
+
+    try {
+      const response = await axios.get("http://localhost:6400/api/packages/find/search", { params });
+
+      console.log("API Response:", response.data); // Debugging log
+
+      if (response.data.packages && response.data.packages.length > 0) {
+        navigate("/searchresult", { state: { packages: response.data.packages } });
+      } else {
+        alert("No packages found.");
+      }
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+      alert("Error fetching packages. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -86,7 +159,7 @@ const Packages = () => {
                   key={index}
                   className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 
                         ${selectedSection === section
-                      ? "bg-white text-black "
+                      ? "bg-teal-600 text-black "
                       : "  "
                     }`}
                   onClick={() => handleSectionClick(section)}
@@ -182,88 +255,99 @@ const Packages = () => {
               <h2 className="text-lg lg:text-xl font-bold mb-4">
                 FIND THE BEST PACKAGE
               </h2>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  console.log("Form submitted");
-                  console.log("Destination:", e.target.destination.value);
-                  console.log("Travel Dates:", e.target.travelDate.value);
-                  console.log("Trip Duration:", e.target.tripDuration.value);
-                  console.log("Number of Travelers:", e.target.travelers.value);
-                }}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Destination Field */}
-                  <div>
-                    <label className="text-sm font-medium" htmlFor="destination">
-                      Destination
-                    </label>
-                    <input
-                      type="text"
-                      id="destination"
-                      name="destination"
-                      placeholder="SIGIRIYA, ELLA, ETC"
-                      className="w-full p-2 mt-1  rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
+              <form onSubmit={handleSearch}>
+          <div className="flex justify-start">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 w-full md:w-1/2">
+              {/* Destination Field */}
+              <div>
+                <label className="text-sm font-medium" htmlFor="destination">
+                  Destination
+                </label>
+                <input
+                  type="text"
+                  id="destination"
+                  placeholder="SIGIRIYA, ELLA, ETC"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                />
+              </div>
+
+              {/* Trip Duration Field */}
+              <div>
+                <label className="text-sm font-medium" htmlFor="tripDuration">
+                  Trip Duration (Days)
+                </label>
+                <input
+                  type="number"
+                  id="tripDuration"
+                  placeholder="Enter number of days"
+                  value={tripDuration}
+                  onChange={(e) => setTripDuration(e.target.value)}
+                  className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                />
+              </div>
+            </div>
+
+            {/* Activities Section */}
+            <div className="grid grid-cols-1 mx-2 md:grid-cols-1 gap-4 w-full md:w-1/2">
+              <div>
+                <label className="text-sm font-medium">Activities & Interests</label>
+                <div className="w-full max-w-md space-y-3">
+                  {/* Search Input */}
+                  <input
+                    type="text"
+                    placeholder="Search activities..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  />
+
+                  {/* Activity List */}
+                  <div className="flex flex-wrap gap-2">
+                    {(searchTerm ? filteredActivities : allActivities.slice(0, 8)).map((activity) => (
+                      <div
+                        key={activity}
+                        onClick={() => toggleActivity(activity)}
+                        className={`px-4 py-2 rounded-full cursor-pointer transition ${
+                          selectedActivities.includes(activity)
+                            ? "bg-teal-500 text-white"
+                            : "bg-gray-200 text-gray-700"
+                        }`}
+                      >
+                        {activity}
+                      </div>
+                    ))}
                   </div>
 
-                  {/* Travel Activities*/}
-                  <div>
-                    <label className="text-sm font-medium" htmlFor="travelDate">
-                      Activities & Interests
-                    </label>
-                    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                      <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Wildlife</div>
-                      <div className="px-4 py-2 bg-teal-200 rounded-full text-gray-900">Snorkeling</div>
-                      <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Historical Sites</div>
-                      <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Hiking</div>
+                  {/* Selected Activities */}
+                  {selectedActivities.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-8">
+                      {selectedActivities.map((activity) => (
+                        <div key={activity} className="px-3 py-1 bg-teal-500 text-white rounded-full flex items-center">
+                          {activity}
+                          <button onClick={() => toggleActivity(activity)} className="ml-2 text-white font-bold">
+                            ×
+                          </button>
+                        </div>
+                      ))}
                     </div>
-
-                  </div>
-
-                  {/* Trip Duration Field */}
-                  <div>
-                    <label className="text-sm font-medium" htmlFor="tripDuration">
-                      Trip Duration
-                    </label>
-                    <input
-                      type="text"
-                      id="tripDuration"
-                      name="tripDuration"
-                      placeholder="10 DAYS"
-                      className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
-                  </div>
-
-                  {/* trip Activities */}
-                  <div>
-                    <label className="text-sm font-medium" htmlFor="travelers">
-                      Number of traveles
-                    </label>
-                    <select
-                      id="travelers"
-                      name="travelers"
-                      className="w-full p-2 mt-1 rounded-3xl text-gray-500 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    >
-                      <option value="2 Adult">2 Adult</option>
-                      <option value="1 Adult">1 Adult</option>
-                      <option value="3 Adult">3 Adult</option>
-                      <option value="FAMILY PACKAGE">Family Package</option>
-                    </select>
-                  </div>
+                  )}
                 </div>
+              </div>
+            </div>
+          </div>
 
-                {/* Submit Button */}
-                <div className="flex justify-center">
-                  <button
-                    type="submit"
-                    className="w-1/2 flex text-center bg-teal-600 text-white py-2 mt-6 justify-center rounded-3xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  >
-                    FIND
-                  </button>
-                </div>
-
-              </form>
+          {/* Submit Button */}
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="w-1/2 flex text-center bg-teal-600 text-white py-2 mt-6 justify-center rounded-3xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            >
+              FIND
+            </button>
+          </div>
+        </form>
             </div>
           </div>
         </div>
