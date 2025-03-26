@@ -141,14 +141,16 @@ export const deletePackage = async (req, res) => {
 
 export const searchPackages = async (req, res) => {
   try {
-    const { place, days, activity } = req.query;  // Extract place, days, and activity from the query parameters
-    let filter = {};  // Initialize the filter object
+    const { place, days, activity } = req.query; // Extract query parameters
+    let filter = {}; // Initialize the filter object
 
-    // Filter by places_to_visit (searching within the array of places)
+    // Filter by places_to_visit, itinerary activities, or itinerary title
     if (place && typeof place === "string") {
-      filter.places_to_visit = { $regex: new RegExp(place, "i") };  // Case-insensitive regex search
-      filter["itinerary.activities"] = { $regex: new RegExp(place, "i") };
-      filter["itinerary.title"] = { $regex: new RegExp(place, "i") };
+      filter.$or = [
+        { places_to_visit: { $regex: new RegExp(place, "i") } },
+        { "itinerary.activities": { $regex: new RegExp(place, "i") } },
+        { "itinerary.title": { $regex: new RegExp(place, "i") } }
+      ];
     }
 
     // Filter by duration days (±3 days range)
@@ -157,23 +159,23 @@ export const searchPackages = async (req, res) => {
       if (isNaN(numDays)) {
         return res.status(400).json({ message: "Invalid 'days' value" });
       }
-      filter["duration.days"] = { $gte: numDays - 3, $lte: numDays + 3 };  // Search for packages within a ±3 days range of provided days
+      filter["duration.days"] = { $gte: numDays - 3, $lte: numDays + 3 };
     }
 
     // Filter by itinerary activities (searching within the array of activities)
     if (activity && typeof activity === "string") {
-      filter["itinerary.activities"] = { $regex: new RegExp(activity, "i") };  // Case-insensitive regex search within itinerary.activities
+      filter["itinerary.activities"] = { $regex: new RegExp(activity, "i") }; // Corrected syntax
     }
 
-    console.log("Filter being used:", filter);  // Log the filter object to inspect
+    console.log("Filter being used:", filter); // Log the filter object to inspect
 
     // Query the database with the constructed filter
-    const packages = await Package.find(filter);  // Correct the variable name to 'packages'
+    const packages = await Package.find(filter);
 
     // Return the result
     return res.status(200).json({ message: "Packages retrieved successfully", packages });
   } catch (error) {
-    console.error("Error in searchPackages:", error.stack);  // Log the stack trace
+    console.error("Error in searchPackages:", error.stack);
     return res.status(500).json({ message: "Error retrieving packages", error: error.message });
   }
 };
