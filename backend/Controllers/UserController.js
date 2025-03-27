@@ -109,7 +109,17 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
 
     // Generate token
-    const token = jwt.sign({ email: user.email}, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(  {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      email: user.email,
+      country: user.country,
+      passportId: user.passportId,
+      role: user.role,
+      profileUrl: user.profileUrl,
+    }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.cookie('token', token, {
      httpOnly: true,  // This prevents client-side access to the cookie
      secure: process.env.NODE_ENV === 'production',  // Set to true if you're using HTTPS
@@ -119,6 +129,7 @@ export const loginUser = async (req, res) => {
    res.status(200).json({
      status: true,
      message: 'Login successful',
+     token: token,
      user: {
        id: user._id,
        firstName: user.firstName,
@@ -151,7 +162,17 @@ export const googleloginUser = async (req, res) => {
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
      // Generate token
-     const token = jwt.sign({ email: user.email}, process.env.JWT_SECRET, { expiresIn: '1h' });
+     const token = jwt.sign(  {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      email: user.email,
+      country: user.country,
+      passportId: user.passportId,
+      role: user.role,
+      profileUrl: user.profileUrl,
+    }, process.env.JWT_SECRET, { expiresIn: '1h' });
      res.cookie('token', token, {
       httpOnly: true,  // This prevents client-side access to the cookie
       secure: process.env.NODE_ENV === 'production',  // Set to true if you're using HTTPS
@@ -161,6 +182,7 @@ export const googleloginUser = async (req, res) => {
     res.status(200).json({
       status: true,
       message: 'Login successful',
+      token: token,
       user: {
         id: user._id,
         firstName: user.firstName,

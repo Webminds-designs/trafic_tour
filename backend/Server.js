@@ -12,6 +12,7 @@ import bookingRoutes from "./Routes/BookingRoutes.js"
 import paymentRoutes from "./Routes/PaymentRoutes.js"
 import payhereRoutes from "./Routes/PayhereRoutes.js"
 import inquiriesRoutes from "./Routes/InquiriesRoutes.js"
+import subscriptionRoutes from "./Routes/SubscriptionRoutes.js"
 
 dotenv.config(); // Load environment variables
 
@@ -44,6 +45,7 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/payments",paymentRoutes);
 app.use("/api/payhere", payhereRoutes);
 app.use("/api/send-email", inquiriesRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 
 // Start the server

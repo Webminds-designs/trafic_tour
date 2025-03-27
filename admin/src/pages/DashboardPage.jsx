@@ -1,10 +1,11 @@
-import React from "react";
+import React,{useContext} from "react";
 import Topbar from "../components/Topbar";
 import Sidebar from "../components/Sidebar";
 import P1 from "../assets/P1.png";
 import P2 from "../assets/P2.png";
 import P3 from "../assets/P3.png";
 import Stamps from "../assets/stamps.png";
+import { AuthContext } from "../context/authContext.jsx";
 
 const packages = [
     {
@@ -33,6 +34,8 @@ const activities = [
 ];
 
 const DashboardPage = () => {
+     const { user, setUser, logout } = useContext(AuthContext);
+     console.log(user)
     return (
         <div className="flex bg-gray-200 font-figtree min-h-screen">
             {/* Sidebar - Fixed */}

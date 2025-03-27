@@ -25,7 +25,7 @@ router.post('/update', upload.single('avatar'), updateUserProfileAndImage);
 
 // Protected routes 
 router.get('/:userId', getUserDetails);
-router.get('/auth', authMiddleware, getCurrentUser);
+router.get('/auth/auth', authMiddleware, getCurrentUser);
 router.post('/logout', logoutUser);
 router.put('/profile',updateUserProfile);
 router.delete('/:userId', deleteUser);

@@ -159,7 +159,7 @@ const PackageManagement = () => {
         updatedItinerary[dayIndex].activities.splice(activityIndex, 1);
         setFormData({ ...formData, itinerary: updatedItinerary });
     };
-console.log(selectedPackage)
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
