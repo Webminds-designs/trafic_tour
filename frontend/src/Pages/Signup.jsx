@@ -114,6 +114,12 @@ const Signup = () => {
         {}
       );
       toast.success("User registered successfully!");
+      const subscriptionResponse = await axios.post(
+        "http://localhost:6400/api/subscriptions/signup", 
+        { email }
+      );
+  
+      console.log("Email subscribed successfully!");
     } catch (err) {
       console.error(
         "Error during registration: ",

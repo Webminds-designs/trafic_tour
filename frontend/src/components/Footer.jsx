@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useState } from "react";
 import star from "../assets/star.png";
 import pin from "../assets/pin.png";
 import telephone from "../assets/telephone.png";
@@ -6,6 +6,28 @@ import emailwhite from "../assets/emailwhite.png";
 import pinwhite from "../assets/pinwhite.png";
 
 const Footer = () => {
+  const [form, setForm] = useState({ name: '', email: '', postalCode: '' });
+  const [message, setMessage] = useState('');
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch('http://localhost:6400/api/subscriptions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    });
+    const data = await response.json();
+    if (response.ok) {
+      setMessage('Subscription successful!');
+      setForm({ name: '', email: '', postalCode: '' });
+    } else {
+      setMessage(`${data.error}`);
+    }
+  };
   return (
     <div className="bg-black text-white ">
       <div className=" mx-auto md:px-24 px-4 py-8">
@@ -16,19 +38,25 @@ const Footer = () => {
                 Subscribe to learn about our latest news, <br /> updates, and
                 adventures.
               </h2>
-              <form className="space-y-4 mx-5">
+              <form onSubmit={handleSubmit} className="space-y-4 mx-5">
                 <input
                   type="text"
+                  name="name"
+                  value={form.name} onChange={handleChange} required
                   placeholder="Your First Name"
                   className="w-full p-4 bg-neutral-900 rounded-2xl"
                 />
                 <input
                   type="email"
+                  name="email" 
+                  value={form.email} onChange={handleChange} required 
                   placeholder="Your Email"
                   className="w-full p-4 bg-neutral-900 rounded-2xl"
                 />
                 <input
                   type="text"
+                   name="postalCode"
+                  value={form.postalCode} onChange={handleChange}
                   placeholder="Zip Code"
                   className="w-full p-4 bg-neutral-900 rounded-2xl"
                 />
@@ -39,6 +67,8 @@ const Footer = () => {
                   Subscribe
                 </button>
               </form>
+              <div className="text-center mt-3">  {message && <p>{message}</p>}</div>
+            
             </div>
           </div>
           <div className="w-full lg:w-1/2 pt-0 mt-0 ">

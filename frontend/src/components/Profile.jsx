@@ -42,7 +42,7 @@ const Profile = () => {
     setSelectedPackage(packageItem);
     setIsModalOpen(true);
   };
-
+console.log(user)
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedPackage(null);
