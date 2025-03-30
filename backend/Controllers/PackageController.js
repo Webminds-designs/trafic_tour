@@ -4,23 +4,24 @@ import cloudinary from "../config/CloudinaryConfig.js";
 // Controller to create a new Package
 export const createPackage = async (req, res) => {
   try {
-    const { name, description, duration, places_to_visit, itinerary, price, type, status } = req.body;
+    const { name, description, duration, places_to_visit, itinerary, price, type } = req.body;
     const { file } = req;
-
-    console.log("Raw req.body:", req.body);
 
     // Parse JSON fields
     const parsedDuration = JSON.parse(duration);
     const parsedPlacesToVisit = JSON.parse(places_to_visit);
     const parsedItinerary = JSON.parse(itinerary);
 
-
+    console.log("Parsed Itinerary:", parsedItinerary);
+    console.log("Parsed Itinerary Length:", parsedItinerary.length);
+    
     // Validate required fields
     if (!name || !description || !parsedDuration || !parsedPlacesToVisit || !parsedItinerary || !price || !type) {
       return res.status(400).json({ message: "All fields are required." });
     }
     const parsedDays = Number(parsedDuration.days); 
 
+   
    // Validate itinerary length
 if (parsedDays !== parsedItinerary.length) {
   return res.status(400).json({
@@ -44,7 +45,6 @@ if (parsedDays !== parsedItinerary.length) {
       itinerary: parsedItinerary,
       price,
       type,
-      status,
       imageUrl,
     });
 

@@ -22,7 +22,7 @@ const PackageCard = ({ packageItem, onExplore }) => {
 
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden transition-shadow duration-300">
+    <div className=" rounded-lg overflow-hidden transition-shadow duration-300">
       {/* Image with taller rectangular shape */}
       <img
         src={imageUrl}

@@ -2,13 +2,13 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import user from "../assets/user.png";
 import signup_Bg from "../assets/signup.jpg"
-import google from "../assets/Google.svg"; 
+import google from "../assets/Google.svg";
 import { auth } from "../components/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import {
   setPersistence,
   browserSessionPersistence,
- 
+
 } from "firebase/auth";
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
@@ -47,57 +47,83 @@ const Signup = () => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       console.log(user.email);
-
-      // data from Google user
+  
+      // Extract data from Google user
       const { email, displayName, photoURL } = user;
-
+  
       // Split the displayName into first name and last name
       const [firstName, ...lastName] = displayName.split(" ");
       const lastNameString = lastName.join(" ");
-
+  
       // Prepare data
-      const userData = {
-        email,
-      };
-
-      // Check if the email already exists
+      const userData = { email };
+  
+      // Check if the email already exists in your system
       const emailCheckResponse = await axios.post(
         "http://localhost:6400/api/user/findemail",
         userData
       );
-//google login
+  
+      // If email exists, perform Google login
       if (emailCheckResponse.data.exists) {
-        const LoginResponse = await axios.post(
+        const loginResponse = await axios.post(
           "http://localhost:6400/api/user/Googlelogin",
           userData
         );
-
-       
-        localStorage.setItem("user", JSON.stringify(LoginResponse.data.user));
-        setUser(LoginResponse.data.user);
+  
+        localStorage.setItem("user", JSON.stringify(loginResponse.data.user));
+        setUser(loginResponse.data.user);
         toast.success("Login Successful");
+  
+        // Redirect to profile page
         navigate("/profile");
       } else {
-        // registration
+        // Register user if email doesn't exist
         const registrationData = {
           email,
           profileUrl: photoURL,
           firstName,
           lastName: lastNameString,
         };
-
+  
         const registrationResponse = await axios.post(
           "http://localhost:6400/api/user/Googleregister",
           registrationData
         );
-        console.log("User registered successfully:", registrationResponse.data);
+  
+        // Check if registration was successful
+        if (registrationResponse.status === 201) {
+          // Subscribe user to service
+          const subscriptionData = {
+            name: firstName,  // Send user first name and email to subscription API
+            email,
+          };
+  
+          const subscriptionResponse = await axios.post(
+            "http://localhost:6400/api/subscriptions/signup",
+            subscriptionData
+          );
+  
+          // If subscription is successful
+          if (subscriptionResponse.status === 201) {
+            console.log("Email subscribed successfully!");
+          } else {
+            console.error("Subscription failed:", subscriptionResponse.data);
+          }
+  
+          toast.success("User registered ");
+          signInWithGoogle()
+        } else {
+          console.error("Registration failed:", registrationResponse.data);
+        }
       }
     } catch (error) {
       setError("Error during sign-in: " + error.message);
+      console.error("Sign-in Error:", error);
     }
   };
-
-// basic register
+  
+  // basic register
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
@@ -115,11 +141,12 @@ const Signup = () => {
       );
       toast.success("User registered successfully!");
       const subscriptionResponse = await axios.post(
-        "http://localhost:6400/api/subscriptions/signup", 
+        "http://localhost:6400/api/subscriptions/signup",
         { email }
       );
-  
+
       console.log("Email subscribed successfully!");
+      signInWithGoogle()
     } catch (err) {
       console.error(
         "Error during registration: ",
@@ -134,9 +161,9 @@ const Signup = () => {
   return (
     <div className=" -z-50">
       <div
-       style={{ backgroundImage: `url(${signup_Bg})` }}
-       className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
-     >
+        style={{ backgroundImage: `url(${signup_Bg})` }}
+        className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
+      >
         <div className="absolute top-4 left-4 text-[16px] font-semibold">
           <img src={logoBlack} alt="logo" className="w-16 md:w-28" />
         </div>
@@ -179,7 +206,7 @@ const Signup = () => {
             </div>
 
             <div className="mb-4 relative">
-                {/* password */}
+              {/* password */}
               <label className="bg-[#e2e7ea] rounded-xl text-gray-700 flex items-center">
                 <img
                   src={lock}
@@ -205,7 +232,7 @@ const Signup = () => {
               </label>
             </div>
             <div className="mb-4 relative">
-                {/* comfirm password */}
+              {/* comfirm password */}
               <label className="bg-[#e2e7ea] rounded-xl text-gray-700 flex items-center">
                 <img
                   src={lock}
@@ -230,16 +257,16 @@ const Signup = () => {
                 />
               </label>
               <div className=" flex justify-between text-right mt-5">
-              <div>
-                {" "}
-                {error && (
-                  <p className="text-red-500 text-center mb-4">{error}</p>
-                )}
+                <div>
+                  {" "}
+                  {error && (
+                    <p className="text-red-500 text-center mb-4">{error}</p>
+                  )}
+                </div>
+                <a href="#" className="text-sm text-gray-800 hover:underline">
+                  Forgot password?
+                </a>
               </div>
-              <a href="#" className="text-sm text-gray-800 hover:underline">
-                Forgot password?
-              </a>
-            </div>
             </div>
             <button
               type="submit"
@@ -283,7 +310,7 @@ const Signup = () => {
               <div className="m-2 text-gray-900
             ">Login with Google </div>
             </button>
-           
+
           </div>
 
           <p className="text-center text-gray-600 mt-6">

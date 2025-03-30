@@ -39,7 +39,7 @@ const AboutUs = () => {
             text: "See the wild beauty of Yala’s leopards, chase waterfalls in Ella, and dive into clear waters full of marine life.",
         },
     ];
-    
+
 
     // Animation variants for text
     const textVariants = {
@@ -59,12 +59,11 @@ const AboutUs = () => {
                 {/* Header Section */}
                 <header className="text-center py-10 md:py-20">
                     <div
-                        className="inline-block px-4 py-3 md:px-8 md:py-6 relative bg-cover bg-center h-full"
+                        className="inline-block px-4 py-3 md:px-8 md:py-6 relative bg-cover bg-center h-full w-full md:w-[700px]"
                         style={{
                             backgroundImage: `url(${backgroundImage})`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
-                            width:"700px"
                         }}
                     >
                         <motion.h1
@@ -74,7 +73,7 @@ const AboutUs = () => {
                             variants={textVariants}
                             transition={{ duration: 0.8 }}
                         >
-                           Refreshingly Sri Lanka
+                            Refreshingly Sri Lanka
                         </motion.h1>
                         <motion.p
                             className="text-sm md:text-lg mt-2 md:mt-3 font-base relative z-10"
@@ -108,7 +107,7 @@ const AboutUs = () => {
                             A
                             <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-5xl md:text-6xl lg:text-7xl">˜</span>
                         </span>
-                      yob
+                        yob
                         <span className="relative inline-block">
                             o
                             <span className="absolute -top-1 left-1/2 -translate-x-1/2 text-5xl md:text-6xl lg:text-7xl">˜</span>

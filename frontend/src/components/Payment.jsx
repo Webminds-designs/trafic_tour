@@ -12,6 +12,7 @@ const Payment = () => {
   const { user, loading } = useContext(AuthContext);
   const { data } = location.state || {};
   const [checkInDate, setCheckInDate] = useState("");
+  const [Noguests, setNoguests] = useState(1)
   const [checkOutDate, setCheckOutDate] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ const Payment = () => {
     address: "",
     city: "",
     postalCode: "",
-    contactNumber: user.phone,
+    contactNumber: user.phone || "",
     paymentMethod: "card", // Default payment method
   });
 
@@ -35,7 +36,7 @@ const Payment = () => {
     order_id: generateOrderId(),
     user_id: user?.id || "",
     package_id: data?._id || "",
-    amount: data?.price || 0,
+    amount: Noguests * data.price || 0,
     first_name: user?.firstName || "",
     last_name: user?.lastName || "",
     email: user?.email || "",
@@ -45,10 +46,10 @@ const Payment = () => {
   const bookingData = {
     userId: user?.id || "",
     packageId: data?._id || "",
-    guests: 1,
+    guests: Noguests,
     checkingDate: checkInDate,
     checkOutDate: checkOutDate,
-    paymentStatus:"completed",
+    paymentStatus: "completed",
     billingDetails: {
       firstName: formData.firstName,
       lastName: formData.lastName,
@@ -56,7 +57,7 @@ const Payment = () => {
       city: formData.city,
       postalCode: formData.postalCode,
       country: formData.country,
-      contactNumber: user.phone,
+      contactNumber: formData.contactNumber,
     },
   }
 
@@ -128,6 +129,11 @@ const Payment = () => {
       toast.error("Check-Out Date is required");
       return;
     }
+    if (!Noguests) {
+      toast.error("No of guests is required");
+      return;
+    }
+
 
 
     // If all validations pass
@@ -257,7 +263,7 @@ const Payment = () => {
   };
 
   return (
-    <div className="bg-white p-6 px-24">
+    <div className="bg-white p-6 md:px-24">
       <Navbar />
 
       <main className="grid grid-cols-1 md:grid-cols-2 gap-16 pt-22">
@@ -288,8 +294,11 @@ const Payment = () => {
               </div>
             </div>
             <div className="flex justify-between"><span className="text-gray-600">Package Type</span><span className="text-gray-800">{data.type}</span></div>
-            <div className="flex justify-between"><span className="text-gray-600">Guest</span><span className="text-blue-500">{user.firstName} {user.lastName}</span></div>
-            <div className="flex justify-between font-medium text-lg mt-4"><span>Total Amount</span><span>{data.price}</span></div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">No Guests</span>
+              <input type="number" className="border rounded px-2 py-1 text-gray-600  w-16 text-center" value={Noguests} placeholder="1" min="1" onChange={(e) => setNoguests(Number(e.target.value))} />
+            </div>
+            <div className="flex justify-between font-medium text-lg mt-4"><span>Total Amount</span><span> ${Noguests * data.price}</span></div>
           </div>
         </div>
 
@@ -306,7 +315,7 @@ const Payment = () => {
             </button>
           )}
 
-          {!isConfirmed || isConfirmed && formData.paymentMethod === "card"  ? (
+          {!isConfirmed || isConfirmed && formData.paymentMethod === "card" ? (
             <>
               <h3 className="text-xl font-medium mb-4">Billing:</h3>
               <form className="space-y-4 font-medium" onSubmit={handleConfirm}>
@@ -575,18 +584,19 @@ const BankTransfer = ({ order, bookingData }) => {
           {previewUrl && (
             <div className="mt-4">
               <p className="text-sm text-gray-600">Preview:</p>
-              <div className="mt-2">
+              <div className="mt-2 flex flex-col items-center text-center">
                 {paymentProof.type.startsWith("image") ? (
                   <img
                     src={previewUrl}
                     alt="Payment Proof Preview"
-                    height={100}
-                    className="max-w-full h-auto rounded-lg"
+                    height={20}
+                    className="max-w-50 h-auto rounded-lg"
                   />
                 ) : (
                   <p className="text-gray-600">File type: {paymentProof.type}</p>
                 )}
               </div>
+
             </div>
           )}
 

@@ -33,61 +33,90 @@ const Signin = () => {
   };
 
   //google signin
-  const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await setPersistence(auth, browserSessionPersistence);
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      console.log(user.email);
-
-      // data from Google user
-      const { email, displayName, photoURL } = user;
-
-      // Split the displayName into first name and last name
-      const [firstName, ...lastName] = displayName.split(" ");
-      const lastNameString = lastName.join(" ");
-
-      // Prepare data
-      const userData = {
-        email,
-      };
-
-      // Check if the email already exists
-      const emailCheckResponse = await axios.post(
-        "http://localhost:6400/api/user/findemail",
-        userData
-      );
-         // login  in google
-      if (emailCheckResponse.data.exists) {
-        const LoginResponse = await axios.post(
-          "http://localhost:6400/api/user/Googlelogin",    
+    //google signin
+    const signInWithGoogle = async () => {
+      const provider = new GoogleAuthProvider();
+      try {
+        await setPersistence(auth, browserSessionPersistence);
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log(user.email);
+    
+        // Extract data from Google user
+        const { email, displayName, photoURL } = user;
+    
+        // Split the displayName into first name and last name
+        const [firstName, ...lastName] = displayName.split(" ");
+        const lastNameString = lastName.join(" ");
+    
+        // Prepare data
+        const userData = { email };
+    
+        // Check if the email already exists in your system
+        const emailCheckResponse = await axios.post(
+          "http://localhost:6400/api/user/findemail",
           userData
         );
-        localStorage.setItem("user", JSON.stringify(LoginResponse.data.user));
-        setUser(LoginResponse.data.user);
-        toast.success("Login Successful");
-        navigate("/profile");
-
-      } else {
-        // registration
-        const registrationData = {
-          email,
-          profileUrl: photoURL,
-          firstName,
-          lastName: lastNameString,
-        };
-
-        const registrationResponse = await axios.post(
-          "http://localhost:6400/api/user/Googleregister",
-          registrationData
-        );
-        console.log("User registered successfully:", registrationResponse.data);
+    
+        // If email exists, perform Google login
+        if (emailCheckResponse.data.exists) {
+          const loginResponse = await axios.post(
+            "http://localhost:6400/api/user/Googlelogin",
+            userData
+          );
+    
+          localStorage.setItem("user", JSON.stringify(loginResponse.data.user));
+          setUser(loginResponse.data.user);
+          toast.success("Login Successful");
+    
+          // Redirect to profile page
+          navigate("/profile");
+        } else {
+          // Register user if email doesn't exist
+          const registrationData = {
+            email,
+            profileUrl: photoURL,
+            firstName,
+            lastName: lastNameString,
+          };
+    
+          const registrationResponse = await axios.post(
+            "http://localhost:6400/api/user/Googleregister",
+            registrationData
+          );
+    
+          // Check if registration was successful
+          if (registrationResponse.status === 201) {
+            // Subscribe user to service
+            const subscriptionData = {
+              name: firstName,  // Send user first name and email to subscription API
+              email,
+            };
+    
+            const subscriptionResponse = await axios.post(
+              "http://localhost:6400/api/subscriptions/signup",
+              subscriptionData
+            );
+    
+            // If subscription is successful
+            if (subscriptionResponse.status === 201) {
+              console.log("Email subscribed successfully!");
+            } else {
+              console.error("Subscription failed:", subscriptionResponse.data);
+            }
+    
+            toast.success("User registered ");
+            signInWithGoogle()
+          } else {
+            console.error("Registration failed:", registrationResponse.data);
+          }
+        }
+      } catch (error) {
+        setError("Error during sign-in: " + error.message);
+        console.error("Sign-in Error:", error);
       }
-    } catch (error) {
-      setError("Error during sign-in: " + error.message);
-    }
-  };
+    };
+    
 
  // basic login
   const handleLogin = async (e) => {

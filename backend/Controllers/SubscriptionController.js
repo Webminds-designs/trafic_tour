@@ -20,20 +20,39 @@ export const createSubscription = async (req, res) => {
 
   export const signupSubscription = async (req, res) => {
     try {
-      const { email } = req.body;
-      if (!email) return res.status(400).json({ error: 'Email is required' });
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Invalid email format' });
+      const { name, email } = req.body;
       
+      // Check if email is provided
+      if (!email) return res.status(400).json({ error: 'Email is required' });
+  
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) return res.status(400).json({ error: 'Invalid email format' });
+  
+      // Check if the email already exists in the subscription database
       const existingSubscription = await Subscription.findOne({ email });
       if (existingSubscription) return res.status(400).json({ error: 'Email is already subscribed' });
-      
-      const newSubscription = new Subscription({ email });
+  
+      // Create new subscription
+      const newSubscription = new Subscription({
+        name: name || "",  // Use empty string if no name is provided
+        email
+      });
+  
+      // Save the subscription to the database
       await newSubscription.save();
-      res.status(201).json(newSubscription);
+      
+      // Send success response
+      res.status(201).json({
+        message: 'Subscription successful',
+        subscription: newSubscription
+      });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      console.error('Error during subscription:', error);  // Log the error for debugging
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   };
+  
 export const getAllSubscriptions = async (req, res) => {
   try {
     const subscriptions = await Subscription.find();

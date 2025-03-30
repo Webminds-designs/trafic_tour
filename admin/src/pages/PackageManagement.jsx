@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
-import {  FiTrash2 } from 'react-icons/fi';
+import { FiTrash2 } from 'react-icons/fi';
 import { BiSolidPackage } from "react-icons/bi";
 import axios from "axios";
 import { FaCamera } from "react-icons/fa";
@@ -163,34 +163,40 @@ const PackageManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        setLoading(true); // Start loading
+
         // Trim spaces and validate required fields
         if (!formData.name.trim() || !formData.description.trim() || !formData.type.trim()) {
             toast.error("Name, Description, and Type are required.");
+            setLoading(false);
             return;
         }
 
         if (!formData.price || isNaN(formData.price) || formData.price <= 0) {
             toast.error("Please enter a valid positive price.");
+            setLoading(false);
             return;
         }
 
         if (!formData.duration.days || !formData.duration.nights || isNaN(formData.duration.days) || isNaN(formData.duration.nights)) {
             toast.error("Please enter valid duration days and nights.");
+            setLoading(false);
             return;
         }
 
         if (!formData.places_to_visit.length) {
             toast.error("Please add at least one place to visit.");
+            setLoading(false);
             return;
         }
 
         if (!formData.itinerary.length || !formData.itinerary[0].title.trim()) {
             toast.error("Please provide a valid itinerary.");
+            setLoading(false);
             return;
         }
 
         try {
-            // Create FormData object
             const formDataToSend = new FormData();
             formDataToSend.append("name", formData.name);
             formDataToSend.append("description", formData.description);
@@ -200,45 +206,36 @@ const PackageManagement = () => {
             formDataToSend.append("places_to_visit", JSON.stringify(formData.places_to_visit));
             formDataToSend.append("itinerary", JSON.stringify(formData.itinerary));
 
-            // Handle image if exists
             if (image) {
                 console.log("Adding New Image File:", image);
                 formDataToSend.append("image", image);
-            } else if (selectedPackage?.imageUrl) {
-                console.log("Retaining Existing Image:", selectedPackage.imageUrl);
-                formDataToSend.append("oldimageUrl", selectedPackage.imageUrl); // existing image
-            } else {
-                toast.error("Please provide an image.");
-                return;
             }
-    
+
+            if (selectedPackage?.imageUrl) {
+                console.log("Retaining Existing Image:", selectedPackage.imageUrl);
+                formDataToSend.append("oldimageUrl", selectedPackage.imageUrl);
+            }
 
             let response;
 
             if (selectedPackage) {
-               
-                // **Update Existing Package**
                 response = await axios.put(
                     `http://localhost:6400/api/packages/${selectedPackage._id}`,
                     formDataToSend,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );
-
                 toast.success("Package updated successfully!");
             } else {
-                // **Create New Package**
                 response = await axios.post(
                     "http://localhost:6400/api/packages",
                     formDataToSend,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );
-
                 toast.success("Package added successfully!");
             }
 
             console.log("Server Response:", response.data);
 
-            // Reset form fields after successful submission
             setFormData({
                 name: "",
                 description: "",
@@ -251,7 +248,7 @@ const PackageManagement = () => {
             });
 
             setImage(null);
-            setEditShowModal(false); // Close modal
+            setEditShowModal(false);
         } catch (error) {
             console.error("Error:", error);
             if (error.response) {
@@ -260,6 +257,8 @@ const PackageManagement = () => {
             } else {
                 toast.error("Operation failed. Please try again.");
             }
+        } finally {
+            setLoading(false); // Stop loading
         }
     };
 
@@ -282,48 +281,48 @@ const PackageManagement = () => {
 
         setEditShowModal(true);
     };
-//delete package
-const deletePackage = async (packageId) => {
-    const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'You will not be able to undo this action!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel',
-    });
+    //delete package
+    const deletePackage = async (packageId) => {
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to undo this action!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+        });
 
-    if (result.isConfirmed) {
-        try {
-            await axios.delete(`http://localhost:6400/api/packages/${packageId}`);
+        if (result.isConfirmed) {
+            try {
+                await axios.delete(`http://localhost:6400/api/packages/${packageId}`);
 
-            // Update state to remove deleted package
-            setPackages((prevPackages) => prevPackages.filter(pkg => pkg._id !== packageId));
+                // Update state to remove deleted package
+                setPackages((prevPackages) => prevPackages.filter(pkg => pkg._id !== packageId));
 
-            // Show success message
-            Swal.fire({
-                title: 'Deleted!',
-                text: 'The package has been deleted.',
-                icon: 'success',
-                confirmButtonColor: '#3085d6',
-            });
-        } catch (err) {
-            console.error("Error deleting package:", err);
+                // Show success message
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'The package has been deleted.',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                });
+            } catch (err) {
+                console.error("Error deleting package:", err);
 
-            // Show error message
-            Swal.fire({
-                title: 'Error!',
-                text: 'Failed to delete the package. Please try again.',
-                icon: 'error',
-                confirmButtonColor: '#d33',
-            });
+                // Show error message
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to delete the package. Please try again.',
+                    icon: 'error',
+                    confirmButtonColor: '#d33',
+                });
+            }
         }
-    }
-};
+    };
 
-    
+
     return (
 
         <div className="flex h-full bg-gray-200 font-figtree">
@@ -349,7 +348,7 @@ const deletePackage = async (packageId) => {
                                     alt={pkg.name}
                                     className="w-72 h-64 object-cover rounded-2xl"
                                 />
-                                <div  onClick={() => deletePackage(pkg._id)} className="absolute top-3 m-3 py-2 right-3 bg-red-500 text-white text-xs px-3  rounded-full cursor-pointer shadow-md hover:bg-red-600 transition duration-200"><FiTrash2  className="w-5 h-5 "/></div>
+                                <div onClick={() => deletePackage(pkg._id)} className="absolute top-3 m-3 py-2 right-3 bg-white text-red-500 text-xs px-3  rounded-full cursor-pointer shadow-md transition duration-200"><FiTrash2 className="w-5 h-5 " /></div>
                                 <div className="p-4 flex flex-col items-center text-center">
                                     <h2 className="text-lg font-base text-gray-800">{pkg.name}</h2>
                                     <button onClick={() => handleEditPackage(pkg)} className="mt-3  bg-black text-white px-3 py-1 rounded-lg cursor-pointer text-sm">
@@ -553,8 +552,16 @@ const deletePackage = async (packageId) => {
                         {/* Buttons - Bottom Right */}
                         <div className="flex justify-end gap-4 mt-6">
                             <button onClick={() => setShowModal(false)} className="px-2 py-1 border rounded-3xl cursor-pointer">Cancel</button>
-                            <button type="submit" onClick={handleSubmit} className="px-2 py-1 bg-black text-white rounded-3xl cursor-pointer">Save changes</button>
+                            <button
+                                type="submit"
+                                onClick={handleSubmit}
+                                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-black'}`}
+                                disabled={loading}
+                            >
+                                {loading ? 'Saving...' : 'Save changes'}
+                            </button>
                         </div>
+
                     </div>
                 </div>
 
@@ -765,8 +772,16 @@ const deletePackage = async (packageId) => {
                         {/* Buttons - Bottom Right */}
                         <div className="flex justify-end gap-4 mt-6">
                             <button onClick={() => setEditShowModal(false)} className="px-2 py-1 border rounded-3xl cursor-pointer">Cancel</button>
-                            <button type="submit" onClick={handleSubmit} className="px-2 py-1 bg-black text-white rounded-3xl cursor-pointer">Save changes</button>
+                            <button
+                                type="submit"
+                                onClick={handleSubmit}
+                                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-black'}`}
+                                disabled={loading}
+                            >
+                                {loading ? 'Saving...' : 'Save changes'}
+                            </button>
                         </div>
+
                     </div>
 
                 </div>

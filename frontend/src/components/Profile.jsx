@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 
-
+import { FaUser } from "react-icons/fa";
 import Footer from '../components/Footer'
 import heart from "../assets/heart.png";
 import hidden from "../assets/hidden.png";
@@ -36,13 +36,14 @@ const Profile = () => {
   const [bookings, setBookings] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const userId = user.id
 
   const openModal = (packageItem) => {
     setSelectedPackage(packageItem);
     setIsModalOpen(true);
   };
-console.log(user)
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedPackage(null);
@@ -112,7 +113,7 @@ console.log(user)
     'My Favourites',
     'Bookings'
   ];
-  
+
   //update profile
 
   const [isEditing, setIsEditing] = useState(true);
@@ -260,37 +261,7 @@ console.log(user)
     }
   };
 
-  // get Favorites Packages
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const response = await fetch(`http://localhost:6400/api/favorites/${userId}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch favorites");
-        }
-        const data = await response.json();
-        setFavorites(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    if (userId) {
-      fetchFavorites();
-    }
-  }, [userId]);
-
-  //remove faviorites
-  const removeFavorite = async (packageId) => {
-    try {
-      await axios.delete("http://localhost:6400/api/favorites/remove", { data: { userId, packageId } });
-      setFavorites((prevFavorites) => prevFavorites.filter((fav) => fav.packageId._id !== packageId));
-    } catch (error) {
-      console.error("Error removing from favorites:", error);
-    }
-  };
 
   //get bookings
   useEffect(() => {
@@ -311,14 +282,71 @@ console.log(user)
 
     fetchBookings();
   }, []);
-  
+  console.log(bookings)
   const filteredBookings = bookings.filter((packageItem) => {
     const checkOutDate = new Date(packageItem?.checkOutDate);
     const currentDate = new Date();
-  
+
     // Check if the checkOutDate is in the past
     return checkOutDate < currentDate;
   });
+
+  //add faviorites
+  const addFavorite = async (packageId) => {
+    try {
+      const response = await axios.post("http://localhost:6400/api/favorites/add", {
+        userId,
+        packageId,
+      });
+
+      setRefreshTrigger((prev) => prev + 1); // Trigger re-fetch
+
+      console.log("Added to favorites:", response.data);
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+    }
+  };
+  //remove faviorites
+  const removeFavorite = async (packageId) => {
+    try {
+      await axios.delete("http://localhost:6400/api/favorites/remove", {
+        data: { userId, packageId },
+      });
+
+      setRefreshTrigger((prev) => prev + 1); // Trigger re-fetch
+
+      console.log("Removed from favorites");
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
+    }
+  };
+
+  // get Favorites Packages
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const response = await fetch(`http://localhost:6400/api/favorites/${userId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch favorites");
+        }
+        const data = await response.json();
+        setFavorites(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchFavorites();
+    }
+  }, [userId, refreshTrigger]);
+
+
+  const isPackageFavorite = (packageId) => {
+    return favorites.some((fav) => fav.packageId?._id === packageId);
+  };
   return (
     < >
       <Navbar />
@@ -326,7 +354,7 @@ console.log(user)
         <main className="container md:mx-auto md:px-4 py-8 ">
           <h1 className="lg:text-5xl md:text-4xl text-2xl font-medium lg:mx-0 md:mx-22 mx-10">Your Adventure <span className='border-b-1'>Awaits</span></h1>
           <p className="mt-6 md:mx-0 mx-10 md:text-start text-center">Tailor your experience and make every moment unforgettable.</p>
-        
+
           <div className="flex flex-col md:flex-row items-center mx-4 md:mx-0 my-12">
             <div
               {...(isProfileEditing ? getRootProps() : {})} // Apply drag-and-drop only if editing
@@ -339,13 +367,13 @@ console.log(user)
                   imagePreview ||
                   (formData?.profileUrl?.includes("=s96-c")
                     ? formData.profileUrl.replace(/=s96-c/, "=s400-c")
-                    : formData?.profileUrl || userpic)
+                    : formData?.profileUrl)
                 }
                 alt="Profile"
                 className="rounded-full w-32 h-32 md:w-48 md:h-48 object-cover"
                 onError={() => console.log("Image failed to load")}
               />
-            </div> 
+            </div>
 
             <div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
               <h2 className="text-lg md:text-xl  font-bold">{userDetails?.firstName}  {userDetails?.lastName}</h2>
@@ -366,9 +394,10 @@ console.log(user)
                     >
                       {loading ? (
                         <span className="flex items-center justify-center">
-                          <div className="animate-spin border-4 border-t-transparent border-white rounded-3xl-full w-5 h-5 mr-2" />
-                          Uploading...
+                          <div className="animate-spin border-4 border-t-transparent border-white rounded-full w-5 h-5 mr-2" />
+                          <span>Uploading...</span>
                         </span>
+
                       ) : (
                         "Change Profile"
                       )}
@@ -382,27 +411,49 @@ console.log(user)
                     Edit
                   </button>
                 )}
-                  <button onClick={logout}   className="bg-black cursor-pointer text-white ml-5 px-4 py-2 rounded-3xl text-sm md:text-md">Logout </button>
+                <button onClick={logout} className="bg-black cursor-pointer text-white ml-5 px-4 py-2 rounded-3xl text-sm md:text-md">Logout </button>
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center mt-6 lg:mt-10 font-base">
-            <div className="bg-black text-white flex w-full max-w-7xl  rounded-3xl overflow-x-auto">
+          {/* tabs */}
+          {/* tabs */}
+          <div className="flex flex-col items-center mt-6 lg:mt-10 font-base w-full">
+            {/* Dropdown for Mobile View (only visible on mobile) */}
+            <div className=" w-full max-w-7xl rounded-3xl overflow-hidden md:hidden">
+              <select
+                onChange={(e) => setSelectedTab(e.target.value)}
+                value={selectedTab}
+                className="w-full p-3 rounded-3xl bg-black text-white appearance-none
+             border  outline-none cursor-pointer hover:bg-gray-100 focus:ring-2 "
+              >
+                {tabs.map((tab) => (
+                  <option
+                    key={tab}
+                    value={tab}
+                    className={`bg-black text-white ${selectedTab === tab ? 'bg-teal-600 text-black' : ''}`}
+                  >
+                    {tab}
+                  </option>
+                ))}
+              </select>
+            </div>
 
+
+            {/* Horizontal Bar for Larger Screens */}
+            <div className="hidden md:flex bg-black text-white w-full max-w-7xl rounded-3xl overflow-x-auto">
               {tabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
-                  className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 ${selectedTab === tab
-                    ? 'bg-teal-600 text-black'
-                    : ''
-                    }`}
+                  className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 ${selectedTab === tab ? 'bg-teal-600 text-black' : ''}`}
                 >
                   {tab}
                 </button>
               ))}
             </div>
           </div>
+
+
           {/* Account Settings */}
           {selectedTab === 'Account Settings' && (
             <div className="">
@@ -604,37 +655,37 @@ console.log(user)
           {selectedTab === 'Booking History' && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 m-6">
-    {filteredBookings.length === 0 ? (
-      <div className="col-span-full text-center text-xl text-gray-500">
-        No booking history available for past check-out dates.
-      </div>
-    ) : (
-      filteredBookings.map((packageItem, index) => (
-        <div key={index} className="relative overflow-hidden m-4">
-          <img
-            src={packageItem?.packageId.imageUrl}
-            alt={packageItem?.packageId.description}
-            className="w-full h-92 object-cover rounded-xl"
-          />
-          <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-            <img src={heart} alt="heart" width={20} />
-          </button>
-          <div className="p-4">
-            <h3 className="font-bold text-lg">{packageItem.packageId.description}</h3>
-            <p className="text-black font-semibold text-md mt-2">
-              {packageItem.packageId.places_to_visit}
-            </p>
-            <button
-              onClick={() => openModal(packageItem)}
-              className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
-            >
-              VIEW
-            </button>
-          </div>
-        </div>
-      ))
-    )}
-  </div>
+                {filteredBookings.length === 0 ? (
+                  <div className="col-span-full text-center text-xl text-gray-500">
+                    No booking history available for past check-out dates.
+                  </div>
+                ) : (
+                  filteredBookings.map((packageItem, index) => (
+                    <div key={index} className="relative overflow-hidden m-4">
+                      <img
+                        src={packageItem?.packageId.imageUrl}
+                        alt={packageItem?.packageId.description}
+                        className="w-full h-92 object-cover rounded-xl"
+                      />
+                      <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
+                        <img src={heart} alt="heart" width={20} />
+                      </button>
+                      <div className="p-4">
+                        <h3 className="font-bold text-lg">{packageItem.packageId.description}</h3>
+                        <p className="text-black font-semibold text-md mt-2">
+                          {packageItem.packageId.places_to_visit}
+                        </p>
+                        <button
+                          onClick={() => openModal(packageItem)}
+                          className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
+                        >
+                          VIEW
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
 
               {/* Modal */}
               {isModalOpen && (
@@ -653,16 +704,16 @@ console.log(user)
                 {favorites.map((packageItem, index) => (
                   <div key={index} className="relative  overflow-hidden m-4">
                     <img
-                      src={packageItem.packageId.imageUrl}
-                      alt={packageItem.packageId.name}
+                      src={packageItem?.packageId.imageUrl}
+                      alt={packageItem?.packageId.name}
                       className="w-full h-92 object-cover rounded-xl"
                     />
-                    <button onClick={() => removeFavorite(packageItem.packageId._id)} className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
+                    <button onClick={() => removeFavorite(packageItem?.packageId._id)} className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
                       <FaHeart className="text-red-500" alt='heart' width={20} />
                     </button>
                     <div className="p-4">
-                      <h3 className="font-bold text-lg">{packageItem.packageId.name}</h3>
-                      <p className="text-black font-semibold text-md mt-2">{packageItem.packageId.description}</p>
+                      <h3 className="font-bold text-lg">{packageItem?.packageId.name}</h3>
+                      <p className="text-black font-semibold text-md mt-2">{packageItem?.packageId.description}</p>
                       <button className="mt-4 bg-black text-white px-4 py-2 rounded-md">
                         EXPLORE NOW
                       </button>
@@ -687,21 +738,33 @@ console.log(user)
                         alt={packageItem?.packageId.description}
                         className="w-full h-92 object-cover rounded-xl"
                       />
-                      <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                        <img src={heart} alt="heart" width={20} />
-                      </button>
-                      <div className="p-4">
-                        <h3 className="font-bold text-lg">{packageItem.packageId.description}</h3>
-                        <p className="text-black font-semibold text-md mt-2">
-                          {packageItem.packageId.places_to_visit}
-                        </p>
-                        <button
-                          onClick={() => openModal(packageItem)}
-                          className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
-                        >
-                          VIEW
-                        </button>
+
+                      {/* Favorite (Heart) Button */}
+                      <div
+                        className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md cursor-pointer"
+                        onClick={() => {
+                          isPackageFavorite(packageItem.packageId._id)
+                            ? removeFavorite(packageItem.packageId._id)
+                            : addFavorite(packageItem.packageId._id);
+                        }}
+                      >
+                        <FaHeart className={`text-xs ${isPackageFavorite(packageItem.packageId._id) ? 'text-red-500' : 'text-black'}`} />
                       </div>
+                      <div className="flex items-center ">
+                        {packageItem.packageId.places_to_visit.map((place, index) => (
+                          <div key={index} className="flex items-center">
+                            <p className="text-black font-semibold text-md mt-4">
+                              {place}
+                            </p>
+                            {/* Add vertical line after each item except the last one */}
+                            {index < packageItem.packageId.places_to_visit.length - 1 && (
+                              <div className="border-l-2 border-teal-400 h-6 mx-1 mt-5"></div> // Added height (h-8) for visibility
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+
                     </div>
                   ))
                 )}

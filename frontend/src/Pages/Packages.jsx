@@ -50,7 +50,7 @@ const Packages = () => {
       targetSectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const allActivities = [
     "Wildlife",
@@ -127,7 +127,7 @@ const Packages = () => {
     <>
       <Navbar />
       <div
-        className=" w-full mt-30"
+        className=" w-full pt-30 bg-gray-100"
       >
         <div className="text-black">
           {/* Header Section */}
@@ -150,18 +150,43 @@ const Packages = () => {
           </div>
 
           {/* Packages Section Bar */}
-          <div className="flex flex-col items-center mt-6 lg:mt-10 font-base">
-            <div className="bg-black text-white flex w-full max-w-7xl  rounded-3xl overflow-x-auto">
+          <div className="flex flex-col items-center mt-6 lg:mt-10 font-base w-full">
+            {/* Dropdown for Mobile View */}
+            <div className="w-full md:hidden px-3">
+              <div className="relative">
+                <select
+                  className="w-full p-3 rounded-3xl bg-black text-white appearance-none
+             border  outline-none cursor-pointer hover:bg-gray-100 focus:ring-2 "
+                  onChange={(e) => handleSectionClick(e.target.value)}
+                  value={selectedSection}
+                >
+                  {sections.map((section, index) => (
+                    <option
+                      key={index}
+                      value={section}
+                      className={selectedSection === section
+                        ? "bg-teal-600 text-black"
+                        : "bg-black text-white"
+                      }
+                    >
+                      {section}
+                    </option>
+                  ))}
+                </select>
 
-
+                {/* Custom dropdown arrow */}
+                <div className="absolute text-white inset-y-0 right-4 flex items-center pointer-events-none">
+                  ⌄
+                </div>
+              </div>
+            </div>
+            {/* Horizontal Bar for Larger Screens */}
+            <div className="hidden md:flex bg-black text-white w-full max-w-7xl rounded-3xl overflow-x-auto">
               {sections.map((section, index) => (
                 <div
                   key={index}
                   className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 
-                        ${selectedSection === section
-                      ? "bg-teal-600 text-black "
-                      : "  "
-                    }`}
+          ${selectedSection === section ? "bg-teal-600 text-black" : ""}`}
                   onClick={() => handleSectionClick(section)}
                 >
                   {section}
@@ -169,7 +194,6 @@ const Packages = () => {
               ))}
             </div>
           </div>
-
           {/* Packages Grid */}
           <div className="mt-10 lg:mt-30 mb-14 lg:mb-28 px-4 sm:px-6 lg:px-20">
             <div className="flex justify-between">
@@ -187,7 +211,7 @@ const Packages = () => {
                 </button>
               </div>
             </div>
-            <div className=" bg-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-10 lg:mt-20">
+            <div className="  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-10 lg:mt-20">
               {/* All Packages */}
               {selectedSection === "All Packages" ? (<>
                 {packages
@@ -213,8 +237,8 @@ const Packages = () => {
                   ))}
               </>) : null}
 
-  {/*Advanture and Wildlife */}
-  {selectedSection === "Advanture and Wildlife" ? (<>
+              {/*Advanture and Wildlife */}
+              {selectedSection === "Advanture and Wildlife" ? (<>
                 {packages
                   .filter((packageItem) => packageItem.type === "Adventure and Wildlife")
                   .map((packageItem) => (
@@ -226,8 +250,8 @@ const Packages = () => {
                   ))}
               </>) : null}
 
-                {/*Educational and Cultural */}
-  {selectedSection === "Educational and Cultural" ? (<>
+              {/*Educational and Cultural */}
+              {selectedSection === "Educational and Cultural" ? (<>
                 {packages
                   .filter((packageItem) => packageItem.type === "Educational and Cultural")
                   .map((packageItem) => (
@@ -244,7 +268,7 @@ const Packages = () => {
           {/* Find Best Package Section */}
           <div
             ref={targetSectionRef}
-            className="relative w-full h-[400px] lg:h-screen bg-cover bg-center mt-10 lg:mt-30 mb-20 lg:mb-50"
+            className="relative w-full h-screen md:h-[400px] lg:h-screen bg-cover bg-center mt-10 lg:mt-30 mb-20 lg:mb-50"
             style={{
               backgroundImage: `url(${backgroundImage})`,
               backgroundPosition: "center",
@@ -256,98 +280,98 @@ const Packages = () => {
                 FIND THE BEST PACKAGE
               </h2>
               <form onSubmit={handleSearch}>
-          <div className="flex justify-start">
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 w-full md:w-1/2">
-              {/* Destination Field */}
-              <div>
-                <label className="text-sm font-medium" htmlFor="destination">
-                  Destination
-                </label>
-                <input
-                  type="text"
-                  id="destination"
-                  placeholder="SIGIRIYA, ELLA, ETC"
-                  value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                  className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-              </div>
+                <div className="flex flex-col md:flex-row gap-4">
+                  {/* Left Section - Destination & Trip Duration */}
+                  <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
+                    {/* Destination Field */}
+                    <div>
+                      <label className="text-sm font-medium" htmlFor="destination">
+                        Destination
+                      </label>
+                      <input
+                        type="text"
+                        id="destination"
+                        placeholder="SIGIRIYA, ELLA, ETC"
+                        value={destination}
+                        onChange={(e) => setDestination(e.target.value)}
+                        className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
 
-              {/* Trip Duration Field */}
-              <div>
-                <label className="text-sm font-medium" htmlFor="tripDuration">
-                  Trip Duration (Days)
-                </label>
-                <input
-                  type="number"
-                  id="tripDuration"
-                  placeholder="Enter number of days"
-                  value={tripDuration}
-                  onChange={(e) => setTripDuration(e.target.value)}
-                  className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-              </div>
-            </div>
-
-            {/* Activities Section */}
-            <div className="grid grid-cols-1 mx-2 md:grid-cols-1 gap-4 w-full md:w-1/2">
-              <div>
-                <label className="text-sm font-medium">Activities & Interests</label>
-                <div className="w-full max-w-md space-y-3">
-                  {/* Search Input */}
-                  <input
-                    type="text"
-                    placeholder="Search activities..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  />
-
-                  {/* Activity List */}
-                  <div className="flex flex-wrap gap-2">
-                    {(searchTerm ? filteredActivities : allActivities.slice(0, 8)).map((activity) => (
-                      <div
-                        key={activity}
-                        onClick={() => toggleActivity(activity)}
-                        className={`px-4 py-2 rounded-full cursor-pointer transition ${
-                          selectedActivities.includes(activity)
-                            ? "bg-teal-500 text-white"
-                            : "bg-gray-200 text-gray-700"
-                        }`}
-                      >
-                        {activity}
-                      </div>
-                    ))}
+                    {/* Trip Duration Field */}
+                    <div>
+                      <label className="text-sm font-medium" htmlFor="tripDuration">
+                        Trip Duration (Days)
+                      </label>
+                      <input
+                        type="number"
+                        id="tripDuration"
+                        placeholder="Enter number of days"
+                        value={tripDuration}
+                        onChange={(e) => setTripDuration(e.target.value)}
+                        className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
                   </div>
 
-                  {/* Selected Activities */}
-                  {selectedActivities.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-8">
-                      {selectedActivities.map((activity) => (
-                        <div key={activity} className="px-3 py-1 bg-teal-500 text-white rounded-full flex items-center">
-                          {activity}
-                          <button onClick={() => toggleActivity(activity)} className="ml-2 text-white font-bold">
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+                  {/* Right Section - Activities */}
+                  <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
+                    <div>
+                      <label className="text-sm font-medium">Activities & Interests</label>
+                      <div className="w-full space-y-3">
+                        {/* Search Input */}
+                        <input
+                          type="text"
+                          placeholder="Search activities..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        />
 
-          {/* Submit Button */}
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="w-1/2 flex text-center bg-teal-600 text-white py-2 mt-6 justify-center rounded-3xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            >
-              FIND
-            </button>
-          </div>
-        </form>
+                        {/* Activity List */}
+                        <div className="flex flex-wrap gap-2">
+                          {(searchTerm ? filteredActivities : allActivities.slice(0, 8)).map((activity) => (
+                            <div
+                              key={activity}
+                              onClick={() => toggleActivity(activity)}
+                              className={`px-4 py-2 rounded-full cursor-pointer transition ${selectedActivities.includes(activity)
+                                ? "bg-teal-500 text-white"
+                                : "bg-gray-200 text-gray-700"
+                                }`}
+                            >
+                              {activity}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Selected Activities */}
+                        {selectedActivities.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-4">
+                            {selectedActivities.map((activity) => (
+                              <div key={activity} className="px-3 py-1 bg-teal-500 text-white rounded-full flex items-center">
+                                {activity}
+                                <button onClick={() => toggleActivity(activity)} className="ml-2 text-white font-bold">
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex justify-center">
+                  <button
+                    type="submit"
+                    className="w-full sm:w-3/4 md:w-1/2 flex text-center bg-teal-600 text-white py-2 mt-6 justify-center rounded-3xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  >
+                    FIND
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
