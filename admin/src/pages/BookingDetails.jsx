@@ -6,41 +6,6 @@ import { MdArrowBackIos, MdCheckCircle, MdCancel } from "react-icons/md";
 import { FaPhone, FaEnvelope } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 
-const bookings = [
-    {
-        id: 1,
-        image: "https://via.placeholder.com/40",
-        packageName: "Yala Safari Expedition",
-        category: "Adventure",
-        paymentStatus: "Paid",
-        guest: "Pete Deemer",
-        date: "Feb 28 - Feb 30",
-        totalAmount: "$198",
-        bookingStatus: "Confirmed",
-    },
-    {
-        id: 2,
-        image: "https://via.placeholder.com/40",
-        packageName: "Yala Safari Expedition",
-        category: "Adventure",
-        paymentStatus: "Failed",
-        guest: "Pete Deemer",
-        date: "Feb 28 - Feb 30",
-        totalAmount: "$198",
-        bookingStatus: "Pending",
-    },
-    {
-        id: 3,
-        image: "https://via.placeholder.com/40",
-        packageName: "Ella Rock Hiking Tour",
-        category: "Hiking",
-        paymentStatus: "Paid",
-        guest: "Maria Gonzales",
-        date: "Mar 12 - Mar 14",
-        totalAmount: "$250",
-        bookingStatus: "Confirmed",
-    },
-];
 
 const BookingDetails = () => {
     const location = useLocation();

@@ -248,7 +248,7 @@ const Profile = () => {
         newPassword, // Send new password
       });
 
-      toast.error(response.data.message);
+      toast.success(response.data.message);
 
       // Clear the password fields
       setOldPassword("");

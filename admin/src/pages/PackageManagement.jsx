@@ -281,44 +281,26 @@ const PackageManagement = () => {
 
         setEditShowModal(true);
     };
-    //delete package
-    const deletePackage = async (packageId) => {
-        const result = await Swal.fire({
-            title: 'Are you sure?',
-            text: 'You will not be able to undo this action!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel',
-        });
 
-        if (result.isConfirmed) {
-            try {
-                await axios.delete(`http://localhost:6400/api/packages/${packageId}`);
+    const confirmDelete = (packageId) => {
+        setSelectedPackage(packageId);
+        setShowDeleteModal(true);
+    };
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    // Handle deletion after confirmation
+    const deletePackage = async () => {
+        if (!selectedPackage) return;
 
-                // Update state to remove deleted package
-                setPackages((prevPackages) => prevPackages.filter(pkg => pkg._id !== packageId));
+        try {
+            await axios.delete(`http://localhost:6400/api/packages/${selectedPackage}`);
 
-                // Show success message
-                Swal.fire({
-                    title: 'Deleted!',
-                    text: 'The package has been deleted.',
-                    icon: 'success',
-                    confirmButtonColor: '#3085d6',
-                });
-            } catch (err) {
-                console.error("Error deleting package:", err);
-
-                // Show error message
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to delete the package. Please try again.',
-                    icon: 'error',
-                    confirmButtonColor: '#d33',
-                });
-            }
+            // Update state to remove deleted package
+            setPackages((prevPackages) => prevPackages.filter(pkg => pkg._id !== selectedPackage));
+        } catch (err) {
+            console.error("Error deleting package:", err);
+        } finally {
+            setShowDeleteModal(false);
+            setSelectedPackage(null);
         }
     };
 
@@ -348,7 +330,7 @@ const PackageManagement = () => {
                                     alt={pkg.name}
                                     className="w-72 h-64 object-cover rounded-2xl"
                                 />
-                                <div onClick={() => deletePackage(pkg._id)} className="absolute top-3 m-3 py-2 right-3 bg-white text-red-500 text-xs px-3  rounded-full cursor-pointer shadow-md transition duration-200"><FiTrash2 className="w-5 h-5 " /></div>
+                                <div onClick={() => confirmDelete(pkg._id)} className="absolute top-3 m-3 py-2 right-3 bg-white text-red-500 text-xs px-3  rounded-full cursor-pointer shadow-md transition duration-200"><FiTrash2 className="w-5 h-5 " /></div>
                                 <div className="p-4 flex flex-col items-center text-center">
                                     <h2 className="text-lg font-base text-gray-800">{pkg.name}</h2>
                                     <button onClick={() => handleEditPackage(pkg)} className="mt-3  bg-black text-white px-3 py-1 rounded-lg cursor-pointer text-sm">
@@ -360,6 +342,30 @@ const PackageManagement = () => {
                     </div>
                 </div>
             </div>
+            {/* Confirmation Modal */}
+            {showDeleteModal && (
+    <div className="fixed inset-0 backdrop-blur-sm bg-opacity-90 flex justify-center z-50">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg p-6 w-96">
+            <h2 className="text-lg font-semibold text-gray-800 text-center">Confirm Deletion</h2>
+            <p className="text-gray-600 text-center mt-2">Are you sure you want to delete this package?</p>
+            
+            <div className="flex justify-center gap-4 mt-4">
+                <button 
+                    onClick={deletePackage} 
+                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                >
+                    Yes, Delete
+                </button>
+                <button 
+                    onClick={() => setShowDeleteModal(false)} 
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+)}
 
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-opacity-50 z-50">

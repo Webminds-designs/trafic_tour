@@ -6,14 +6,13 @@ import { ImUserPlus } from "react-icons/im";
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
 import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
-
-    
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
     const [error, setError] = useState(null);
@@ -102,35 +101,28 @@ const UserManagement = () => {
     };
 
     //delete user
-    const handleDelete = async (userId) => {
+    const confirmDelete = (userId) => {
+        setSelectedUser(userId);
+        setShowDeleteModal(true);
+    };
+
+    // Handle actual deletion after confirmation
+    const handleDelete = async () => {
+        if (!selectedUser) return;
+
         try {
-            // Use SweetAlert2 for confirmation dialog
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'You will not be able to undo this action!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!',
-            });
+            await axios.delete(`http://localhost:6400/api/user/${selectedUser}`);
 
-            if (result.isConfirmed) {
-                // Send DELETE request to backend
-                await axios.delete(`http://localhost:6400/api/user/${userId}`);
+            // Remove user from state
+            setUsers((prevUsers) => prevUsers.filter(user => user._id !== selectedUser));
 
-                // Remove the deleted user from the state
-                setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
-
-                // Show success toast notification
-                toast.success('User deleted successfully!');
-            }
+            toast.success("User deleted successfully!");
         } catch (err) {
-            console.error('Error deleting user:', err);
-            setError('Failed to delete user. Please try again.');
-
-            // Show error toast notification
-            toast.error('Failed to delete user. Please try again.');
+            console.error("Error deleting user:", err);
+            toast.error("Failed to delete user. Please try again.");
+        } finally {
+            setShowDeleteModal(false);
+            setSelectedUser(null);
         }
     };
 
@@ -265,7 +257,7 @@ const UserManagement = () => {
                                     <td className="py-4 px-6 text-green-500">Active</td>
                                     <td className="py-4 px-6 flex space-x-3">
                                         <button className="text-teal-500 cursor-pointer" onClick={() => handleEdit(user)}><FiEdit2 /></button>
-                                        <button className="text-teal-500 cursor-pointer" onClick={() => handleDelete(user._id)}><FiTrash2 /></button>
+                                        <button className="text-teal-500 cursor-pointer"  onClick={() => confirmDelete(user._id)} ><FiTrash2 /></button>
                                     </td>
                                 </tr>
                             ))}
@@ -273,7 +265,30 @@ const UserManagement = () => {
                     </table>
                 </div>
             </div>
+{/* Custom Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 backdrop-blur-sm bg-opacity-90 flex justify-center z-50">
+                    <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg p-6 w-96">
+                        <h2 className="text-lg font-semibold text-gray-800 text-center">Confirm Deletion</h2>
+                        <p className="text-gray-600 text-center mt-2">Are you sure you want to delete this user?</p>
 
+                        <div className="flex justify-center gap-4 mt-4">
+                            <button 
+                                onClick={handleDelete} 
+                                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                            >
+                                Yes, Delete
+                            </button>
+                            <button 
+                                onClick={() => setShowDeleteModal(false)} 
+                                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {/*Register Modal */}
             {showModal && (
                 <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center">
