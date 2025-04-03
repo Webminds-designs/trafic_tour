@@ -2,6 +2,8 @@ import User from "../Model/User.js";
 import cloudinary from "../config/CloudinaryConfig.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { ErrorResponse } from "../utils/errorResponse.js";
+
 
 // Register a new user
 export const registerUser = async (req, res) => {
@@ -129,7 +131,6 @@ export const loginUser = async (req, res) => {
    res.status(200).json({
      status: true,
      message: 'Login successful',
-     token: token,
      user: {
        id: user._id,
        firstName: user.firstName,
@@ -182,7 +183,6 @@ export const googleloginUser = async (req, res) => {
     res.status(200).json({
       status: true,
       message: 'Login successful',
-      token: token,
       user: {
         id: user._id,
         firstName: user.firstName,
@@ -405,54 +405,50 @@ export const findUserByEmail = async (req, res) => {
   }
 };
 
-
-//verify user
 export const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.cookies.token;  // Token is retrieved from cookies
+    const token = req.cookies.token; // Retrieve token from cookies
     if (!token) {
-      return res.json({ status: false, message: "No token provided" });
+      return next(new ErrorResponse("No token provided", 401));
     }
 
-    // Verify the token using jsonwebtoken
+    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;  // Attach user information to the request object
-    next();  // Proceed to the next route handler
+    req.user = decoded; // Attach user data to request object
+    next(); // Proceed to the next middleware or controller
   } catch (err) {
     console.error("Token verification failed:", err);
-    return res.json({ status: false, message: "Invalid or expired token" });
+    return next(new ErrorResponse("Invalid or expired token", 401));
   }
 };
 
 // Get the current authenticated user
-export const getCurrentUser = (req, res) => {
-  // Ensure the user information exists in the request (i.e., decoded token)
-  if (!req.user || !req.user.email) {
-    return res.status(401).json({ status: false, message: "Unauthorized" });
-  }
+export const getCurrentUser = async (req, res, next) => {
+  try {
+    if (!req.user || !req.user.email) {
+      return next(new ErrorResponse("Unauthorized", 401));
+    }
 
-  User.findOne({ email: req.user.email })  // Find the user based on the decoded token's email
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({ status: false, message: "User not found" });  // 404 Not Found
-      }
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
+    }
 
-      // Return account summary information
-      res.json({
-        status: true,
-        message: "Authorized",
-        user: {
-          id: user._id,
-          firstName: user.firstName,
-          email: user.email,
-          role: user.role,
-        },
-      });
-    })
-    .catch((err) => {
-      console.error("Error fetching user details:", err);
-      res.status(500).json({ status: false, message: "Server error" });  // 500 Internal Server Error
+    // Return user details
+    res.json({
+      status: true,
+      message: "Authorized",
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        email: user.email,
+        role: user.role,
+      },
     });
+  } catch (err) {
+    console.error("Error fetching user details:", err);
+    next(new ErrorResponse("Server error", 500));
+  }
 };
 
 // Register a new user from admin

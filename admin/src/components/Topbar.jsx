@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { AuthContext } from "../context/authContext.jsx";
 
 const Topbar = ({ title }) => {
-    const { user, setUser, logout } = useContext(AuthContext);
+    
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const toggleDropdown = () => {

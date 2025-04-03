@@ -32,7 +32,6 @@ const Signin = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  //google signin
     //google signin
     const signInWithGoogle = async () => {
       const provider = new GoogleAuthProvider();

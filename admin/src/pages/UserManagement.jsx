@@ -150,7 +150,7 @@ const UserManagement = () => {
                 formDataToSend
             );
             setShowModal(false);
-            alert("User registered successfully!");
+            toast.success("User registered successfully!");
         } catch (err) {
             console.error("Error during registration:", err.response?.data?.message || err.message);
             setError(err.response?.data?.message || "Registration failed. Please try again.");
