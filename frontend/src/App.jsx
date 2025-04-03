@@ -1,5 +1,4 @@
 import "./App.css";
-import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from './context/authContext';
@@ -13,6 +12,7 @@ import ContactUs from "./Pages/ContactUs";
 import Payment from "./components/Payment";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 import SeachResult from "./components/SeachResult";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function App() {
   return (

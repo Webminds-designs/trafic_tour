@@ -6,7 +6,6 @@ import { MdArrowBackIos, MdCheckCircle, MdCancel } from "react-icons/md";
 import { FaPhone, FaEnvelope } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 
-
 const BookingDetails = () => {
     const location = useLocation();
     const { booking } = location.state || {};

@@ -5,7 +5,6 @@ import { FiTrash2 } from 'react-icons/fi';
 import { BiSolidPackage } from "react-icons/bi";
 import axios from "axios";
 import { FaCamera } from "react-icons/fa";
-import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 
 
