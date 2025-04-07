@@ -1,38 +1,60 @@
-import React from "react";
+import React,{useContext,useState ,useEffect  } from "react";
 import Topbar from "../components/Topbar";
 import Sidebar from "../components/Sidebar";
-import P1 from "../assets/P1.png";
-import P2 from "../assets/P2.png";
-import P3 from "../assets/P3.png";
+import axios from "axios"
 import Stamps from "../assets/stamps.png";
+import { AuthContext } from "../context/authContext.jsx";
+import { Link } from 'react-router-dom';
 
-const packages = [
-    {
-        title: "Cool Hill Tour",
-        highlights: "Highlights: Trekking to Adam’s Peak, Nine Arches Bridge, eco-resort stay ",
-        image: P1,
-    },
-    {
-        title: "Eastern Tour Package",
-        highlights: "Highlights: Trekking to Adam’s Peak, Nine Arches Bridge, eco-resort stay ",
-        image: P2,
-    },
-    {
-        title: "Adventure Tour Package",
-        highlights: "Highlights: Trekking to Adam’s Peak, Nine Arches Bridge, eco-resort stay ",
-        image: P3,
-    },
-];
-
-const activities = [
-    { name: "Malinka Weerasinghe", type: "New User", image: "https://via.placeholder.com/50" },
-    { name: "Farah Firthouse", type: "New User", image: "https://via.placeholder.com/50" },
-    { name: "Serene Beach Package", type: "New Package", image: "https://via.placeholder.com/50" },
-    { name: "Jacob Mendis", type: "New User", image: "https://via.placeholder.com/50" },
-    { name: "Yala Safari Package", type: "New Package", image: "https://via.placeholder.com/50" },
-];
-
+ 
 const DashboardPage = () => {
+     const { user, setUser, logout } = useContext(AuthContext);
+     const [packages, setPackages] = useState([]);
+        const [users, setUsers] = useState([]);
+       //get packages details
+       useEffect(() => {
+        const fetchPackages = async () => {
+            try {
+                const response = await axios.get("http://localhost:6400/api/packages");
+                setPackages(response.data.packages);
+                // Assuming the response contains an array of packages
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPackages();
+    }, []);
+
+   //get all users
+   useEffect(() => {
+    const fetchUsers = async () => {
+        try {
+            const response = await axios.get('http://localhost:6400/api/user');
+            console.log('API Response:', response.data); // Check full response
+
+            // Verify if the response contains expected user fields
+            if (response.data.users) {
+                console.log('Users Data:', response.data.users);
+                setUsers(response.data.users);
+            } else {
+                console.error('Users field missing in response');
+                setUsers([]);
+            }
+        } catch (err) {
+            console.error('Error fetching users:', err);
+            setError(err.message);
+            setUsers([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchUsers();
+}, []);
+
     return (
         <div className="flex bg-gray-200 font-figtree min-h-screen">
             {/* Sidebar - Fixed */}
@@ -64,16 +86,19 @@ const DashboardPage = () => {
                     <div className="w-full lg:w-2/3 bg-white p-5 rounded-lg">
                         <div className="flex justify-between items-center">
                             <h2 className="text-xl text-[#003135] font-semibold">Recently Added Packages</h2>
-                            <a href="#" className="text-gray-600 text-sm underline">manage tour packages</a>
+                            <Link to="/packages">
+  <div className="text-gray-600 text-sm underline">manage tour packages</div>
+</Link>
+
                         </div>
                         <div className="mt-6 space-y-4">
-                            {packages.map((pkg, index) => (
+                            {packages.slice(0,3).map((pkg, index) => (
                                 <div key={index} className="flex flex-col sm:flex-row items-center gap-4 bg-white p-5 rounded-lg">
-                                    <img src={pkg.image} alt={pkg.title} className="w-full sm:w-36 h-36 rounded-lg object-cover" />
+                                    <img src={pkg.imageUrl} alt={pkg.name} className="w-full sm:w-36 h-36 rounded-lg object-cover" />
                                     <div className="flex-1 text-center sm:text-left">
-                                        <h3 className="font-semibold text-xl">{pkg.title}</h3>
-                                        <p className="text-gray-600 text-sm">{pkg.highlights}</p>
-                                        <button className="mt-4 bg-[#009990] text-white px-4 py-2 rounded-2xl text-sm cursor-pointer">View Package</button>
+                                        <h3 className="font-semibold text-xl">{pkg.name}</h3>
+                                        <p className="text-gray-600 text-sm">{pkg.description}</p>
+                                        <Link to="/packages"><button className="mt-4 bg-[#009990] text-white px-4 py-2 rounded-2xl text-sm cursor-pointer">View Package</button></Link>
                                     </div>
                                 </div>
                             ))}
@@ -84,19 +109,20 @@ const DashboardPage = () => {
                     <div className="w-full lg:w-1/3 bg-white p-6 rounded-lg">
                         <div className="flex justify-between items-center">
                             <h2 className="text-xl font-semibold text-[#003135]">New Activity</h2>
-                            <a href="#" className="text-gray-600 text-sm underline">see all</a>
+                            <Link to="/UserManagement"><div className="text-gray-600 text-sm underline">see all</div></Link>
                         </div>
                         <div className="mt-4 space-y-4">
-                            {activities.map((activity, index) => (
+                            {users.slice(0,10).map((user, index) => (
                                 <div key={index} className="flex items-center justify-between text-[#003135]">
                                     <div className="flex items-center gap-3">
-                                        <img src={activity.image} alt={activity.name} className="w-10 h-10 rounded-full object-cover" />
+                                        <img   src={user.profileUrl}
+                                                alt={user.firstName} className="w-10 h-10 rounded-full object-cover" />
                                         <div>
-                                            <h3 className="font-medium text-[#003135]">{activity.name}</h3>
-                                            <p className="text-gray-500 text-sm">{activity.type}</p>
+                                            <h3 className="font-medium text-[#003135]">{user.firstName} {user.lastName}</h3>
+                                            <p className="text-gray-500 text-sm">User</p>
                                         </div>
                                     </div>
-                                    <a href="#" className="text-sm text-[#003135]">View</a>
+                                    <Link to="/UserManagement"><div className="text-sm text-[#003135]">View</div></Link>
                                 </div>
                             ))}
                         </div>

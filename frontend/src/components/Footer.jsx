@@ -1,11 +1,88 @@
-import React from "react";
+import React, { useState } from "react";
 import star from "../assets/star.png";
 import pin from "../assets/pin.png";
 import telephone from "../assets/telephone.png";
 import emailwhite from "../assets/emailwhite.png";
 import pinwhite from "../assets/pinwhite.png";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+import review from "../assets/review/review.png";
+import review1 from "../assets/review/review1.png"
+import review2 from "../assets/review/review2.png"
+import review3 from "../assets/review/review3.png"
+import review4 from "../assets/review/review4.png"
+
+const reviews = [
+
+  {
+    text: "Absolutely breathtaking! The climb is challenging, but the views from the top are worth every step. The frescoes and lion's paws are a must-see!",
+    name: "Sam Vorona",
+    location: "Visited from London",
+    image: review1,
+  },
+  {
+    text: "Sigirya Rock was fun climbing . The mirror wall was intersting in that painting s centuries old have been discovered.",
+    name: "Arunas Pleckaitis",
+    location: "From Sydney, Australia",
+    image: review,
+  },
+  {
+    text: "Any visitor must visit to this city to see this town's beauty and feel the ancient culture & never forget to short visit to kandy view point.",
+    name: "Wasana Rathnayaka",
+    location: "Local Guide",
+    image: review3,
+  },
+  {
+    text: "Historical monument. Have a panoramic view of the Galle harbour, sea and the city. Best time to visit this place is during the evening to watch the mesmerizing sunsets",
+    name: "Jodi Billings",
+    location: "Journeyed from Germany",
+    image: review2,
+  },
+  {
+    text: "It's a truly special place. Climbing up the steps to the temple in a pouring rain made it feel like a pilgrimage. The ancient caves and statues really bear the Buddhist spirit.",
+    name: "Nelly Papazova",
+    location: "Dambulla Royal Cave Temple",
+    image: review4,
+  }
+];
+
 
 const Footer = () => {
+
+  const [form, setForm] = useState({ name: '', email: '', postalCode: '' });
+  const [message, setMessage] = useState('');
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch('http://localhost:6400/api/subscriptions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    });
+    const data = await response.json();
+    if (response.ok) {
+      setMessage('Subscription successful!');
+      setForm({ name: '', email: '', postalCode: '' });
+    } else {
+      setMessage(`${data.error}`);
+    }
+  };
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+    arrows: false,
+  };
   return (
     <div className="bg-black text-white ">
       <div className=" mx-auto md:px-24 px-4 py-8">
@@ -16,19 +93,25 @@ const Footer = () => {
                 Subscribe to learn about our latest news, <br /> updates, and
                 adventures.
               </h2>
-              <form className="space-y-4 mx-5">
+              <form onSubmit={handleSubmit} className="space-y-4 mx-5">
                 <input
                   type="text"
+                  name="name"
+                  value={form.name} onChange={handleChange} required
                   placeholder="Your First Name"
                   className="w-full p-4 bg-neutral-900 rounded-2xl"
                 />
                 <input
                   type="email"
+                  name="email"
+                  value={form.email} onChange={handleChange} required
                   placeholder="Your Email"
                   className="w-full p-4 bg-neutral-900 rounded-2xl"
                 />
                 <input
                   type="text"
+                  name="postalCode"
+                  value={form.postalCode} onChange={handleChange}
                   placeholder="Zip Code"
                   className="w-full p-4 bg-neutral-900 rounded-2xl"
                 />
@@ -39,6 +122,8 @@ const Footer = () => {
                   Subscribe
                 </button>
               </form>
+              <div className="text-center mt-3">  {message && <p>{message}</p>}</div>
+
             </div>
           </div>
           <div className="w-full lg:w-1/2 pt-0 mt-0 ">
@@ -55,85 +140,98 @@ const Footer = () => {
             </div>
 
             <div className="hidden lg:block">
-              <div className="text-[40px] font-light mb-12 ">
-                "I love this travel experience because it's designed for people
-                like us who just want to explore without any hassle. Everything
-                is seamless, and it just works!"
-              </div>
-              <div className="flex items-center my-7">
-                <img
-                  src="https://www.noovolife.com/images/roundedrectangles/rr-1.jpeg"
-                  alt="Profile"
-                  className="w-15 h-10 rounded-2xl mr-4"
-                />
-                <div className="m-2">
-                  <p className="font-normal ">Jane, Traveling nurse</p>
-                  <p className="flex text-sm text-gray-500">
-                    <img
-                      src={pin}
-                      alt="pin"
-                      width={15}
-                      height={15}
-                      className="m-2"
-                    />
-                    <span className="m-1">
-                      {" "}
-                      Over 2700 miles traveled from Las Vegas
-                    </span>
-                  </p>
-                </div>
-              </div>
+              <Slider {...settings}>
+                {reviews.map((review, index) => (
+                  <div key={index}>
+                    <div className="text-[40px] font-light mb-12 ">
+                      {review.text}
+                    </div>
+                    <div className="flex items-center my-7">
+                      <img
+                        src={review.image}
+                        alt="Profile"
+                        className="w-12 h-12 rounded-2xl mr-4"
+                      />
+                      <div className="m-2">
+                        <p className="font-normal ">{review.name}</p>
+                        <p className="flex text-sm text-gray-500">
+                          <img
+                            src={pin}
+                            alt="pin"
+                            width={15}
+                            height={15}
+                            className="m-2"
+                          />
+                          <span className="m-1">
+                            {" "}
+                            {review.location}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </Slider>
             </div>
           </div>
         </div>
         <div className="flex flex-col lg:flex-row justify-between items-start mx-6 lg:items-center">
           <div></div>
-          <div className="grid md:grid-cols-4 grid-cols-4  lg:grid-cols-4 md:gap-16 gap-0 border-t border-neutral-700 ">
+          <div className="grid md:grid-cols-4 grid-cols-4 lg:grid-cols-4 md:gap-16 gap-0 border-t border-neutral-700">
             {[
               {
                 title: "Packages",
                 links: [
-                  "All Packages",
-                  "Romantic",
-                  "Advanture",
-                  "Education",
-                  "Cultural",
+                  { name: "Cultural", url: "/packages" },
+                  { name: "Romantic", url: "/packages" },
+                  { name: "Adventure", url: "/packages" },
+                  { name: "Education", url: "/packages" },
+                  { name: "All Packages", url: "/packages" },
                 ],
               },
-
               {
                 title: "Sites",
                 links: [
-                  "Galle",
-                  "Unawatuna",
-                  "Colombo",
-                  "Adam's Park",
-                  "Temple of the Tooth",
+                  { name: "Galle", url: "https://maps.app.goo.gl/wXHTPKMcFhJ8T9iy8" },
+                  { name: "Colombo", url: "https://maps.app.goo.gl/dUbs66EiaWL1TrUM9" },
+                  { name: "Unawatuna", url: "https://maps.app.goo.gl/2hzSdfft5YZvmmbS7" },
+                  { name: "Adam's Peak", url: "https://maps.app.goo.gl/ReJ38ygADuZ39fxF9" },
+                  { name: "Temple of the Tooth", url: "https://maps.app.goo.gl/LcJ7TbvRCJQzpQwB9" },
                 ],
               },
               {
-                title: "Termes & Conditions",
-                links: ["Return Polies", "Business Polices", "Termes"],
+                title: "Terms & Conditions",
+                links: [
+                  { name: "Terms", url: "/" },
+                  { name: "Return Policies", url: "/" },
+                  { name: "Business Policies", url: "/" },
+                ],
               },
               {
-                title: "trafic tours",
-                links: ["FAQ", "Resources", "Service", "Contact"],
+                title: "Traffic Tours",
+                links: [
+                  { name: "FAQ", url: "/contact-us" },
+                  { name: "Service", url: "/about-us" },
+                  { name: "Contact", url: "/contact-us" },
+                  { name: "Resources", url: "/about-us" },
+                ],
               },
             ].map((section, index) => (
               <div key={index} className="mt-4">
-                <h3 className="font-light text-neutral-400 mb-4">
-                  {section.title}
-                </h3>
+                <h3 className="font-light text-neutral-400 mb-4">{section.title}</h3>
                 <ul className="font-extralight">
                   {section.links.map((link, i) => (
                     <li key={i} className="hover:text-gray-300 cursor-pointer">
-                      {link}
+                      <a href={link.url} className="text-inherit">
+                        {link.name}
+                      </a>
                     </li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
+
         </div>
         <div className="mt-8 pt-8">
           <div className="flex flex-col lg:flex-row justify-between">

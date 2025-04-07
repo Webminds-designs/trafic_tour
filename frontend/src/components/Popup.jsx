@@ -156,59 +156,60 @@ export default function Popup({ onClose, data }) {
           {/* Dynamic Content */}
           <div className="mt-8 sm:mt-10 text-black text-sm sm:text-base">
             {activeTab === "INCLUDES" && (
-              <>
-                <div className="flex">
-                  {/* Left Side */}
-                  <div className="w-2/3 h-96 p-4 m-4 border-1 border-[#009990] rounded-2xl overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-[#009990] scrollbar-track-transparent">
-                    {data.itinerary.map((dayItem) => (
-                      <div key={dayItem._id} className="mb-8">
-                        <h2 className="text-xl font-medium">{`Day ${dayItem.day}: ${dayItem.title}`}</h2>
-
-                        <div className="mt-4">
-                          <ul className="list-disc pl-6">
-                            {(dayItem.activities && Array.isArray(dayItem.activities)) ? (
-                              dayItem.activities.map((activity, index) => (
-                                <li key={index}>{activity}</li>
-                              ))
-                            ) : (
-                              <li>No activities available</li> 
-                            )}
-                          </ul>
-                        </div>
-                      </div>
-                    ))}
-
-                  </div>
-                  {/* Right Side */}
-                  <div className="w-1/3 p-4  ">
-                    <div className="bg-emerald-50 rounded-2xl m-4 p-3">
-                      <h2 className="text-xl font-medium">Booking Details</h2>
-                      <div className="flex justify-between">
-                        <div className="py-10">Standed Package</div>
-                        <div className="py-10">LKR :{data.price}</div>
-                      </div>
-                      <div class="border-t border-gray-300 my-4 mt-14"></div>
-                      <div className="flex justify-between">
-                        <div>Standed Package</div>
-                        <div>LKR :{data.price}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div>Sites</div>
-                  <div>
-                    {data.places_to_visit && data.places_to_visit.length > 0
-                      ? data.places_to_visit.join(', ')
-                      : 'No places to visit available'}
-                  </div>
-                </div>
-                <div className="text-center mt-8 sm:mt-10">
-                  <button onClick={handleBooking} className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base">
-                    BOOK NOW
-                  </button>
-                </div>
-              </>
+             <>
+             <div className="flex flex-col md:flex-row">
+               {/* Left Side */}
+               <div className="w-full md:w-2/3 h-96 p-4 m-4 border border-[#009990] rounded-2xl overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-[#009990] scrollbar-track-transparent">
+                 {data.itinerary.map((dayItem) => (
+                   <div key={dayItem._id} className="mb-8">
+                     <h2 className="text-lg md:text-xl font-medium">{`Day ${dayItem.day}: ${dayItem.title}`}</h2>
+                     <div className="mt-4">
+                       <ul className="list-disc pl-6">
+                         {dayItem.activities && Array.isArray(dayItem.activities) ? (
+                           dayItem.activities.map((activity, index) => (
+                             <li key={index}>{activity}</li>
+                           ))
+                         ) : (
+                           <li>No activities available</li>
+                         )}
+                       </ul>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+               {/* Right Side */}
+               <div className="w-full md:w-1/3 p-4">
+                 <div className="bg-emerald-50 rounded-2xl m-4 p-3">
+                   <h2 className="text-lg md:text-xl font-medium">Booking Details</h2>
+                   <div className="flex justify-between">
+                     <div className="py-4 md:py-10">Standard Package</div>
+                     <div className="py-4 md:py-10">LKR: {data.price}</div>
+                   </div>
+                   <div className="border-t border-gray-300 my-4"></div>
+                   <div className="flex justify-between">
+                     <div>Standard Package</div>
+                     <div>LKR: {data.price}</div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             <div className="p-4">
+               <h2 className="text-lg font-medium">Sites</h2>
+               <p>
+                 {data.places_to_visit && data.places_to_visit.length > 0
+                   ? data.places_to_visit.join(', ')
+                   : 'No places to visit available'}
+               </p>
+             </div>
+             <div className="text-center mt-6 md:mt-8">
+               <button
+                 onClick={handleBooking}
+                 className="bg-[#009990] text-white px-6 py-2 rounded-lg text-sm md:text-base w-full md:w-auto md:px-20"
+               >
+                 BOOK NOW
+               </button>
+             </div>
+           </>
             )}
             {/*
             {activeTab === "CUSTOMISE" && (

@@ -5,16 +5,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 
-
+import { FaUser } from "react-icons/fa";
 import Footer from '../components/Footer'
-import image1 from "../assets/Packages/image.png";
-import image2 from "../assets/Packages/image1.png";
-import image3 from "../assets/Packages/image2.png";
-import image4 from "../assets/Packages/image4.png";
-import image5 from "../assets/Packages/image5.png";
-import image6 from "../assets/Packages/image6.png";
-import image7 from "../assets/Packages/image7.png";
-import image8 from "../assets/Packages/image8.png";
 import heart from "../assets/heart.png";
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
@@ -25,7 +17,7 @@ import { toast } from 'react-toastify';
 
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser, logout } = useContext(AuthContext);
   const [imagePreview, setImagePreview] = useState(null);
   const [profileData, setProfileData] = useState(new FormData());
   const [selectedTab, setSelectedTab] = useState('Account Settings');
@@ -41,11 +33,12 @@ const Profile = () => {
   const [isProfileEditing, setIsProfileEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
-
+  const [bookings, setBookings] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const userId = user.id
-  
+
   const openModal = (packageItem) => {
     setSelectedPackage(packageItem);
     setIsModalOpen(true);
@@ -100,7 +93,7 @@ const Profile = () => {
     };
 
     fetchUserDetails();
-  }, [user]);  // ✅ Corrected dependency array
+  }, [user]);  //Corrected dependency array
 
 
   const togglePasswordVisibility = () => {
@@ -119,48 +112,6 @@ const Profile = () => {
     'Booking History',
     'My Favourites',
     'Bookings'
-  ];
-  const tourPackages = [
-    {
-      title: "Belihul Oya Wilderness Escape",
-      highlights: "Scenic Belihul Oya, Diyaluma Falls, Trekking Trails, Eco-Lodge Stay, Birdwatching",
-      image: image1
-    },
-    {
-      title: "Cultural Heritage Adventure",
-      highlights: "Sigiriya Rock Fortress, Anuradhapura Ruins, Ancient Temples",
-      image: image2,
-    },
-    {
-      title: "Serene Beach Escape",
-      highlights: "Bentota Beach, Galle Fort, Boat Rides in Madu River",
-      image: image3,
-    },
-    {
-      title: "Cultural Capital Discovery",
-      highlights: "Kandy, Pinnawala Elephant Orphanage, Local Arts and Crafts",
-      image: image4,
-    },
-    {
-      title: "Southern Paradise Discovery",
-      highlights: "Mirissa Beach, Whale Watching, Hiriketiya, and Tangalle",
-      image: image5,
-    },
-    {
-      title: "Temple Trails and Sacred Sites",
-      highlights: "Kandy Temple of the Tooth, Dambulla Cave Temple, Polonnaruwa Ruins",
-      image: image6,
-    },
-    {
-      title: "Ancient Cities and Heritage Tour",
-      highlights: "Polonnaruwa, Anuradhapura, Ritigala Ancient Site",
-      image: image7,
-    },
-    {
-      title: "Nature & Adventure Expedition",
-      highlights: "Adam’s Peak, Knuckles Mountain Range, Kandy Lake",
-      image: image8,
-    }
   ];
 
   //update profile
@@ -233,6 +184,7 @@ const Profile = () => {
       if (response.status === 200) {
         setIsProfileEditing(false)
         toast.success("Image uploaded successfully")
+        setUser(response.data.user)
       } else {
         console.error('Upload failed:', response.data.message);
       }
@@ -296,7 +248,7 @@ const Profile = () => {
         newPassword, // Send new password
       });
 
-      toast.error(response.data.message);
+      toast.success(response.data.message);
 
       // Clear the password fields
       setOldPassword("");
@@ -306,6 +258,66 @@ const Profile = () => {
       toast.error(error.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
+    }
+  };
+
+
+
+  //get bookings
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axios.get(`http://localhost:6400/api/bookings/user/${userId}`, {
+          withCredentials: true, // Ensure authentication cookies are included
+        });
+
+        setBookings(response.data); // Update state with booking data
+      } catch (err) {
+        console.error("Error fetching bookings:", err);
+        setError(err.response?.data?.message || "Failed to fetch bookings");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+  console.log(bookings)
+  const filteredBookings = bookings.filter((packageItem) => {
+    const checkOutDate = new Date(packageItem?.checkOutDate);
+    const currentDate = new Date();
+
+    // Check if the checkOutDate is in the past
+    return checkOutDate < currentDate;
+  });
+
+  //add faviorites
+  const addFavorite = async (packageId) => {
+    try {
+      const response = await axios.post("http://localhost:6400/api/favorites/add", {
+        userId,
+        packageId,
+      });
+
+      setRefreshTrigger((prev) => prev + 1); // Trigger re-fetch
+
+      console.log("Added to favorites:", response.data);
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+    }
+  };
+  //remove faviorites
+  const removeFavorite = async (packageId) => {
+    try {
+      await axios.delete("http://localhost:6400/api/favorites/remove", {
+        data: { userId, packageId },
+      });
+
+      setRefreshTrigger((prev) => prev + 1); // Trigger re-fetch
+
+      console.log("Removed from favorites");
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
     }
   };
 
@@ -329,18 +341,12 @@ const Profile = () => {
     if (userId) {
       fetchFavorites();
     }
-  }, [userId]);
+  }, [userId, refreshTrigger]);
 
-  //remove faviorites
-  const removeFavorite = async (packageId) => {
-    try {
-      await axios.delete("http://localhost:6400/api/favorites/remove", { data: { userId, packageId } });
-      setFavorites((prevFavorites) => prevFavorites.filter((fav) => fav.packageId._id !== packageId));
-    } catch (error) {
-      console.error("Error removing from favorites:", error);
-    }
+
+  const isPackageFavorite = (packageId) => {
+    return favorites.some((fav) => fav.packageId?._id === packageId);
   };
-
   return (
     < >
       <Navbar />
@@ -361,7 +367,7 @@ const Profile = () => {
                   imagePreview ||
                   (formData?.profileUrl?.includes("=s96-c")
                     ? formData.profileUrl.replace(/=s96-c/, "=s400-c")
-                    : formData?.profileUrl || userpic)
+                    : formData?.profileUrl)
                 }
                 alt="Profile"
                 className="rounded-full w-32 h-32 md:w-48 md:h-48 object-cover"
@@ -377,7 +383,7 @@ const Profile = () => {
                   <>
                     <button
                       onClick={() => setIsProfileEditing(false)}
-                      className="bg-white border border-black px-4 py-2 rounded-3xl mr-2 text-sm md:text-md"
+                      className="bg-white cursor-pointer border border-black px-4 py-2 rounded-3xl mr-2 text-sm md:text-md"
                     >
                       Cancel
                     </button>
@@ -388,9 +394,10 @@ const Profile = () => {
                     >
                       {loading ? (
                         <span className="flex items-center justify-center">
-                          <div className="animate-spin border-4 border-t-transparent border-white rounded-3xl-full w-5 h-5 mr-2" />
-                          Uploading...
+                          <div className="animate-spin border-4 border-t-transparent border-white rounded-full w-5 h-5 mr-2" />
+                          <span>Uploading...</span>
                         </span>
+
                       ) : (
                         "Change Profile"
                       )}
@@ -399,30 +406,54 @@ const Profile = () => {
                 ) : (
                   <button
                     onClick={() => setIsProfileEditing(true)}
-                    className="bg-black text-white px-4 py-2 rounded-3xl text-sm md:text-md"
+                    className="bg-black cursor-pointer text-white px-4 py-2 rounded-3xl text-sm md:text-md"
                   >
                     Edit
                   </button>
                 )}
+                <button onClick={logout} className="bg-black cursor-pointer text-white ml-5 px-4 py-2 rounded-3xl text-sm md:text-md">Logout </button>
               </div>
             </div>
           </div>
-          <div className=" bg-black text-white rounded-3xl">
-            <nav className="flex justify-between  ">
+          {/* tabs */}
+          {/* tabs */}
+          <div className="flex flex-col items-center mt-6 lg:mt-10 font-base w-full">
+            {/* Dropdown for Mobile View (only visible on mobile) */}
+            <div className=" w-full max-w-7xl rounded-3xl overflow-hidden md:hidden">
+              <select
+                onChange={(e) => setSelectedTab(e.target.value)}
+                value={selectedTab}
+                className="w-full p-3 rounded-3xl bg-black text-white appearance-none
+             border  outline-none cursor-pointer hover:bg-gray-100 focus:ring-2 "
+              >
+                {tabs.map((tab) => (
+                  <option
+                    key={tab}
+                    value={tab}
+                    className={`bg-black text-white ${selectedTab === tab ? 'bg-teal-600 text-black' : ''}`}
+                  >
+                    {tab}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+
+            {/* Horizontal Bar for Larger Screens */}
+            <div className="hidden md:flex bg-black text-white w-full max-w-7xl rounded-3xl overflow-x-auto">
               {tabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
-                  className={`md:py-2 lg:px-27 md:px-10 lg:text-base text-[10px] px-6 ${selectedTab === tab
-                    ? 'text-black bg-[#F1F1F1] font-bold text-sm '
-                    : ''
-                    }`}
+                  className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 ${selectedTab === tab ? 'bg-teal-600 text-black' : ''}`}
                 >
                   {tab}
                 </button>
               ))}
-            </nav>
+            </div>
           </div>
+
+
           {/* Account Settings */}
           {selectedTab === 'Account Settings' && (
             <div className="">
@@ -624,26 +655,47 @@ const Profile = () => {
           {selectedTab === 'Booking History' && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 m-6">
-                {tourPackages.slice(0, 4).map((packageItem, index) => (
-                  <div key={index} className="relative  overflow-hidden m-4">
-                    <img
-                      src={packageItem.image}
-                      alt={packageItem.title}
-                      className="w-full h-92 object-cover rounded-xl"
-                    />
-                    <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                      <img src={heart} alt='heart' width={20} />
-                    </button>
-                    <div className="p-4">
-                      <h3 className="font-bold text-lg">{packageItem.title}</h3>
-                      <p className="text-black font-semibold text-md mt-2">{packageItem.highlights}</p>
-                      <button className="mt-4 bg-black text-white px-4 py-2 rounded-md">
-                        BOOK AGAIN
-                      </button>
-                    </div>
+                {filteredBookings.length === 0 ? (
+                  <div className="col-span-full text-center text-xl text-gray-500">
+                    No booking history available for past check-out dates.
                   </div>
-                ))}
-              </div></>
+                ) : (
+                  filteredBookings.map((packageItem, index) => (
+                    <div key={index} className="relative overflow-hidden m-4">
+                      <img
+                        src={packageItem?.packageId.imageUrl}
+                        alt={packageItem?.packageId.description}
+                        className="w-full h-92 object-cover rounded-xl"
+                      />
+                      <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
+                        <img src={heart} alt="heart" width={20} />
+                      </button>
+                      <div className="p-4">
+                        <h3 className="font-bold text-lg">{packageItem.packageId.description}</h3>
+                        <p className="text-black font-semibold text-md mt-2">
+                          {packageItem.packageId.places_to_visit}
+                        </p>
+                        <button
+                          onClick={() => openModal(packageItem)}
+                          className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
+                        >
+                          VIEW
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Modal */}
+              {isModalOpen && (
+                <div className="fixed inset-0 flex justify-center items-center">
+                  <div className="rounded-lg shadow-lg max-w-md w-full p-6">
+                    <Bookings packageItem={selectedPackage} closeModal={closeModal} />
+                  </div>
+                </div>
+              )}
+            </>
           )}
           {/* MY FAVOURITES */}
           {selectedTab === 'My Favourites' && (
@@ -652,16 +704,16 @@ const Profile = () => {
                 {favorites.map((packageItem, index) => (
                   <div key={index} className="relative  overflow-hidden m-4">
                     <img
-                      src={packageItem.packageId.imageUrl}
-                      alt={packageItem.packageId.name}
+                      src={packageItem?.packageId.imageUrl}
+                      alt={packageItem?.packageId.name}
                       className="w-full h-92 object-cover rounded-xl"
                     />
-                    <button onClick={() => removeFavorite(packageItem.packageId._id)} className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                      <FaHeart  className="text-red-500" alt='heart' width={20} />
+                    <button onClick={() => removeFavorite(packageItem?.packageId._id)} className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
+                      <FaHeart className="text-red-500" alt='heart' width={20} />
                     </button>
                     <div className="p-4">
-                      <h3 className="font-bold text-lg">{packageItem.packageId.name}</h3>
-                      <p className="text-black font-semibold text-md mt-2">{packageItem.packageId.description}</p>
+                      <h3 className="font-bold text-lg">{packageItem?.packageId.name}</h3>
+                      <p className="text-black font-semibold text-md mt-2">{packageItem?.packageId.description}</p>
                       <button className="mt-4 bg-black text-white px-4 py-2 rounded-md">
                         EXPLORE NOW
                       </button>
@@ -674,39 +726,59 @@ const Profile = () => {
           {selectedTab === 'Bookings' && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 m-6">
-                {tourPackages.slice(6, 8).map((packageItem, index) => (
-                  <div key={index} className="relative  overflow-hidden m-4">
-                    <img
-                      src={packageItem.image}
-                      alt={packageItem.title}
-                      className="w-full h-92 object-cover rounded-xl"
-                    />
-                    <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                      <img src={heart} alt='heart' width={20} />
-                    </button>
-                    <div className="p-4">
-                      <h3 className="font-bold text-lg">{packageItem.title}</h3>
-                      <p className="text-black font-semibold text-md mt-2">{packageItem.highlights}</p>
-                      <button
-                        onClick={() => openModal(packageItem)}
-                        className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
-                      >
-                        VIEW
-                      </button>
-                    </div>
+                {bookings.length === 0 ? (
+                  <div className="col-span-full text-center text-xl text-gray-500">
+                    No bookings available.
                   </div>
-                ))}
+                ) : (
+                  bookings.map((packageItem, index) => (
+                    <div key={index} className="relative overflow-hidden m-4">
+                      <img
+                        src={packageItem?.packageId.imageUrl}
+                        alt={packageItem?.packageId.description}
+                        className="w-full h-92 object-cover rounded-xl"
+                      />
+
+                      {/* Favorite (Heart) Button */}
+                      <div
+                        className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md cursor-pointer"
+                        onClick={() => {
+                          isPackageFavorite(packageItem.packageId._id)
+                            ? removeFavorite(packageItem.packageId._id)
+                            : addFavorite(packageItem.packageId._id);
+                        }}
+                      >
+                        <FaHeart className={`text-xs ${isPackageFavorite(packageItem.packageId._id) ? 'text-red-500' : 'text-black'}`} />
+                      </div>
+                      <div className="flex items-center ">
+                        {packageItem.packageId.places_to_visit.map((place, index) => (
+                          <div key={index} className="flex items-center">
+                            <p className="text-black font-semibold text-md mt-4">
+                              {place}
+                            </p>
+                            {/* Add vertical line after each item except the last one */}
+                            {index < packageItem.packageId.places_to_visit.length - 1 && (
+                              <div className="border-l-2 border-teal-400 h-6 mx-1 mt-5"></div> // Added height (h-8) for visibility
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+
+                    </div>
+                  ))
+                )}
               </div>
 
               {/* Modal */}
               {isModalOpen && (
-                <div className="fixed inset-0 flex  justify-center items-center">
-                  <div className=" rounded-lg shadow-lg max-w-md w-full p-6">
-
+                <div className="fixed inset-0 flex justify-center items-center">
+                  <div className="rounded-lg shadow-lg max-w-md w-full p-6">
                     <Bookings packageItem={selectedPackage} closeModal={closeModal} />
                   </div>
                 </div>
-              )}</>
+              )}
+            </>
 
           )}
         </main>

@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useContext} from "react";
 import { Link } from "react-router-dom";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import { HiMiniUser } from "react-icons/hi2";
@@ -7,8 +7,10 @@ import { AiFillMessage } from "react-icons/ai";
 import { TbHomeFilled } from "react-icons/tb";
 import logo from "../assets/logo.jpg";
 import { IoMdLogOut } from "react-icons/io";
+import { AuthContext } from "../context/authContext.jsx";
 
 const Sidebar = ({ activated }) => {
+     const { user, setUser, logout } = useContext(AuthContext);
     return (
         <div className="w-72 h-screen bg-white flex flex-col justify-between p-7 font-figtree font-bold sticky top-0">
             <div>
@@ -19,7 +21,7 @@ const Sidebar = ({ activated }) => {
                 <ul className="space-y-8">
                     <li>
                         <Link
-                            to="/"
+                            to="/dashboard"
                             className={`flex items-center text-lg font-bold cursor-pointer transition-all duration-300 ${location.pathname === "/" ? "text-[#009990]" : "text-black"
                                 } hover:bg-[#ffffff]`}
                         >
@@ -79,7 +81,7 @@ const Sidebar = ({ activated }) => {
             </div>
 
             {/* Logout Button */}
-            <button className="flex items-center text-red-900 text-lg font-bold cursor-pointer">
+            <button onClick={logout} className="flex items-center text-red-900 text-lg font-bold cursor-pointer">
                 <IoMdLogOut className="mr-3 text-bold" />
                 Log Out
             </button>

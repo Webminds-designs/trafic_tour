@@ -26,7 +26,7 @@ const HomePackageCat = () => {
         </div>
         {/* Dancer img */}
         <div
-          className="absolute inset-0 bg-cover opacity-25 z-0 left-0 top-30 w-[400px] h-[600px]"
+          className="absolute inset-0 bg-cover opacity-25 z-0 left-0 top-30 md:w-[400px] md:h-[600px] w-[300px] h-[500px]"
           style={{
             backgroundImage: `url(${dancer})`,
             backgroundPosition: "",

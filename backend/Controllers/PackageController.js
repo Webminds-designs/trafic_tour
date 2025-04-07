@@ -4,23 +4,24 @@ import cloudinary from "../config/CloudinaryConfig.js";
 // Controller to create a new Package
 export const createPackage = async (req, res) => {
   try {
-    const { name, description, duration, places_to_visit, itinerary, price, type, status } = req.body;
+    const { name, description, duration, places_to_visit, itinerary, price, type } = req.body;
     const { file } = req;
-
-    console.log("Raw req.body:", req.body);
 
     // Parse JSON fields
     const parsedDuration = JSON.parse(duration);
     const parsedPlacesToVisit = JSON.parse(places_to_visit);
     const parsedItinerary = JSON.parse(itinerary);
 
-
+    console.log("Parsed Itinerary:", parsedItinerary);
+    console.log("Parsed Itinerary Length:", parsedItinerary.length);
+    
     // Validate required fields
     if (!name || !description || !parsedDuration || !parsedPlacesToVisit || !parsedItinerary || !price || !type) {
       return res.status(400).json({ message: "All fields are required." });
     }
     const parsedDays = Number(parsedDuration.days); 
 
+   
    // Validate itinerary length
 if (parsedDays !== parsedItinerary.length) {
   return res.status(400).json({
@@ -44,7 +45,6 @@ if (parsedDays !== parsedItinerary.length) {
       itinerary: parsedItinerary,
       price,
       type,
-      status,
       imageUrl,
     });
 
@@ -88,7 +88,7 @@ export const getPackageById = async (req, res) => {
 // Controller to update a Package by ID
 export const updatePackage = async (req, res) => {
   try {
-    const { name, description, duration, places_to_visit, itinerary, price, type, status } = req.body;
+    const { name, description, duration, places_to_visit, itinerary, price, type, status ,oldimageUrl } = req.body;
     const { file } = req;
 
     let parsedDuration, parsedPlacesToVisit, parsedItinerary;
@@ -103,7 +103,7 @@ export const updatePackage = async (req, res) => {
       });
     }
 
-    let imageUrl = null;
+    let imageUrl = oldimageUrl;
     if (file) {
       const uploadedImage = await cloudinary.uploader.upload(file.path);
       imageUrl = uploadedImage.secure_url;
@@ -136,5 +136,46 @@ export const deletePackage = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error deleting package", error: error.message });
+  }
+};
+
+export const searchPackages = async (req, res) => {
+  try {
+    const { place, days, activity } = req.query; // Extract query parameters
+    let filter = {}; // Initialize the filter object
+
+    // Filter by places_to_visit, itinerary activities, or itinerary title
+    if (place && typeof place === "string") {
+      filter.$or = [
+        { places_to_visit: { $regex: new RegExp(place, "i") } },
+        { "itinerary.activities": { $regex: new RegExp(place, "i") } },
+        { "itinerary.title": { $regex: new RegExp(place, "i") } }
+      ];
+    }
+
+    // Filter by duration days (±3 days range)
+    if (days) {
+      const numDays = Number(days);
+      if (isNaN(numDays)) {
+        return res.status(400).json({ message: "Invalid 'days' value" });
+      }
+      filter["duration.days"] = { $gte: numDays - 3, $lte: numDays + 3 };
+    }
+
+    // Filter by itinerary activities (searching within the array of activities)
+    if (activity && typeof activity === "string") {
+      filter["itinerary.activities"] = { $regex: new RegExp(activity, "i") }; // Corrected syntax
+    }
+
+    console.log("Filter being used:", filter); // Log the filter object to inspect
+
+    // Query the database with the constructed filter
+    const packages = await Package.find(filter);
+
+    // Return the result
+    return res.status(200).json({ message: "Packages retrieved successfully", packages });
+  } catch (error) {
+    console.error("Error in searchPackages:", error.stack);
+    return res.status(500).json({ message: "Error retrieving packages", error: error.message });
   }
 };

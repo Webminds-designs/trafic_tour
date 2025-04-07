@@ -2,6 +2,8 @@ import User from "../Model/User.js";
 import cloudinary from "../config/CloudinaryConfig.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { ErrorResponse } from "../utils/errorResponse.js";
+
 
 // Register a new user
 export const registerUser = async (req, res) => {
@@ -56,6 +58,7 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
 //Google Register a new user
 export const googleRegisterUser = async (req, res) => {
   try {
@@ -108,7 +111,17 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
 
     // Generate token
-    const token = jwt.sign({ email: user.email}, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(  {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      email: user.email,
+      country: user.country,
+      passportId: user.passportId,
+      role: user.role,
+      profileUrl: user.profileUrl,
+    }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.cookie('token', token, {
      httpOnly: true,  // This prevents client-side access to the cookie
      secure: process.env.NODE_ENV === 'production',  // Set to true if you're using HTTPS
@@ -150,7 +163,17 @@ export const googleloginUser = async (req, res) => {
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
      // Generate token
-     const token = jwt.sign({ email: user.email}, process.env.JWT_SECRET, { expiresIn: '1h' });
+     const token = jwt.sign(  {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      email: user.email,
+      country: user.country,
+      passportId: user.passportId,
+      role: user.role,
+      profileUrl: user.profileUrl,
+    }, process.env.JWT_SECRET, { expiresIn: '1h' });
      res.cookie('token', token, {
       httpOnly: true,  // This prevents client-side access to the cookie
       secure: process.env.NODE_ENV === 'production',  // Set to true if you're using HTTPS
@@ -200,6 +223,22 @@ export const getUserDetails = async (req, res) => {
   }
 };
 
+// Get all users
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find(); // Fetch all users from the database
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    res.status(200).json({ users }); // Return all users as JSON
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // Update user profile
 export const updateUserProfile =  async (req, res) => {
  
@@ -227,6 +266,7 @@ export const updateUserProfile =  async (req, res) => {
     res.status(500).json({ message: 'Error updating profile' });
   }
 };
+
 export const updateImage = async (req, res) => {
   try {
     // Log request body and file for debugging
@@ -330,14 +370,21 @@ export const updatePassword = async (req, res) => {
 
 // Delete user
 export const deleteUser = async (req, res) => {
+  const { userId } = req.params; // Get the userId from the URL params
+
   try {
-    await User.findByIdAndDelete(req.user.id);
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
+    console.error('Error deleting user:', error);
     res.status(500).json({ message: "Server error", error });
   }
 };
-
 // Find user by email using req.body
 export const findUserByEmail = async (req, res) => {
   try {
@@ -358,54 +405,143 @@ export const findUserByEmail = async (req, res) => {
   }
 };
 
-
-//verify user
 export const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.cookies.token;  // Token is retrieved from cookies
+    const token = req.cookies.token; // Retrieve token from cookies
     if (!token) {
-      return res.json({ status: false, message: "No token provided" });
+      return next(new ErrorResponse("No token provided", 401));
     }
 
-    // Verify the token using jsonwebtoken
+    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;  // Attach user information to the request object
-    next();  // Proceed to the next route handler
+    req.user = decoded; // Attach user data to request object
+    next(); // Proceed to the next middleware or controller
   } catch (err) {
     console.error("Token verification failed:", err);
-    return res.json({ status: false, message: "Invalid or expired token" });
+    return next(new ErrorResponse("Invalid or expired token", 401));
   }
 };
 
 // Get the current authenticated user
-export const getCurrentUser = (req, res) => {
-  // Ensure the user information exists in the request (i.e., decoded token)
-  if (!req.user || !req.user.email) {
-    return res.status(401).json({ status: false, message: "Unauthorized" });
-  }
+export const getCurrentUser = async (req, res, next) => {
+  try {
+    if (!req.user || !req.user.email) {
+      return next(new ErrorResponse("Unauthorized", 401));
+    }
 
-  User.findOne({ email: req.user.email })  // Find the user based on the decoded token's email
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({ status: false, message: "User not found" });  // 404 Not Found
-      }
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
+    }
 
-      // Return account summary information
-      res.json({
-        status: true,
-        message: "Authorized",
-        user: {
-          id: user._id,
-          firstName: user.firstName,
-          email: user.email,
-          role: user.role,
-        },
-      });
-    })
-    .catch((err) => {
-      console.error("Error fetching user details:", err);
-      res.status(500).json({ status: false, message: "Server error" });  // 500 Internal Server Error
+    // Return user details
+    res.json({
+      status: true,
+      message: "Authorized",
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        email: user.email,
+        role: user.role,
+      },
     });
+  } catch (err) {
+    console.error("Error fetching user details:", err);
+    next(new ErrorResponse("Server error", 500));
+  }
+};
+
+// Register a new user from admin
+export const registerUserAdmin = async (req, res) => {
+  try {
+    const { firstName, lastName, email, phone,  passportId, password } = req.body;
+
+    // Validate required fields
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+    if (!password) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+    if (!firstName) {
+      return res.status(400).json({ message: "First name is required" });
+    }
+    if (!lastName) {
+      return res.status(400).json({ message: "Last name is required" });
+    }
+    if (!phone) {
+      return res.status(400).json({ message: "phone is required" });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
+    // Cloudinary - Image upload if available
+    let profileUrl = "";
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path); 
+      profileUrl = result.secure_url;
+    }
+
+    // Create new user
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      phone,
+      passportId,
+      role: "user", // Default role
+      password,
+      profileUrl, // Cloudinary URL for the profile image
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+export const updateUserProfileAndImage = async (req, res) => {
+  try {
+    // Extract userId and form data from request body
+    const { _id, firstName, lastName, email, passportId, phone } = req.body;
+    console.log(req.body)
+    if (!_id) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    // Find the user by userId
+    const user = await User.findById(_id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update user fields if provided
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+    user.passportId = passportId || user.passportId;
+    user.phone = phone || user.phone;
+
+    // Check if a file (image) was uploaded
+    if (req.file) {
+      console.log('Uploaded File:', req.file);
+      const result = await cloudinary.uploader.upload(req.file.path);
+      user.profileUrl = result.secure_url;
+    }
+
+    await user.save(); // Save the updated user data
+
+    res.status(200).json({ message: 'Profile updated successfully', user });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 export const logoutUser = (req, res) => {

@@ -1,30 +1,59 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { FaUser } from 'react-icons/fa';
 import { FiCamera, FiRefreshCcw, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { ImUserPlus } from "react-icons/im";
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
-
-const usersData = [
-    { id: 1, name: 'User 01', email: 'hellouser01@gmail.com', activity: 'Active', avatar: 'https://via.placeholder.com/40' },
-    { id: 2, name: 'User 02', email: 'hellouser02@gmail.com', activity: 'Active', avatar: 'https://via.placeholder.com/40' },
-    { id: 3, name: 'User 03', email: 'hellouser03@gmail.com', activity: 'Active', avatar: 'https://via.placeholder.com/40' }
-];
+import { toast } from 'react-toastify';
 
 const UserManagement = () => {
-    const [users, setUsers] = useState(usersData);
+    const [users, setUsers] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [editUser, setEditUser] = useState(null);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
+    const [error, setError] = useState(null);
+
+    //get all users
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await axios.get('http://localhost:6400/api/user');
+                console.log('API Response:', response.data); // Check full response
+
+                // Verify if the response contains expected user fields
+                if (response.data.users) {
+                    console.log('Users Data:', response.data.users);
+                    setUsers(response.data.users);
+                } else {
+                    console.error('Users field missing in response');
+                    setUsers([]);
+                }
+            } catch (err) {
+                console.error('Error fetching users:', err);
+                setError(err.message);
+                setUsers([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
 
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         passportId: '',
-        contactNumber: '',
-        address: '',
+        phone: '',
         password: '',
-        avatar: ''
+        avatar: null,
+
     });
 
     const handleInputChange = (e) => {
@@ -39,18 +68,14 @@ const UserManagement = () => {
         } else if (name === "passportId") {
             // Allow only letters and numbers
             newValue = value.replace(/[^A-Za-z0-9]/g, '');
-        } else if (name === "contactNumber") {
+        } else if (name === "phone") {
             // Allow only numbers and optional leading '+'
             newValue = value.replace(/[^0-9+]/g, '');
         }
 
         setFormData({ ...formData, [name]: newValue });
 
-        // Validate as user types
-        validateField(name, newValue);
-    };
 
-    const validateField = (name, value) => {
         let error = '';
 
         if (name === "firstName" && !/^[A-Za-z]+$/.test(value)) {
@@ -61,8 +86,8 @@ const UserManagement = () => {
             error = "Enter a valid email address containing '@'";
         } else if (name === "passportId" && !/^[A-Za-z0-9]+$/.test(value)) {
             error = "Passport ID should contain only letters and numbers";
-        } else if (name === "contactNumber" && !/^\+?[0-9]+$/.test(value)) {
-            error = "Contact number should contain only numbers";
+        } else if (name === "phone" && !/^\+?[0-9]+$/.test(value)) {
+            error = "Contact phone should contain only numbers";
         } else if (name === "password" && value.length < 8) {
             error = "Password must be at least 8 characters";
         }
@@ -70,93 +95,121 @@ const UserManagement = () => {
         setErrors({ ...errors, [name]: error });
     };
 
-
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        const isValid = validateForm();
-        if (!isValid) {
-            return; // Stop submission if there are errors
-        }
-
-        if (editUser) {
-            const updatedUsers = users.map(user =>
-                user.id === editUser.id ? { ...user, ...formData } : user
-            );
-            setUsers(updatedUsers);
-        } else {
-            const newUser = { ...formData, id: users.length + 1 };
-            setUsers([...users, newUser]);
-        }
-
-        setShowModal(false);
-        setEditUser(null);
-        setFormData({
-            firstName: '', lastName: '', email: '', passportId: '',
-            contactNumber: '', address: '', password: '', avatar: ''
-        });
-    };
-
     const handleEdit = (user) => {
-        setEditUser(user);
         setFormData(user);
-        setShowModal(true);
+        setShowUpdateModal(true);
     };
 
-    const handleDelete = (id) => {
-        const updatedUsers = users.filter(user => user.id !== id);
-        setUsers(updatedUsers);
+    //delete user
+    const confirmDelete = (userId) => {
+        setSelectedUser(userId);
+        setShowDeleteModal(true);
     };
 
-    const handleImageChange = (e) => {
+    // Handle actual deletion after confirmation
+    const handleDelete = async () => {
+        if (!selectedUser) return;
+
+        try {
+            await axios.delete(`http://localhost:6400/api/user/${selectedUser}`);
+
+            // Remove user from state
+            setUsers((prevUsers) => prevUsers.filter(user => user._id !== selectedUser));
+
+            toast.success("User deleted successfully!");
+        } catch (err) {
+            console.error("Error deleting user:", err);
+            toast.error("Failed to delete user. Please try again.");
+        } finally {
+            setShowDeleteModal(false);
+            setSelectedUser(null);
+        }
+    };
+
+    // basic register
+    const handleSignup = async (e) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true); // Start loading
+
+        const formDataToSend = new FormData();
+        formDataToSend.append("firstName", formData.firstName);
+        formDataToSend.append("lastName", formData.lastName);
+        formDataToSend.append("email", formData.email);
+        formDataToSend.append("passportId", formData.passportId);
+        formDataToSend.append("phone", formData.phone);
+        formDataToSend.append("password", formData.password);
+
+        if (formData.avatar) {
+            formDataToSend.append("avatar", formData.avatar);
+        }
+
+        try {
+            const response = await axios.post(
+                "http://localhost:6400/api/user/newregister",
+                formDataToSend
+            );
+            setShowModal(false);
+            toast.success("User registered successfully!");
+        } catch (err) {
+            console.error("Error during registration:", err.response?.data?.message || err.message);
+            setError(err.response?.data?.message || "Registration failed. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const response = await updateUserProfile(formData);
+            alert('Profile updated successfully:', response);
+            setShowUpdateModal(false);
+           
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            // Handle error (e.g., show error message)
+        }
+
+        setLoading(false);
+    };
+
+    const updateUserProfile = async () => {
+        try {
+            const formDataToSend = new FormData();
+            Object.keys(formData).forEach((key) => {
+                if (formData[key]) {
+                    formDataToSend.append(key, formData[key]);
+                    console.log(key, formData[key])
+                }
+            });
+
+            const response = await axios.post('http://localhost:6400/api/user/update', formDataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            return { message: 'Error updating profile' };
+        }
+    };
+
+    
+      
+    const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData({ ...formData, avatar: reader.result });
-            };
-            reader.readAsDataURL(file);
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                avatar: file, // Store the File object
+            }));
         }
     };
-
-    const validateForm = () => {
-        let newErrors = {};
-
-        // First Name: Only letters (No numbers or symbols)
-        if (!/^[A-Za-z]+$/.test(formData.firstName)) {
-            newErrors.firstName = "First name should contain only letters";
-        }
-
-        // Last Name: Only letters (No numbers or symbols)
-        if (!/^[A-Za-z]+$/.test(formData.lastName)) {
-            newErrors.lastName = "Last name should contain only letters";
-        }
-
-        // Email: Must contain '@' and follow standard email format
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = "Enter a valid email address containing '@'";
-        }
-
-        // Passport ID: Only letters and numbers (No symbols)
-        if (!/^[A-Za-z0-9]+$/.test(formData.passportId)) {
-            newErrors.passportId = "Passport ID should contain only letters and numbers";
-        }
-
-        // Contact Number: Only numbers, with optional leading '+'
-        if (!/^\+?[0-9]+$/.test(formData.contactNumber)) {
-            newErrors.contactNumber = "Contact number should contain only numbers";
-        }
-
-        // Password: Must be at least 8 characters
-        if (formData.password.length < 8) {
-            newErrors.password = "Password must be at least 8 characters";
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
 
     return (
         <div className="flex h-screen bg-gray-200">
@@ -186,14 +239,25 @@ const UserManagement = () => {
                             {users.map(user => (
                                 <tr key={user.id} className="">
                                     <td className="py-4 px-6 flex items-center font-bold">
-                                        <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full mr-3" />
-                                        {user.name}
+                                        {user.profileUrl ? (
+                                            <img
+                                                src={user.profileUrl}
+                                                alt={user.name}
+                                                className="w-8 h-8 rounded-full mr-3"
+                                            />
+                                        ) : (
+                                            <div className="w-8 h-8  rounded-full flex items-center justify-center bg-black mr-3">
+                                                <FaUser className="text-white text-xl" /> {/* Profile icon */}
+                                            </div>
+                                        )}
+
+                                        {user.firstName} {user.lastName}
                                     </td>
                                     <td className="py-4 px-6 text-black font-bold">{user.email}</td>
-                                    <td className="py-4 px-6 text-green-500">{user.activity}</td>
+                                    <td className="py-4 px-6 text-green-500">Active</td>
                                     <td className="py-4 px-6 flex space-x-3">
                                         <button className="text-teal-500 cursor-pointer" onClick={() => handleEdit(user)}><FiEdit2 /></button>
-                                        <button className="text-teal-500 cursor-pointer" onClick={() => handleDelete(user.id)}><FiTrash2 /></button>
+                                        <button className="text-teal-500 cursor-pointer"  onClick={() => confirmDelete(user._id)} ><FiTrash2 /></button>
                                     </td>
                                 </tr>
                             ))}
@@ -201,30 +265,58 @@ const UserManagement = () => {
                     </table>
                 </div>
             </div>
+{/* Custom Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 backdrop-blur-sm bg-opacity-90 flex justify-center z-50">
+                    <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg p-6 w-96">
+                        <h2 className="text-lg font-semibold text-gray-800 text-center">Confirm Deletion</h2>
+                        <p className="text-gray-600 text-center mt-2">Are you sure you want to delete this user?</p>
 
-            {/* Modal */}
+                        <div className="flex justify-center gap-4 mt-4">
+                            <button 
+                                onClick={handleDelete} 
+                                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                            >
+                                Yes, Delete
+                            </button>
+                            <button 
+                                onClick={() => setShowDeleteModal(false)} 
+                                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/*Register Modal */}
             {showModal && (
                 <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white rounded-2xl p-8 w-3/4 max-w-2xl">
-                        <div className="flex flex-col items-center">
-                            <label htmlFor="avatar-upload" className="cursor-pointer">
-                                <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
-                                    {formData.avatar ? (
-                                        <img src={formData.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <FiCamera className="text-black text-2xl" />
-                                    )}
-                                </div>
-                            </label>
-                            <input
-                                id="avatar-upload"
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={handleImageChange}
-                            />
-                        </div>
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSignup}>
+
+                            <div className="flex flex-col items-center">
+                                <label htmlFor="avatar-upload" className="cursor-pointer">
+                                    <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
+                                        {formData.avatar ? (
+                                            <img
+                                                src={URL.createObjectURL(formData.avatar)}
+                                                alt="Avatar"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <FiCamera className="text-black text-2xl" />
+                                        )}
+                                    </div>
+                                </label>
+                                <input
+                                    id="avatar-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleFileChange}
+                                />
+                            </div>
                             <div className="grid grid-cols-2 gap-6 mt-6">
                                 <div>
                                     <label className="block text-sm font-medium">First Name</label>
@@ -248,18 +340,14 @@ const UserManagement = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium">Contact Number</label>
-                                    <input type="text" name="contactNumber" value={formData.contactNumber} onChange={handleInputChange} placeholder="Enter contact number" className="w-full bg-gray-100 rounded-md p-3 mt-1" />
-                                    {errors.contactNumber && <p className="text-red-500 text-sm mt-1">{errors.contactNumber}</p>}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium">Address</label>
-                                    <input type="text" name="address" value={formData.address} onChange={handleInputChange} placeholder="Enter address" className="w-full bg-gray-100 rounded-md p-3 mt-1" />
+                                    <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="Enter contact number" className="w-full bg-gray-100 rounded-md p-3 mt-1" />
+                                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                                 </div>
                             </div>
                             <div className="mt-6 flex items-center">
                                 <div className="flex-1">
                                     <label className="block text-sm font-medium">Password</label>
-                                    <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder="••••••" className="w-full bg-gray-100 rounded-md p-3 mt-1" required />
+                                    <input type="password" name="password" onChange={handleInputChange} placeholder="••••••" className="w-full bg-gray-100 rounded-md p-3 mt-1 " />
                                     {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                                 </div>
                                 <button type="button" className="text-gray-500 text-sm ml-4 flex items-center cursor-pointer">
@@ -270,7 +358,109 @@ const UserManagement = () => {
                                 <button type="button" onClick={() => setShowModal(false)} className="text-sm border border-gray-400 text-gray-700 px-2 py-2 rounded-3xl cursor-pointer">
                                     Cancel
                                 </button>
-                                <button type="submit" className="text-sm bg-teal-500 text-white px-2 py-1 rounded-3xl cursor-pointer">Save Details</button>
+                                <button
+                                    type="submit"
+                                    className="text-sm bg-teal-500 text-white px-4 py-2 rounded-3xl cursor-pointer flex items-center justify-center"
+                                    disabled={loading} // Disable button when loading
+                                >
+                                    {loading ? (
+                                        <div className="flex items-center">
+
+                                            Saving...
+                                        </div>
+                                    ) : (
+                                        "Add User"
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/*user Update Modal */}
+            {showUpdateModal && (
+                <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white rounded-2xl p-8 w-3/4 max-w-2xl">
+                        <form onSubmit={handleSubmit}>
+
+                            <div className="flex flex-col items-center">
+                                <label htmlFor="avatar-upload" className="cursor-pointer">
+                                    <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
+                                        {formData.avatar ? (
+                                            <img
+                                                src={URL.createObjectURL(formData.avatar)}
+                                                alt="Avatar"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <FiCamera className="text-black text-2xl" />
+                                        )}
+                                    </div>
+                                </label>
+                                <input
+                                    id="avatar-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleFileChange}
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-6 mt-6">
+                                <div>
+                                    <label className="block text-sm font-medium">First Name</label>
+                                    <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder="Enter first name" className="w-full bg-gray-100 rounded-md p-3 mt-1" required />
+                                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium">Last Name</label>
+                                    <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} placeholder="Enter last name" className="w-full bg-gray-100 rounded-md p-3 mt-1" required />
+                                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium">Email Address</label>
+                                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Enter email address" className="w-full bg-gray-100 rounded-md p-3 mt-1" required />
+                                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium">Passport ID</label>
+                                    <input type="text" name="passportId" value={formData.passportId} onChange={handleInputChange} placeholder="Enter passport ID" className="w-full bg-gray-100 rounded-md p-3 mt-1" />
+                                    {errors.passportId && <p className="text-red-500 text-sm mt-1">{errors.passportId}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium">Contact Number</label>
+                                    <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="Enter contact number" className="w-full bg-gray-100 rounded-md p-3 mt-1" />
+                                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                                </div>
+                            </div>
+                            <div className="mt-6 flex items-center">
+                                <div className="flex-1">
+                                    <label className="block text-sm font-medium">Password</label>
+                                    <input type="password" name="password" onChange={handleInputChange} placeholder="••••••" className="w-full bg-gray-100 rounded-md p-3 mt-1 " />
+                                    {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                                </div>
+                                <button type="button" className="text-gray-500 text-sm ml-4 flex items-center cursor-pointer">
+                                    Reset password <FiRefreshCcw className="ml-1" />
+                                </button>
+                            </div>
+                            <div className="mt-8 flex justify-end space-x-4">
+                                <button type="button" onClick={() => setShowUpdateModal(false)} className="text-sm border border-gray-400 text-gray-700 px-2 py-2 rounded-3xl cursor-pointer">
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="text-sm bg-teal-500 text-white px-4 py-2 rounded-3xl cursor-pointer flex items-center justify-center"
+                                    disabled={loading} // Disable button when loading
+                                >
+                                    {loading ? (
+                                        <div className="flex items-center">
+
+                                            Saving...
+                                        </div>
+                                    ) : (
+                                        "Edit Details"
+                                    )}
+                                </button>
                             </div>
                         </form>
                     </div>

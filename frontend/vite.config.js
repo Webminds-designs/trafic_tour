@@ -6,4 +6,17 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      format: {
+        comments: false,
+      },
+    },
+  },
+  server: {
+    fs: {
+      strict: true, // Prevent serving sensitive files
+    },
+  },
 })

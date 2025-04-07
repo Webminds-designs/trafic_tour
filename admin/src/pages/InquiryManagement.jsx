@@ -1,4 +1,4 @@
-import { useState ,useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
@@ -25,90 +25,55 @@ const InquiryManagement = () => {
             })
             .catch((err) => console.error("Error fetching emails:", err));
     }, []);
- // Function to generate Gravatar URL based on email
- const getGravatarUrl = (email, size = 40) => {
-    const emailHash = md5(email.trim().toLowerCase()); // Hash email to lowercase
-    return `https://www.gravatar.com/avatar/${emailHash}?s=${size}&d=identicon`; // Gravatar URL with optional size and default image
-  };
-
-  // Function to extract the information
-  
-  useEffect(() => {
-    if (selectedInquiry && selectedInquiry.text) {
-      const newText = selectedInquiry.text;
-      extractInformation(newText);
-    }
-  }, [selectedInquiry]);
-  
-
-  const extractInformation = (newtext) => {
-    const namePattern = /Name:\s+(\w+)\s+(\w+)/;
-    const emailPattern = /Email:\s+([\w\.]+@[\w\.]+)/;
-    const messagePattern = /Message:\s+(.*)/;
-
-    const nameMatch = newtext.match(namePattern);
-    const emailMatch = newtext.match(emailPattern);
-    const messageMatch = newtext.match(messagePattern);
-
-    if (nameMatch && emailMatch && messageMatch) {
-      const firstName = nameMatch[1];
-      const lastName = nameMatch[2];
-      const email = emailMatch[1];
-      const message = messageMatch[1];
-
-      setExtractedInfo({ firstName, lastName, email, message });
-    } else {
-      console.log("Could not extract the information.");
-    }
-  };
-  // Handle reply submission
-  const handleReply = async (emailId) => {
-    try {
-      await axios.post("http://localhost:6400/api/send-email/reply", { emailId, replyText });
-      alert("Reply sent successfully!");
-      setReplyText("");
-    } catch (error) {
-      console.error("Failed to send reply:", error);
-      alert("Failed to send reply.");
-    }
-  };
-    const handleSendMessage = () => {
-        if (!replyMessage.trim()) return; // Prevent empty messages
-
-        setReplies((prev) => ({
-            ...prev,
-            [selectedInquiry.id]: [...(prev[selectedInquiry.id] || []), replyMessage],
-        }));
-
-        setReplyMessage(""); // Clear input
+    // Function to generate Gravatar URL based on email
+    const getGravatarUrl = (email, size = 40) => {
+        const emailHash = md5(email.trim().toLowerCase()); // Hash email to lowercase
+        return `https://www.gravatar.com/avatar/${emailHash}?s=${size}&d=identicon`; // Gravatar URL with optional size and default image
     };
 
-    const handleAttachFile = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            console.log("File attached:", file.name);
+    // Function to extract the information
+
+    useEffect(() => {
+        if (selectedInquiry && selectedInquiry.text) {
+            const newText = selectedInquiry.text;
+            extractInformation(newText);
+        }
+    }, [selectedInquiry]);
+
+
+    const extractInformation = (newtext) => {
+        const namePattern = /Name:\s+(\w+)\s+(\w+)/;
+        const emailPattern = /Email:\s+([\w\.]+@[\w\.]+)/;
+        const messagePattern = /Message:\s+(.*)/;
+
+        const nameMatch = newtext.match(namePattern);
+        const emailMatch = newtext.match(emailPattern);
+        const messageMatch = newtext.match(messagePattern);
+
+        if (nameMatch && emailMatch && messageMatch) {
+            const firstName = nameMatch[1];
+            const lastName = nameMatch[2];
+            const email = emailMatch[1];
+            const message = messageMatch[1];
+
+            setExtractedInfo({ firstName, lastName, email, message });
+        } else {
+            console.log("Could not extract the information.");
         }
     };
-
-    const [isEditing, setIsEditing] = useState(null);
-    const [editedReply, setEditedReply] = useState("");
-
-    const handleEdit = (index, reply) => {
-        setIsEditing(index); // Set the current index to be in editing mode
-        setEditedReply(reply); // Set the current reply to the input field
+    // Handle reply submission
+    const handleReply = async (emailId) => {
+        try {
+            await axios.post("http://localhost:6400/api/send-email/reply", { emailId, replyText });
+            alert("Reply sent successfully!");
+            setReplyText("");
+        } catch (error) {
+            console.error("Failed to send reply:", error);
+            alert("Failed to send reply.");
+        }
     };
-
-    const handleSaveEdit = (index) => {
-        const updatedReplies = [...replies[selectedInquiry.id]];
-        updatedReplies[index] = editedReply;
-        setReplies((prev) => ({
-            ...prev,
-            [selectedInquiry.id]: updatedReplies,
-        }));
-        setIsEditing(null); // Exit the editing mode
-    };
-
-console.log( selectedInquiry?.reply.text)
+  
+    console.log(selectedInquiry?.reply.text)
     return (
         <div className="flex h-full bg-gray-200 font-figtree">
             <Sidebar />
@@ -121,14 +86,14 @@ console.log( selectedInquiry?.reply.text)
                         {emails.map((inq) => (
                             <div
                                 key={inq.id}
-                                className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition ${selectedInquiry?.id === inq.id ? "bg-gray-200" : ""
+                                className={`flex items-center gap-4 p-3 mb-1 rounded-lg cursor-pointer hover:bg-gray-100 transition ${selectedInquiry?._id === inq._id ? "bg-gray-200" : ""
                                     }`}
                                 onClick={() => setSelectedInquiry(inq)}
                             >
-                                <img  src={getGravatarUrl(inq.from)}  alt={inq.name} className="w-10 h-10 rounded-full" />
+                                <img src={getGravatarUrl(inq.from)} alt={inq.name} className="w-10 h-10 rounded-full" />
                                 <div>
                                     <p className="font-medium text-gray-800">{inq.from}</p>
-                                    <p className="text-sm text-gray-500">{inq.subject}</p>
+                                    <p className="text-sm text-gray-500">{inq.subject} </p>
                                 </div>
                             </div>
                         ))}
@@ -146,7 +111,7 @@ console.log( selectedInquiry?.reply.text)
                                         <label className="block text-sm font-medium">First Name</label>
                                         <input
                                             type="text"
-                                            value= {extractedInfo.firstName}
+                                            value={extractedInfo.firstName}
                                             disabled
                                             className="w-full p-2 rounded-md bg-gray-100"
                                         />
@@ -155,7 +120,7 @@ console.log( selectedInquiry?.reply.text)
                                         <label className="block text-sm font-medium">Last Name</label>
                                         <input
                                             type="text"
-                                          value={extractedInfo.lastName}
+                                            value={extractedInfo.lastName}
                                             disabled
                                             className="w-full p-2 rounded-md bg-gray-100"
                                         />
@@ -184,27 +149,22 @@ console.log( selectedInquiry?.reply.text)
                                 </div>
                                 {/* Replies */}
                                 <div>
-    <label className="block text-sm font-medium">Replies</label>
-    <div className="bg-gray-100 p-3 rounded-md space-y-2">
-        {selectedInquiry.reply?.length > 0 ? (
-            selectedInquiry.reply.map((reply) => (
-                <div key={reply._id} className="rounded-md">
-                    <div className="flex justify-between items-center">
-                        <div className="flex-1">
-                            <div>
-                                <p className="font-medium text-gray-800">{reply.from}</p>
-                                <p className="text-sm text-gray-500">{new Date(reply.reply.date).toLocaleString()}</p>
-                                <p>{selectedInquiry?.reply.text}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ))
-        ) : (
-            <p className="text-gray-500">No replies yet.</p>
-        )}
-    </div>
-</div>
+                                    <label className="block text-sm font-medium">Replies</label>
+                                    <div className="bg-gray-100 p-3 rounded-md space-y-2">
+                                        {selectedInquiry?.reply.text ? (
+                                            <div key={selectedInquiry.reply._id} className="rounded-md">
+                                                <div className="flex justify-between items-center">
+                                                    <div className="flex-1">
+                                                        <p>{selectedInquiry.reply.text} </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <p className="text-gray-500">No replies yet.</p>
+                                        )}
+                                    </div>
+                                </div>
+
 
                                 {/* Reply Input */}
                                 <div>
@@ -217,16 +177,11 @@ console.log( selectedInquiry?.reply.text)
                                     />
 
                                     <div className="flex justify-end space-x-6 mt-3">
-                                        {/* Attach Button */}
-                                        <label className="cursor-pointer p-2 rounded-md flex items-center space-x-1">
-                                            <Paperclip size={18} />
-                                            <span>Attach</span>
-                                            <input type="file" className="hidden" onChange={handleAttachFile} />
-                                        </label>
+                                        
 
                                         {/* Send Button */}
                                         <button
-                                         onClick={() => handleReply(selectedInquiry._id)}
+                                            onClick={() => handleReply(selectedInquiry._id)}
                                             className="text-[#009990] px-1 py-2 rounded-md flex cursor-pointer items-center space-x-1"
                                         >
                                             <Send size={18} />
