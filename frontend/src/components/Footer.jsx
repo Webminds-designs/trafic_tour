@@ -9,13 +9,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import review from "../assets/review/review.png";
-import review1 from "../assets/review/review1.png"
-import review2 from "../assets/review/review2.png"
-import review3 from "../assets/review/review3.png"
-import review4 from "../assets/review/review4.png"
+import review1 from "../assets/review/review1.png";
+import review2 from "../assets/review/review2.png";
+import review3 from "../assets/review/review3.png";
+import review4 from "../assets/review/review4.png";
 
 const reviews = [
-
   {
     text: "Absolutely breathtaking! The climb is challenging, but the views from the top are worth every step. The frescoes and lion's paws are a must-see!",
     name: "Sam Vorona",
@@ -45,14 +44,12 @@ const reviews = [
     name: "Nelly Papazova",
     location: "Dambulla Royal Cave Temple",
     image: review4,
-  }
+  },
 ];
 
-
 const Footer = () => {
-
-  const [form, setForm] = useState({ name: '', email: '', postalCode: '' });
-  const [message, setMessage] = useState('');
+  const [form, setForm] = useState({ name: "", email: "", postalCode: "" });
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -60,15 +57,15 @@ const Footer = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:6400/api/subscriptions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+    const response = await fetch("http://localhost:3000/api/subscriptions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
     });
     const data = await response.json();
     if (response.ok) {
-      setMessage('Subscription successful!');
-      setForm({ name: '', email: '', postalCode: '' });
+      setMessage("Subscription successful!");
+      setForm({ name: "", email: "", postalCode: "" });
     } else {
       setMessage(`${data.error}`);
     }
@@ -97,21 +94,26 @@ const Footer = () => {
                 <input
                   type="text"
                   name="name"
-                  value={form.name} onChange={handleChange} required
+                  value={form.name}
+                  onChange={handleChange}
+                  required
                   placeholder="Your First Name"
                   className="w-full p-4 bg-neutral-900 rounded-2xl"
                 />
                 <input
                   type="email"
                   name="email"
-                  value={form.email} onChange={handleChange} required
+                  value={form.email}
+                  onChange={handleChange}
+                  required
                   placeholder="Your Email"
                   className="w-full p-4 bg-neutral-900 rounded-2xl"
                 />
                 <input
                   type="text"
                   name="postalCode"
-                  value={form.postalCode} onChange={handleChange}
+                  value={form.postalCode}
+                  onChange={handleChange}
                   placeholder="Zip Code"
                   className="w-full p-4 bg-neutral-900 rounded-2xl"
                 />
@@ -122,8 +124,10 @@ const Footer = () => {
                   Subscribe
                 </button>
               </form>
-              <div className="text-center mt-3">  {message && <p>{message}</p>}</div>
-
+              <div className="text-center mt-3">
+                {" "}
+                {message && <p>{message}</p>}
+              </div>
             </div>
           </div>
           <div className="w-full lg:w-1/2 pt-0 mt-0 ">
@@ -162,10 +166,7 @@ const Footer = () => {
                             height={15}
                             className="m-2"
                           />
-                          <span className="m-1">
-                            {" "}
-                            {review.location}
-                          </span>
+                          <span className="m-1"> {review.location}</span>
                         </p>
                       </div>
                     </div>
@@ -192,11 +193,26 @@ const Footer = () => {
               {
                 title: "Sites",
                 links: [
-                  { name: "Galle", url: "https://maps.app.goo.gl/wXHTPKMcFhJ8T9iy8" },
-                  { name: "Colombo", url: "https://maps.app.goo.gl/dUbs66EiaWL1TrUM9" },
-                  { name: "Unawatuna", url: "https://maps.app.goo.gl/2hzSdfft5YZvmmbS7" },
-                  { name: "Adam's Peak", url: "https://maps.app.goo.gl/ReJ38ygADuZ39fxF9" },
-                  { name: "Temple of the Tooth", url: "https://maps.app.goo.gl/LcJ7TbvRCJQzpQwB9" },
+                  {
+                    name: "Galle",
+                    url: "https://maps.app.goo.gl/wXHTPKMcFhJ8T9iy8",
+                  },
+                  {
+                    name: "Colombo",
+                    url: "https://maps.app.goo.gl/dUbs66EiaWL1TrUM9",
+                  },
+                  {
+                    name: "Unawatuna",
+                    url: "https://maps.app.goo.gl/2hzSdfft5YZvmmbS7",
+                  },
+                  {
+                    name: "Adam's Peak",
+                    url: "https://maps.app.goo.gl/ReJ38ygADuZ39fxF9",
+                  },
+                  {
+                    name: "Temple of the Tooth",
+                    url: "https://maps.app.goo.gl/LcJ7TbvRCJQzpQwB9",
+                  },
                 ],
               },
               {
@@ -218,7 +234,9 @@ const Footer = () => {
               },
             ].map((section, index) => (
               <div key={index} className="mt-4">
-                <h3 className="font-light text-neutral-400 mb-4">{section.title}</h3>
+                <h3 className="font-light text-neutral-400 mb-4">
+                  {section.title}
+                </h3>
                 <ul className="font-extralight">
                   {section.links.map((link, i) => (
                     <li key={i} className="hover:text-gray-300 cursor-pointer">
@@ -231,7 +249,6 @@ const Footer = () => {
               </div>
             ))}
           </div>
-
         </div>
         <div className="mt-8 pt-8">
           <div className="flex flex-col lg:flex-row justify-between">

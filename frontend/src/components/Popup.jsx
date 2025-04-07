@@ -1,5 +1,5 @@
 import { FaBed, FaUtensils, FaCamera, FaHeart, FaTimes } from "react-icons/fa";
-import axios from 'axios';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import React, { useEffect, useState } from "react";
@@ -16,16 +16,18 @@ export default function Popup({ onClose, data }) {
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
 
- 
-  const userId= user?.id
-  const packageId = data?._id
-  console.log(user)
+  const userId = user?.id;
+  const packageId = data?._id;
+  console.log(user);
   useEffect(() => {
     const checkFavoriteStatus = async () => {
       try {
-       
-        const response = await axios.get(`http://localhost:6400/api/favorites/${user?.id}`);
-        const favorite = response.data.find(fav => fav.packageId._id === packageId);
+        const response = await axios.get(
+          `http://localhost:3000/api/favorites/${user?.id}`
+        );
+        const favorite = response.data.find(
+          (fav) => fav.packageId._id === packageId
+        );
         setIsFavorite(!!favorite);
       } catch (error) {
         console.error("Error checking favorite status:", error);
@@ -35,11 +37,14 @@ export default function Popup({ onClose, data }) {
   }, [user?.id, packageId]);
 
   const addFavorite = async () => {
-    if(!user){
-      navigate('/signin')
+    if (!user) {
+      navigate("/signin");
     }
     try {
-      await axios.post('http://localhost:6400/api/favorites/add', { userId, packageId });
+      await axios.post("http://localhost:3000/api/favorites/add", {
+        userId,
+        packageId,
+      });
       setIsFavorite(true);
     } catch (error) {
       console.error("Error adding to favorites:", error);
@@ -47,11 +52,13 @@ export default function Popup({ onClose, data }) {
   };
 
   const removeFavorite = async () => {
-    if(!user){
-      navigate('/signin')
+    if (!user) {
+      navigate("/signin");
     }
     try {
-      await axios.delete('http://localhost:6400/api/favorites/remove', { data: { userId, packageId } });
+      await axios.delete("http://localhost:3000/api/favorites/remove", {
+        data: { userId, packageId },
+      });
       setIsFavorite(false);
     } catch (error) {
       console.error("Error removing from favorites:", error);
@@ -73,11 +80,9 @@ export default function Popup({ onClose, data }) {
     };
   }, []);
 
-
   const handleBooking = () => {
     navigate("/payment", { state: { data } });
   };
-
 
   return (
     <div className="fixed inset-0 bg-opacity-90 backdrop-blur-lg z-50 flex items-center justify-center p-4 sm:p-6">
@@ -97,7 +102,7 @@ export default function Popup({ onClose, data }) {
             {data.name}
           </h1>
           <p className="text-black mt-2 text-sm sm:text-base md:text-lg font-base">
-            {data.duration.nights}  NIGHTS |  {data.duration.days} DAYS TOUR
+            {data.duration.nights} NIGHTS | {data.duration.days} DAYS TOUR
           </p>
         </div>
 
@@ -108,9 +113,16 @@ export default function Popup({ onClose, data }) {
             alt={data.name}
             className="w-full h-48 sm:h-64 object-cover"
           />
-          <div className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md cursor-pointer" onClick={isFavorite ? removeFavorite : addFavorite}>
-        <FaHeart className={`text-xs ${isFavorite ? 'text-red-500' : 'text-black'}`} />
-      </div>
+          <div
+            className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md cursor-pointer"
+            onClick={isFavorite ? removeFavorite : addFavorite}
+          >
+            <FaHeart
+              className={`text-xs ${
+                isFavorite ? "text-red-500" : "text-black"
+              }`}
+            />
+          </div>
         </div>
 
         {/* Description */}
@@ -142,10 +154,11 @@ export default function Popup({ onClose, data }) {
               <div
                 key={tab}
                 className={`flex-1  py-2 text-sm sm:text-base cursor-pointer transition-all duration-300 
-                                    ${activeTab === tab
-                    ? "bg-white text-[#009990]"
-                    : ""
-                  }`}
+                                    ${
+                                      activeTab === tab
+                                        ? "bg-white text-[#009990]"
+                                        : ""
+                                    }`}
                 onClick={() => setActiveTab(tab)}
               >
                 {tab}
@@ -156,60 +169,63 @@ export default function Popup({ onClose, data }) {
           {/* Dynamic Content */}
           <div className="mt-8 sm:mt-10 text-black text-sm sm:text-base">
             {activeTab === "INCLUDES" && (
-             <>
-             <div className="flex flex-col md:flex-row">
-               {/* Left Side */}
-               <div className="w-full md:w-2/3 h-96 p-4 m-4 border border-[#009990] rounded-2xl overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-[#009990] scrollbar-track-transparent">
-                 {data.itinerary.map((dayItem) => (
-                   <div key={dayItem._id} className="mb-8">
-                     <h2 className="text-lg md:text-xl font-medium">{`Day ${dayItem.day}: ${dayItem.title}`}</h2>
-                     <div className="mt-4">
-                       <ul className="list-disc pl-6">
-                         {dayItem.activities && Array.isArray(dayItem.activities) ? (
-                           dayItem.activities.map((activity, index) => (
-                             <li key={index}>{activity}</li>
-                           ))
-                         ) : (
-                           <li>No activities available</li>
-                         )}
-                       </ul>
-                     </div>
-                   </div>
-                 ))}
-               </div>
-               {/* Right Side */}
-               <div className="w-full md:w-1/3 p-4">
-                 <div className="bg-emerald-50 rounded-2xl m-4 p-3">
-                   <h2 className="text-lg md:text-xl font-medium">Booking Details</h2>
-                   <div className="flex justify-between">
-                     <div className="py-4 md:py-10">Standard Package</div>
-                     <div className="py-4 md:py-10">LKR: {data.price}</div>
-                   </div>
-                   <div className="border-t border-gray-300 my-4"></div>
-                   <div className="flex justify-between">
-                     <div>Standard Package</div>
-                     <div>LKR: {data.price}</div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-             <div className="p-4">
-               <h2 className="text-lg font-medium">Sites</h2>
-               <p>
-                 {data.places_to_visit && data.places_to_visit.length > 0
-                   ? data.places_to_visit.join(', ')
-                   : 'No places to visit available'}
-               </p>
-             </div>
-             <div className="text-center mt-6 md:mt-8">
-               <button
-                 onClick={handleBooking}
-                 className="bg-[#009990] text-white px-6 py-2 rounded-lg text-sm md:text-base w-full md:w-auto md:px-20"
-               >
-                 BOOK NOW
-               </button>
-             </div>
-           </>
+              <>
+                <div className="flex flex-col md:flex-row">
+                  {/* Left Side */}
+                  <div className="w-full md:w-2/3 h-96 p-4 m-4 border border-[#009990] rounded-2xl overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-[#009990] scrollbar-track-transparent">
+                    {data.itinerary.map((dayItem) => (
+                      <div key={dayItem._id} className="mb-8">
+                        <h2 className="text-lg md:text-xl font-medium">{`Day ${dayItem.day}: ${dayItem.title}`}</h2>
+                        <div className="mt-4">
+                          <ul className="list-disc pl-6">
+                            {dayItem.activities &&
+                            Array.isArray(dayItem.activities) ? (
+                              dayItem.activities.map((activity, index) => (
+                                <li key={index}>{activity}</li>
+                              ))
+                            ) : (
+                              <li>No activities available</li>
+                            )}
+                          </ul>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Right Side */}
+                  <div className="w-full md:w-1/3 p-4">
+                    <div className="bg-emerald-50 rounded-2xl m-4 p-3">
+                      <h2 className="text-lg md:text-xl font-medium">
+                        Booking Details
+                      </h2>
+                      <div className="flex justify-between">
+                        <div className="py-4 md:py-10">Standard Package</div>
+                        <div className="py-4 md:py-10">LKR: {data.price}</div>
+                      </div>
+                      <div className="border-t border-gray-300 my-4"></div>
+                      <div className="flex justify-between">
+                        <div>Standard Package</div>
+                        <div>LKR: {data.price}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h2 className="text-lg font-medium">Sites</h2>
+                  <p>
+                    {data.places_to_visit && data.places_to_visit.length > 0
+                      ? data.places_to_visit.join(", ")
+                      : "No places to visit available"}
+                  </p>
+                </div>
+                <div className="text-center mt-6 md:mt-8">
+                  <button
+                    onClick={handleBooking}
+                    className="bg-[#009990] text-white px-6 py-2 rounded-lg text-sm md:text-base w-full md:w-auto md:px-20"
+                  >
+                    BOOK NOW
+                  </button>
+                </div>
+              </>
             )}
             {/*
             {activeTab === "CUSTOMISE" && (

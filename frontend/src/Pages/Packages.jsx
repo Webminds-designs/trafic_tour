@@ -17,7 +17,7 @@ const Packages = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await axios.get("http://localhost:6400/api/packages");
+        const response = await axios.get("http://localhost:3000/api/packages");
         setPackages(response.data.packages);
         // Assuming the response contains an array of packages
       } catch (err) {
@@ -79,7 +79,6 @@ const Packages = () => {
   const [destination, setDestination] = useState("");
   const [tripDuration, setTripDuration] = useState("");
 
-
   // Filter activities based on search term
   const filteredActivities = allActivities.filter((activity) =>
     activity.toLowerCase().includes(searchTerm.toLowerCase())
@@ -108,12 +107,17 @@ const Packages = () => {
     console.log("Search Params:", params); // Debugging log
 
     try {
-      const response = await axios.get("http://localhost:6400/api/packages/find/search", { params });
+      const response = await axios.get(
+        "http://localhost:3000/api/packages/find/search",
+        { params }
+      );
 
       console.log("API Response:", response.data); // Debugging log
 
       if (response.data.packages && response.data.packages.length > 0) {
-        navigate("/searchresult", { state: { packages: response.data.packages } });
+        navigate("/searchresult", {
+          state: { packages: response.data.packages },
+        });
       } else {
         alert("No packages found.");
       }
@@ -126,9 +130,7 @@ const Packages = () => {
   return (
     <>
       <Navbar />
-      <div
-        className=" w-full pt-30 bg-gray-100"
-      >
+      <div className=" w-full pt-30 bg-gray-100">
         <div className="text-black">
           {/* Header Section */}
           <div className="flex flex-col lg:flex-row justify-between items-center px-4 sm:px-6 lg:px-20">
@@ -142,9 +144,9 @@ const Packages = () => {
             </div>
             <div className="text-right  px-4 lg:px-7 pt-6">
               <p className="text-xs sm:text-sm font-base">
-                Embark on an unforgettable journey through Sri Lanka. {" "}
-                <br />
-                Where every experience is designed to inspire, relax, and <br /> awaken your sense of adventure.
+                Embark on an unforgettable journey through Sri Lanka. <br />
+                Where every experience is designed to inspire, relax, and <br />{" "}
+                awaken your sense of adventure.
               </p>
             </div>
           </div>
@@ -164,9 +166,10 @@ const Packages = () => {
                     <option
                       key={index}
                       value={section}
-                      className={selectedSection === section
-                        ? "bg-teal-600 text-black"
-                        : "bg-black text-white"
+                      className={
+                        selectedSection === section
+                          ? "bg-teal-600 text-black"
+                          : "bg-black text-white"
                       }
                     >
                       {section}
@@ -198,7 +201,7 @@ const Packages = () => {
           <div className="mt-10 lg:mt-30 mb-14 lg:mb-28 px-4 sm:px-6 lg:px-20">
             <div className="flex justify-between">
               <div className="font-xl md:text-2xl text-xl">
-                Experience the thrill of  Sri Lanka's
+                Experience the thrill of Sri Lanka's
                 <br></br>
                 wilderness.
               </div>
@@ -213,55 +216,79 @@ const Packages = () => {
             </div>
             <div className="  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-10 lg:mt-20">
               {/* All Packages */}
-              {selectedSection === "All Packages" ? (<>
-                {packages
-                  .map((packageItem) => (
+              {selectedSection === "All Packages" ? (
+                <>
+                  {packages.map((packageItem) => (
                     <PackageCard
                       key={packageItem.name}
                       packageItem={packageItem} // Pass the entire package object
-                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
+                      onExplore={() =>
+                        console.log(`Exploring ${packageItem.name}`)
+                      }
                     />
                   ))}
-              </>) : null}
+                </>
+              ) : null}
 
               {/*Romantic and Relaxation */}
-              {selectedSection === "Romantic and Relaxation" ? (<>
-                {packages
-                  .filter((packageItem) => packageItem.type === "Romantic and Relaxation")
-                  .map((packageItem) => (
-                    <PackageCard
-                      key={packageItem.name}
-                      packageItem={packageItem} // Pass the entire package object
-                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
-                    />
-                  ))}
-              </>) : null}
+              {selectedSection === "Romantic and Relaxation" ? (
+                <>
+                  {packages
+                    .filter(
+                      (packageItem) =>
+                        packageItem.type === "Romantic and Relaxation"
+                    )
+                    .map((packageItem) => (
+                      <PackageCard
+                        key={packageItem.name}
+                        packageItem={packageItem} // Pass the entire package object
+                        onExplore={() =>
+                          console.log(`Exploring ${packageItem.name}`)
+                        }
+                      />
+                    ))}
+                </>
+              ) : null}
 
               {/*Advanture and Wildlife */}
-              {selectedSection === "Advanture and Wildlife" ? (<>
-                {packages
-                  .filter((packageItem) => packageItem.type === "Adventure and Wildlife")
-                  .map((packageItem) => (
-                    <PackageCard
-                      key={packageItem.name}
-                      packageItem={packageItem} // Pass the entire package object
-                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
-                    />
-                  ))}
-              </>) : null}
+              {selectedSection === "Advanture and Wildlife" ? (
+                <>
+                  {packages
+                    .filter(
+                      (packageItem) =>
+                        packageItem.type === "Adventure and Wildlife"
+                    )
+                    .map((packageItem) => (
+                      <PackageCard
+                        key={packageItem.name}
+                        packageItem={packageItem} // Pass the entire package object
+                        onExplore={() =>
+                          console.log(`Exploring ${packageItem.name}`)
+                        }
+                      />
+                    ))}
+                </>
+              ) : null}
 
               {/*Educational and Cultural */}
-              {selectedSection === "Educational and Cultural" ? (<>
-                {packages
-                  .filter((packageItem) => packageItem.type === "Educational and Cultural")
-                  .map((packageItem) => (
-                    <PackageCard
-                      key={packageItem.name}
-                      packageItem={packageItem} // Pass the entire package object
-                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
-                    />
-                  ))}
-              </>) : null}
+              {selectedSection === "Educational and Cultural" ? (
+                <>
+                  {packages
+                    .filter(
+                      (packageItem) =>
+                        packageItem.type === "Educational and Cultural"
+                    )
+                    .map((packageItem) => (
+                      <PackageCard
+                        key={packageItem.name}
+                        packageItem={packageItem} // Pass the entire package object
+                        onExplore={() =>
+                          console.log(`Exploring ${packageItem.name}`)
+                        }
+                      />
+                    ))}
+                </>
+              ) : null}
             </div>
           </div>
 
@@ -285,7 +312,10 @@ const Packages = () => {
                   <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
                     {/* Destination Field */}
                     <div>
-                      <label className="text-sm font-medium" htmlFor="destination">
+                      <label
+                        className="text-sm font-medium"
+                        htmlFor="destination"
+                      >
                         Destination
                       </label>
                       <input
@@ -300,7 +330,10 @@ const Packages = () => {
 
                     {/* Trip Duration Field */}
                     <div>
-                      <label className="text-sm font-medium" htmlFor="tripDuration">
+                      <label
+                        className="text-sm font-medium"
+                        htmlFor="tripDuration"
+                      >
                         Trip Duration (Days)
                       </label>
                       <input
@@ -317,7 +350,9 @@ const Packages = () => {
                   {/* Right Section - Activities */}
                   <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
                     <div>
-                      <label className="text-sm font-medium">Activities & Interests</label>
+                      <label className="text-sm font-medium">
+                        Activities & Interests
+                      </label>
                       <div className="w-full space-y-3">
                         {/* Search Input */}
                         <input
@@ -330,14 +365,18 @@ const Packages = () => {
 
                         {/* Activity List */}
                         <div className="flex flex-wrap gap-2">
-                          {(searchTerm ? filteredActivities : allActivities.slice(0, 8)).map((activity) => (
+                          {(searchTerm
+                            ? filteredActivities
+                            : allActivities.slice(0, 8)
+                          ).map((activity) => (
                             <div
                               key={activity}
                               onClick={() => toggleActivity(activity)}
-                              className={`px-4 py-2 rounded-full cursor-pointer transition ${selectedActivities.includes(activity)
-                                ? "bg-teal-500 text-white"
-                                : "bg-gray-200 text-gray-700"
-                                }`}
+                              className={`px-4 py-2 rounded-full cursor-pointer transition ${
+                                selectedActivities.includes(activity)
+                                  ? "bg-teal-500 text-white"
+                                  : "bg-gray-200 text-gray-700"
+                              }`}
                             >
                               {activity}
                             </div>
@@ -348,9 +387,15 @@ const Packages = () => {
                         {selectedActivities.length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-4">
                             {selectedActivities.map((activity) => (
-                              <div key={activity} className="px-3 py-1 bg-teal-500 text-white rounded-full flex items-center">
+                              <div
+                                key={activity}
+                                className="px-3 py-1 bg-teal-500 text-white rounded-full flex items-center"
+                              >
                                 {activity}
-                                <button onClick={() => toggleActivity(activity)} className="ml-2 text-white font-bold">
+                                <button
+                                  onClick={() => toggleActivity(activity)}
+                                  className="ml-2 text-white font-bold"
+                                >
                                   ×
                                 </button>
                               </div>

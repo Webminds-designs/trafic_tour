@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import userimg from "../assets/user.png";
 import google from "../assets/Google.svg";
-import signin_Bg from "../assets/signin.jpg"
+import signin_Bg from "../assets/signin.jpg";
 
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
@@ -13,67 +13,80 @@ import { AuthContext } from "../context/authContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import logoBlack from "../assets/logoBlack.png";
+import api from "../services/api.js";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const { setUser ,user} = useContext(AuthContext);
+  const { setUser, user } = useContext(AuthContext);
   const navigate = useNavigate();
- const userdetails = user;
+  const userdetails = user;
   //password visibility
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  // basic login
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
 
- // basic login
- const handleLogin = async (e) => {
-  e.preventDefault();
-  setError("");
+    try {
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/user/login",
+      //   {
+      //     email,
+      //     password,
+      //   }
+      // );
 
-  try {
-    const response = await axios.post("http://localhost:6400/api/user/login", {
-      email,
-      password,
-    });
+      const response = await api.post(
+        "/user/auth",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
 
-    const user = response.data.user;
+      const user = response.data.user;
 
-    if (user.role !== "admin") {
-      setError("Access denied. Admins only.");
-      toast.error("Access denied. Admins only.");
-      return;
+      if (user.role !== "admin") {
+        setError("Access denied. Admins only.");
+        toast.error("Access denied. Admins only.");
+        return;
+      }
+
+      console.log("Admin Login Successful:", user);
+      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
+      toast.success("Login Successful");
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(
+        "Login Failed:",
+        err.response?.data?.message || err.message
+      );
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
     }
-
-    console.log("Admin Login Successful:", user);
-    localStorage.setItem("user", JSON.stringify(user));
-    setUser(user);
-    toast.success("Login Successful");
-    navigate("/dashboard");
-  } catch (err) {
-    console.error("Login Failed:", err.response?.data?.message || err.message);
-    setError(err.response?.data?.message || "Login failed. Please try again.");
-  }
-};
-
+  };
 
   return (
-   
     <div
-  style={{ backgroundImage: `url(${signin_Bg})` }}   
-  className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
->
-    
-  {/* logo */}
+      style={{ backgroundImage: `url(${signin_Bg})` }}
+      className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
+    >
+      {/* logo */}
       <div className="absolute top-4 left-4 text-[16px] font-semibold">
-          <img src={logoBlack} alt="logo" className="w-16 md:w-28" />
+        <img src={logoBlack} alt="logo" className="w-16 md:w-28" />
       </div>
       <div className="bg-gradient-to-b  from-[#acc6c0] via-[#c9d9d7] to-white backdrop-blur-lg backdrop-brightness-75 bg-opacity-90  p-4 px-8  mt-10  rounded-3xl shadow-lg max-w-md w-full">
         <div className="flex justify-center mb-6">
           <div className="mt-4 bg-white p-4 rounded-2xl shadow-xl">
-           <img src={userimg} width={30} alt="User" />
+            <img src={userimg} width={30} alt="User" />
           </div>
         </div>
         <h2 className="text-2xl font-semibold text-center mb-2">
@@ -83,10 +96,10 @@ const Signin = () => {
           Log in to manage your bookings, explore<br></br> new destinations, and
           plan your perfect trip.
         </p>
-         {/* Login Form */}
+        {/* Login Form */}
         <form onSubmit={handleLogin}>
           <div className="mb-4 relative">
-             {/* email */}
+            {/* email */}
             <label className="bg-[#e2e7ea] rounded-xl text-gray-700 flex items-center">
               <img
                 src={imgemail}
@@ -105,7 +118,7 @@ const Signin = () => {
             </label>
           </div>
           <div className="mb-4 relative">
-               {/* password */}
+            {/* password */}
             <label className="bg-[#e2e7ea] rounded-xl text-gray-700 flex items-center">
               <img
                 src={lock}
@@ -121,7 +134,7 @@ const Signin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-                 {/* password visible */}
+              {/* password visible */}
               <img
                 src={passwordVisible ? eye : hidden}
                 onClick={togglePasswordVisibility}
@@ -133,7 +146,8 @@ const Signin = () => {
 
             <div className=" flex justify-between text-right mt-5">
               <div>
-                {" "}    {/* erorr showing */}
+                {" "}
+                {/* erorr showing */}
                 {error && (
                   <p className="text-red-500 text-center mb-4">{error}</p>
                 )}
@@ -143,7 +157,7 @@ const Signin = () => {
               </a>
             </div>
           </div>
-             {/* Login button */}
+          {/* Login button */}
           <button
             type="submit"
             className="w-full bg-gray-800 text-white py-2 rounded-lg font-semibold hover:bg-gray-800 transition duration-200"
@@ -151,7 +165,6 @@ const Signin = () => {
             Login
           </button>
         </form>
-   
       </div>
     </div>
   );

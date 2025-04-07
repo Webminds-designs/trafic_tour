@@ -1,15 +1,11 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import user from "../assets/user.png";
-import signup_Bg from "../assets/signup.jpg"
+import signup_Bg from "../assets/signup.jpg";
 import google from "../assets/Google.svg";
 import { auth } from "../components/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import {
-  setPersistence,
-  browserSessionPersistence,
-
-} from "firebase/auth";
+import { setPersistence, browserSessionPersistence } from "firebase/auth";
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
 import lock from "../assets/lock.png";
@@ -19,7 +15,6 @@ import { AuthContext } from "../context/authContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import logoBlack from "../assets/logoBlack.png";
-
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -47,34 +42,34 @@ const Signup = () => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       console.log(user.email);
-  
+
       // Extract data from Google user
       const { email, displayName, photoURL } = user;
-  
+
       // Split the displayName into first name and last name
       const [firstName, ...lastName] = displayName.split(" ");
       const lastNameString = lastName.join(" ");
-  
+
       // Prepare data
       const userData = { email };
-  
+
       // Check if the email already exists in your system
       const emailCheckResponse = await axios.post(
-        "http://localhost:6400/api/user/findemail",
+        "http://localhost:3000/api/user/findemail",
         userData
       );
-  
+
       // If email exists, perform Google login
       if (emailCheckResponse.data.exists) {
         const loginResponse = await axios.post(
-          "http://localhost:6400/api/user/Googlelogin",
+          "http://localhost:3000/api/user/Googlelogin",
           userData
         );
-  
+
         localStorage.setItem("user", JSON.stringify(loginResponse.data.user));
         setUser(loginResponse.data.user);
         toast.success("Login Successful");
-  
+
         // Redirect to profile page
         navigate("/profile");
       } else {
@@ -85,34 +80,34 @@ const Signup = () => {
           firstName,
           lastName: lastNameString,
         };
-  
+
         const registrationResponse = await axios.post(
-          "http://localhost:6400/api/user/Googleregister",
+          "http://localhost:3000/api/user/Googleregister",
           registrationData
         );
-  
+
         // Check if registration was successful
         if (registrationResponse.status === 201) {
           // Subscribe user to service
           const subscriptionData = {
-            name: firstName,  // Send user first name and email to subscription API
+            name: firstName, // Send user first name and email to subscription API
             email,
           };
-  
+
           const subscriptionResponse = await axios.post(
-            "http://localhost:6400/api/subscriptions/signup",
+            "http://localhost:3000/api/subscriptions/signup",
             subscriptionData
           );
-  
+
           // If subscription is successful
           if (subscriptionResponse.status === 201) {
             console.log("Email subscribed successfully!");
           } else {
             console.error("Subscription failed:", subscriptionResponse.data);
           }
-  
+
           toast.success("User registered ");
-          signInWithGoogle()
+          signInWithGoogle();
         } else {
           console.error("Registration failed:", registrationResponse.data);
         }
@@ -122,7 +117,7 @@ const Signup = () => {
       console.error("Sign-in Error:", error);
     }
   };
-  
+
   // basic register
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -135,18 +130,18 @@ const Signup = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:6400/api/user/register",
+        "http://localhost:3000/api/user/register",
         formData,
         {}
       );
       toast.success("User registered successfully!");
       const subscriptionResponse = await axios.post(
-        "http://localhost:6400/api/subscriptions/signup",
+        "http://localhost:3000/api/subscriptions/signup",
         { email }
       );
 
       console.log("Email subscribed successfully!");
-      signInWithGoogle()
+      signInWithGoogle();
     } catch (err) {
       console.error(
         "Error during registration: ",
@@ -180,7 +175,6 @@ const Signup = () => {
             Access your bookings, manage itineraries, and explore Sri Lanka like
             never before!
           </p>
-
 
           <form onSubmit={handleSignup}>
             {/* Form Fields */}
@@ -307,10 +301,13 @@ const Signup = () => {
               onClick={signInWithGoogle} // Trigger Firebase Google login on click
             >
               <img src={google} alt="Google Logo" className="w-6 h-6" />
-              <div className="m-2 text-gray-900
-            ">Login with Google </div>
+              <div
+                className="m-2 text-gray-900
+            "
+              >
+                Login with Google{" "}
+              </div>
             </button>
-
           </div>
 
           <p className="text-center text-gray-600 mt-6">

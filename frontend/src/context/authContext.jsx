@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
 export const AuthContext = createContext();
 
@@ -10,10 +10,9 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if user data is saved in localStorage
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser)); // Set user state with data from localStorage
-     
     } else {
       console.log("No user data ");
     }
@@ -21,28 +20,30 @@ export const AuthProvider = ({ children }) => {
     // Optionally, fetch the user from the API to make sure session is valid
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:6400/api/user/auth', {
-          withCredentials: true, // Ensure cookies are included in the request
-        });
+        const response = await axios.get(
+          "http://localhost:3000/api/user/auth",
+          {
+            withCredentials: true, // Ensure cookies are included in the request
+          }
+        );
 
         if (response.data) {
           setUser(response.data); // Set the user if the response is valid
           console.log("User data received:", response.data);
 
           // Save user data in localStorage for future sessions
-          localStorage.setItem('user', JSON.stringify(response.data));
+          localStorage.setItem("user", JSON.stringify(response.data));
         } else {
-          console.log('User not authenticated or not found.');
+          console.log("User not authenticated or not found.");
           setUser(null); // Clear user state if unauthenticated
-          localStorage.removeItem('user'); // Remove user data from localStorage
+          localStorage.removeItem("user"); // Remove user data from localStorage
         }
       } catch (err) {
-        console.error('Error fetching user:', err.message);
+        console.error("Error fetching user:", err.message);
       } finally {
         setLoading(false);
       }
     };
-
 
     // If no user data in localStorage, fetch the user from the API
     if (!storedUser) {
@@ -52,21 +53,25 @@ export const AuthProvider = ({ children }) => {
     }
   }, []); // Run only once when the component mounts
 
-    // Logout function
-    const logout = async () => {
-      try {
-        await axios.post("http://localhost:6400/api/user/logout", {}, { withCredentials: true });
-  
-        setUser(null); // Clear user state
-        localStorage.removeItem("user"); // Remove user data from localStorage
-        console.log("User logged out successfully.");
-      } catch (err) {
-        console.error("Error logging out:", err.message);
-      }
-    };
-  
+  // Logout function
+  const logout = async () => {
+    try {
+      await axios.post(
+        "http://localhost:3000/api/user/logout",
+        {},
+        { withCredentials: true }
+      );
+
+      setUser(null); // Clear user state
+      localStorage.removeItem("user"); // Remove user data from localStorage
+      console.log("User logged out successfully.");
+    } catch (err) {
+      console.error("Error logging out:", err.message);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, error, setUser ,logout }}>
+    <AuthContext.Provider value={{ user, loading, error, setUser, logout }}>
       {loading ? (
         <div>Loading...</div> // Show a loading indicator while fetching user data
       ) : error ? (
