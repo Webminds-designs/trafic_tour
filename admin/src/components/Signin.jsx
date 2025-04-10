@@ -1,14 +1,11 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
 import userimg from "../assets/user.png";
-import google from "../assets/Google.svg";
 import signin_Bg from "../assets/signin.jpg";
 
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
 import lock from "../assets/lock.png";
 import imgemail from "../assets/email.png";
-import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -43,8 +40,9 @@ const Signin = () => {
       // );
 
       const response = await api.post(
-        "/user/auth",
-        {},
+        "/user/login",
+        {  email,
+           password,},
         {
           withCredentials: true,
         }

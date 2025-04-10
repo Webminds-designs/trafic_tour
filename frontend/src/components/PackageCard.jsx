@@ -25,7 +25,7 @@ const PackageCard = ({ packageItem, onExplore }) => {
     <div className=" rounded-lg overflow-hidden transition-shadow duration-300">
       {/* Image with taller rectangular shape */}
       <img
-        src={imageUrl}
+        src={imageUrl[0]}
         alt={name}
         className="w-full h-120 object-cover rounded-lg"
       />
@@ -54,7 +54,7 @@ const PackageCard = ({ packageItem, onExplore }) => {
               </p>
           
             <img
-              src={packageItem.imageUrl}
+              src={packageItem.imageUrl[0]}
               alt={packageItem.name}
               className="w-full h-48 object-cover rounded-lg"
             />
