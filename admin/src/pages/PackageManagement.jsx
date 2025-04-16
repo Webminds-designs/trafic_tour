@@ -73,10 +73,7 @@ const PackageManagement = () => {
     setImageprev((prev) => [...prev, ...previews]);
 
     // Clear single imageUrl if any
-    setFormData((prev) => ({
-      ...prev,
-      imageUrl: [],
-    }));
+
   };
 
   const closeModal = () => {
@@ -153,6 +150,16 @@ const PackageManagement = () => {
     setFormData({ ...formData, itinerary: updatedItinerary });
   };
 
+  useEffect(() => {
+    // Filter only URLs (strings), excluding File objects
+    const previewLinks = imageprev.filter((img) => typeof img === "string" || img instanceof String);
+
+    setFormData((prev) => ({
+      ...prev,
+      imageUrl: previewLinks,
+    }));
+  }, [imageprev]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -211,9 +218,6 @@ const PackageManagement = () => {
       );
       formDataToSend.append("itinerary", JSON.stringify(formData.itinerary));
 
-      // Log the current form data
-      console.log("Form Data before images:", formDataToSend);
-
       if (image && image.length > 0) {
         console.log("Adding New Image Files:", image);
 
@@ -223,26 +227,14 @@ const PackageManagement = () => {
         });
       }
 
-      if (selectedPackage?.imageUrl && selectedPackage.imageUrl.length > 0) {
-       
-          formDataToSend.delete("imageUrl");
-              
-        console.log("Retaining Existing Images:", selectedPackage.imageUrl);
-        selectedPackage.imageUrl.forEach(imageUrl => {
-          formDataToSend.append("imageUrl", imageUrl);  // Appending each image URL to formData
-        });
-      }
-
-      // Only send old image URLs if editing an existing package
-      if (selectedPackage && formData.imageUrl && formData.imageUrl.length > 0) {
-       
-          formDataToSend.delete("imageUrl");
-        
-        console.log("Retaining Existing Images from FormData:", formData.imageUrl);
+      if (selectedPackage && selectedPackage.imageUrl.length > 0) {
+        console.log("Retaining 1 Existing Images:", selectedPackage.imageUrl);
+        console.log(formData.imageUrl)
         formData.imageUrl.forEach((url) => {
           formDataToSend.append("imageUrl", url);
         });
       }
+
 
       // Log the formData after images are added
       console.log("Form Data after images:", formDataToSend);
@@ -319,6 +311,8 @@ const PackageManagement = () => {
     setImageprev(validImageUrls); // This sets preview only once when editing starts
     setImage([]); // Reset newly uploaded files
     setEditShowModal(true);
+
+
   };
 
 
@@ -347,23 +341,49 @@ const PackageManagement = () => {
       setSelectedPackage(null);
     }
   };
+
   const handleRemoveImage = (indexToRemove) => {
     const previewToRemove = imageprev[indexToRemove];
+    console.log("Files before removal:", image); // Log initial files
+    console.log("Removing image at index:", indexToRemove);
 
-    setImageprev((prev) => prev.filter((_, index) => index !== indexToRemove));
+    // Remove the preview from imageprev
+    setImageprev((prev) => {
+      const updatedPrev = prev.filter((_, index) => index !== indexToRemove);
+      console.log("Updated imageprev:", updatedPrev); // Debug log updated imageprev
+      return updatedPrev;
+    });
 
-    // If it's a string, it's from Cloudinary (existing image), so remove from formData.imageUrl
-    if (typeof previewToRemove === "string") {
+    // Remove the corresponding image from the 'image' array (actual File objects)
+    setImage((prev) => {
+      const updatedImages = prev.filter((_, index) => index !== indexToRemove); // Remove the File object
+      console.log("Updated image array:", updatedImages); // Debug log updated image
+      return updatedImages;
+    });
+
+    // If it's an existing Cloudinary image (string starting with "http"), remove it from imageUrl in formData
+    if (typeof previewToRemove === "string" && previewToRemove.startsWith("http")) {
       setFormData((prev) => ({
         ...prev,
         imageUrl: prev.imageUrl.filter((url) => url !== previewToRemove),
       }));
-    } else {
-      // Else it's a new File, so remove from the `images` array
-      setImage((prev) => prev.filter((_, index) => index !== indexToRemove));
+      console.log("Removed Cloudinary URL:", previewToRemove); // Debug log Cloudinary removal
     }
-  };
+    // If it's a new File object (not a Cloudinary URL), remove it from formData's imageUrl if it exists
+    else if (previewToRemove instanceof File) {
+      const fileURL = URL.createObjectURL(previewToRemove);
+      setFormData((prev) => ({
+        ...prev,
+        imageUrl: prev.imageUrl.filter(
+          (url) => url !== fileURL // Compare using the created object URL
+        ),
+      }));
+      console.log("Removed File object URL:", fileURL); // Debug log file object removal
+    }
 
+    // Final debug log after state update
+    console.log("Files after removal:", image);
+  };
 
 
   return (
@@ -464,16 +484,18 @@ const PackageManagement = () => {
                     </div>
                   ))}
 
-                  <label className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer rounded-md">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="hidden"
-                      onChange={handleImageUpload}
-                    />
-                    <FaCamera className="text-gray-500 text-xl" />
-                  </label>
+                  {imageprev.length < 5 && (
+                    <label className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer rounded-md">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handleImageUpload}
+                      />
+                      <FaCamera className="text-gray-500 text-xl" />
+                    </label>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-3 items-center">
@@ -693,7 +715,7 @@ const PackageManagement = () => {
               {/* Image Upload - Top Left */}
               <div className="flex justify-start mb-4">
                 <div className="w-full flex flex-wrap gap-2">
-                  {imageprev.map((preview, index) => (
+                  {imageprev.slice(0, 5).map((preview, index) => (
                     <div
                       key={index}
                       className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center relative rounded-md overflow-hidden"
@@ -715,19 +737,20 @@ const PackageManagement = () => {
                     </div>
                   ))}
 
-                  <label className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer rounded-md">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="hidden"
-                      onChange={handleImageUpload}
-                    />
-                    <FaCamera className="text-gray-500 text-xl" />
-                  </label>
+                  {imageprev.length < 5 && (
+                    <label className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer rounded-md">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handleImageUpload}
+                      />
+                      <FaCamera className="text-gray-500 text-xl" />
+                    </label>
+                  )}
                 </div>
               </div>
-
 
               <div className="grid grid-cols-3 gap-3 items-center">
                 <label className="text-black col-span-1">Package Name</label>
