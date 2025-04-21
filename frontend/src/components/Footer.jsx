@@ -13,6 +13,7 @@ import review1 from "../assets/review/review1.png";
 import review2 from "../assets/review/review2.png";
 import review3 from "../assets/review/review3.png";
 import review4 from "../assets/review/review4.png";
+import api from "../services/api";
 
 const reviews = [
   {
@@ -57,19 +58,22 @@ const Footer = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:3000/api/subscriptions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    const data = await response.json();
-    if (response.ok) {
+    try {
+      await api.post("/subscriptions", form, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
       setMessage("Subscription successful!");
       setForm({ name: "", email: "", postalCode: "" });
-    } else {
-      setMessage(`${data.error}`);
+    } catch (error) {
+      setMessage(
+        error.response?.data?.error || "Something went wrong. Please try again."
+      );
     }
   };
+
   const settings = {
     dots: true,
     infinite: true,
