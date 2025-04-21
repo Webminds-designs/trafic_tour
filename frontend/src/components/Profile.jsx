@@ -857,6 +857,12 @@ const Profile = () => {
                           )
                         )}
                       </div>
+                      <button
+                          onClick={() => openModal(packageItem)}
+                          className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
+                        >
+                          VIEW
+                        </button>
                     </div>
                   ))
                 )}
