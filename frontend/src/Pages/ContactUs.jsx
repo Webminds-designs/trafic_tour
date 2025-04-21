@@ -9,6 +9,7 @@ import Instagram from "../assets/instergram.jpg";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../services/api";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -40,15 +41,22 @@ const ContactUs = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/send-email",
-        {
-          from: email,
-          to: "contact.deneth@gmail.com", // Replace with actual email
-          subject,
-          text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nMessage: ${message}`,
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/send-email",
+      //   {
+      //     from: email,
+      //     to: "contact.deneth@gmail.com", // Replace with actual email
+      //     subject,
+      //     text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nMessage: ${message}`,
+      //   }
+      // );
+
+      const response = await api.post("/send-email", {
+        from: email,
+        to: "contact.deneth@gmail.com", // Replace with actual email
+        subject,
+        text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nMessage: ${message}`,
+      });
 
       if (response.status === 200) {
         toast.success("Email sent successfully!");

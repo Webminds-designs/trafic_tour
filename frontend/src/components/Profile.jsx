@@ -14,6 +14,7 @@ import userpic from "../assets/user.png";
 import Navbar from "./Navbar.jsx";
 import Bookings from "./Bookings.jsx";
 import { toast } from "react-toastify";
+import api from "../services/api.js";
 
 const Profile = () => {
   const { user, setUser, logout } = useContext(AuthContext);
@@ -68,9 +69,14 @@ const Profile = () => {
 
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/user/${user.id}`
-        );
+        // const response = await axios.get(
+        //   `http://localhost:3000/api/user/${user.id}`
+        // );
+
+        const response = await api.get(`/user/${user.id}`, {
+          withCredentials: true, // Include cookies in the request
+        });
+
         setUserDetails(response.data.user);
         setLoading(false);
 
@@ -122,10 +128,16 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(
-        "http://localhost:3000/api/user/profile",
-        { userId: user.id, ...formData }
-      );
+      // const response = await axios.put(
+      //   "http://localhost:3000/api/user/profile",
+      //   { userId: user.id, ...formData }
+      // );
+
+      const response = await api.put("/user/profile", {
+        userId: user.id,
+        ...formData,
+      });
+
       console.log("Profile updated successfully", response.data);
 
       toast.success("Profile updated successfully");
@@ -172,15 +184,23 @@ const Profile = () => {
       formData.append("image", profileData.get("image"));
       formData.append("userId", user.id);
 
-      const response = await axios.put(
-        "http://localhost:3000/api/user/updateurl",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      // const response = await axios.put(
+      //   "http://localhost:3000/api/user/updateurl",
+      //   formData,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //   }
+      // );
+
+      const response = await api.put("/user/updateurl", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true, // Include cookies in the request
+      });
+
       if (response.status === 200) {
         setIsProfileEditing(false);
         toast.success("Image uploaded successfully");
@@ -207,13 +227,18 @@ const Profile = () => {
     const userId = user.id;
     try {
       setLoading(true);
-      const response = await axios.post(
-        "http://localhost:3000/api/user/newpassword",
-        {
-          userId,
-          newPassword,
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/user/newpassword",
+      //   {
+      //     userId,
+      //     newPassword,
+      //   }
+      // );
+
+      const response = await api.post("/user/newpassword", {
+        userId,
+        newPassword,
+      });
 
       toast.error(response.data.message);
       setNewPassword("");
@@ -245,14 +270,20 @@ const Profile = () => {
       setLoading(true);
 
       // Call the backend API to update the password
-      const response = await axios.post(
-        "http://localhost:3000/api/user/updatepassword",
-        {
-          userId,
-          oldPassword, // Send old password to backend for verification
-          newPassword, // Send new password
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/user/updatepassword",
+      //   {
+      //     userId,
+      //     oldPassword, // Send old password to backend for verification
+      //     newPassword, // Send new password
+      //   }
+      // );
+
+      const response = await api.post("/user/updatepassword", {
+        userId,
+        oldPassword, // Send old password to backend for verification
+        newPassword, // Send new password
+      });
 
       toast.success(response.data.message);
 
@@ -271,12 +302,16 @@ const Profile = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/bookings/user/${userId}`,
-          {
-            withCredentials: true, // Ensure authentication cookies are included
-          }
-        );
+        // const response = await axios.get(
+        //   `http://localhost:3000/api/bookings/user/${userId}`,
+        //   {
+        //     withCredentials: true, // Ensure authentication cookies are included
+        //   }
+        // );
+
+        const response = await api.get(`/bookings/user/${userId}`, {
+          withCredentials: true, // Ensure authentication cookies are included
+        });
 
         setBookings(response.data); // Update state with booking data
       } catch (err) {
@@ -301,13 +336,18 @@ const Profile = () => {
   //add faviorites
   const addFavorite = async (packageId) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/favorites/add",
-        {
-          userId,
-          packageId,
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/favorites/add",
+      //   {
+      //     userId,
+      //     packageId,
+      //   }
+      // );
+
+      const response = await api.post("/favorites/add", {
+        userId,
+        packageId,
+      });
 
       setRefreshTrigger((prev) => prev + 1); // Trigger re-fetch
 
@@ -319,7 +359,11 @@ const Profile = () => {
   //remove faviorites
   const removeFavorite = async (packageId) => {
     try {
-      await axios.delete("http://localhost:3000/api/favorites/remove", {
+      // await axios.delete("http://localhost:3000/api/favorites/remove", {
+      //   data: { userId, packageId },
+      // });
+
+      await api.delete("/favorites/remove", {
         data: { userId, packageId },
       });
 
@@ -335,16 +379,13 @@ const Profile = () => {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/favorites/${userId}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch favorites");
-        }
-        const data = await response.json();
-        setFavorites(data);
+        const response = await api.get(`/favorites/${userId}`, {
+          withCredentials: true, // If you're using cookies
+        });
+
+        setFavorites(response.data); // Axios parses JSON automatically
       } catch (err) {
-        setError(err.message);
+        setError(err.response?.data?.error || "Failed to fetch favorites");
       } finally {
         setLoading(false);
       }

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import api from "../services/api"; // Import your API service
 
 export const AuthContext = createContext();
 
@@ -20,12 +21,16 @@ export const AuthProvider = ({ children }) => {
     // Optionally, fetch the user from the API to make sure session is valid
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/api/user/auth",
-          {
-            withCredentials: true, // Ensure cookies are included in the request
-          }
-        );
+        // const response = await axios.get(
+        //   "http://localhost:3000/api/user/auth",
+        //   {
+        //     withCredentials: true, // Ensure cookies are included in the request
+        //   }
+        // );
+
+        const response = await api.get("/user/auth", {
+          withCredentials: true, // Ensure cookies are included in the request
+        });
 
         if (response.data) {
           setUser(response.data); // Set the user if the response is valid
@@ -56,11 +61,13 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = async () => {
     try {
-      await axios.post(
-        "http://localhost:3000/api/user/logout",
-        {},
-        { withCredentials: true }
-      );
+      // await axios.post(
+      //   "http://localhost:3000/api/user/logout",
+      //   {},
+      //   { withCredentials: true }
+      // );
+
+      await api.post("/user/logout", {}, { withCredentials: true }); // Call logout API
 
       setUser(null); // Clear user state
       localStorage.removeItem("user"); // Remove user data from localStorage
