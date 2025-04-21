@@ -150,8 +150,8 @@ const Footer = () => {
             <div className="hidden lg:block">
               <Slider {...settings}>
                 {reviews.map((review, index) => (
-                  <div key={index}>
-                    <div className="text-[40px] font-light mb-12 ">
+                  <div key={index} className="z-40">
+                    <div className="text-[40px] z-40 font-light mb-12 ">
                       {review.text}
                     </div>
                     <div className="flex items-center my-7">
@@ -220,11 +220,11 @@ const Footer = () => {
                 ],
               },
               {
-                title: "Terms & Conditions",
+                title: "Policies",
                 links: [
-                  { name: "Terms", url: "/" },
-                  { name: "Return Policies", url: "/" },
-                  { name: "Business Policies", url: "/" },
+                  { name: "Privacy Policy", url: "/policies?tab=Privacy%20Policy" },
+                  { name: "Return & Refund Policy", url: "/policies?tab=Return%20%26%20Refund%20Policy" },
+                  { name: "Terms & Conditions", url: "/policies?tab=Terms%20%26%20Conditions" },
                 ],
               },
               {

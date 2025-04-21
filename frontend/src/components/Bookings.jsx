@@ -12,7 +12,7 @@ function dateformat(date) {
 }
 
   return (
-    <div className="fixed inset-0  backdrop-blur-lg z-50 flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 scale-z-100 backdrop-blur-lg z-50 flex items-center justify-center p-4 sm:p-6">
 
 
       <div className="bg-white rounded-lg shadow-lg max-w-md w-full mt-20">

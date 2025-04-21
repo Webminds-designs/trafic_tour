@@ -13,6 +13,7 @@ import Payment from "./components/Payment";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 import SeachResult from "./components/SeachResult";
 import ErrorBoundary from "./components/ErrorBoundary";
+import PolicyTabs from "./components/PolicyTabs";
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/packages" element={<Packages />} />
           <Route path="/searchresult" element={<SeachResult />} />
-          
+          <Route path="/policies" element={<PolicyTabs />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
