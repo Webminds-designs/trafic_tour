@@ -77,7 +77,7 @@ const PolicyTabs = () => {
                                 <strong>Effective Date:</strong> {formattedDate}
                             </p>
                             <p className="text-gray-700 leading-relaxed mb-4">
-                                Taric Tour Travels ("we," "our," or "us") is committed to safeguarding your privacy. This Privacy Policy outlines how we collect, use, disclose, and protect your personal information when you visit our website [insert website URL] or engage with our services.
+                                Taric Tour Travels  is committed to safeguarding your privacy. This Privacy Policy outlines how we collect, use, disclose, and protect your personal information when you visit our website [insert website URL] or engage with our services.
                             </p>
 
                             <h3 className="text-xl font-semibold mb-2">1. Information We Collect</h3>
@@ -119,7 +119,7 @@ const PolicyTabs = () => {
                                 <li><strong>Data Portability:</strong> Request the transfer of your personal data to another party.</li>
                             </ul>
                             <p className="text-gray-700 leading-relaxed mb-4">
-                                To exercise any of these rights, please contact us at [insert contact email].
+                                To exercise any of these rights, please contact us at traffictoures999@gmail.com.
                             </p>
 
                             <h3 className="text-xl font-semibold mb-2">6. Third-Party Websites</h3>
@@ -207,14 +207,14 @@ const PolicyTabs = () => {
                                 <strong>Effective Date:</strong> {formattedDate}
                             </p>
                             <p className="text-gray-700 leading-relaxed mb-4">
-                                These Terms and Conditions ("Terms") govern your use of the services provided by Taric Tour Travels ("we," "our," or "us"). By booking our services, you agree to comply with and be bound by these Terms. Please read them carefully.
+                                These Terms and Conditions ("Terms") govern your use of the services provided by Taric Tour Travels . By booking our services, you agree to comply with and be bound by these Terms. Please read them carefully.
                             </p>
 
                             <h3 className="text-xl font-semibold mb-2">1. Booking and Payment</h3>
                             <ul className="list-disc list-inside text-gray-700 leading-relaxed mb-4">
-                                <li><strong>Booking Confirmation:</strong> A booking is confirmed only when we receive a deposit of [insert percentage]% of the total tour cost. The balance is due [insert number] days before the commencement of the tour.</li>
+                                <li><strong>Booking Confirmation:</strong> A booking is confirmed only when we receive a deposit of 100% of the total tour cost. The balance is due 7 days before the commencement of the tour.</li>
                                 <li><strong>Payment Methods:</strong> We accept payments via [insert accepted payment methods, e.g., bank transfer, credit card, etc.].</li>
-                                <li><strong>Pricing:</strong> All prices are quoted in [insert currency] and are subject to change without prior notice. However, once a deposit is received, the price is guaranteed against any increase.</li>
+                                <li><strong>Pricing:</strong> All prices are quoted in LKR/USD and are subject to change without prior notice. However, once a deposit is received, the price is guaranteed against any increase.</li>
                             </ul>
 
                             <h3 className="text-xl font-semibold mb-2">2. Cancellations and Refunds</h3>
