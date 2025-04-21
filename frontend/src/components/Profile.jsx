@@ -858,11 +858,11 @@ const Profile = () => {
                         )}
                       </div>
                       <button
-                          onClick={() => openModal(packageItem)}
-                          className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
-                        >
-                          VIEW
-                        </button>
+                        onClick={() => openModal(packageItem)}
+                        className="mt-4 bg-white text-black border-1 px-4 py-2 rounded-md"
+                      >
+                        VIEW
+                      </button>
                     </div>
                   ))
                 )}
@@ -870,8 +870,12 @@ const Profile = () => {
 
               {/* Modal */}
               {isModalOpen && (
-                <div className="fixed inset-0 flex justify-center items-center">
-                  <div className="rounded-lg shadow-lg max-w-md w-full p-6">
+                <div className="fixed inset-0 flex justify-center items-center z-50">
+                  <div
+                    className="absolute inset-0  bg-opacity-50"
+                    onClick={closeModal}
+                  />
+                  <div className="relativ rounded-lg shadow-lg max-w-md w-full p-6 z-50">
                     <Bookings
                       packageItem={selectedPackage}
                       closeModal={closeModal}
