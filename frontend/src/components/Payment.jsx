@@ -6,12 +6,12 @@ import { AuthContext } from "../context/authContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-
 const Payment = () => {
   const location = useLocation();
   const { user, loading } = useContext(AuthContext);
   const { data } = location.state || {};
   const [checkInDate, setCheckInDate] = useState("");
+  const [Noguests, setNoguests] = useState(1);
   const [checkOutDate, setCheckOutDate] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ const Payment = () => {
     address: "",
     city: "",
     postalCode: "",
-    contactNumber: user.phone,
+    contactNumber: user.phone || "",
     paymentMethod: "card", // Default payment method
   });
 
@@ -35,7 +35,7 @@ const Payment = () => {
     order_id: generateOrderId(),
     user_id: user?.id || "",
     package_id: data?._id || "",
-    amount: data?.price || 0,
+    amount: Noguests * data.price || 0,
     first_name: user?.firstName || "",
     last_name: user?.lastName || "",
     email: user?.email || "",
@@ -45,10 +45,10 @@ const Payment = () => {
   const bookingData = {
     userId: user?.id || "",
     packageId: data?._id || "",
-    guests: 1,
+    guests: Noguests,
     checkingDate: checkInDate,
     checkOutDate: checkOutDate,
-    paymentStatus:"completed",
+    paymentStatus: "completed",
     billingDetails: {
       firstName: formData.firstName,
       lastName: formData.lastName,
@@ -56,9 +56,9 @@ const Payment = () => {
       city: formData.city,
       postalCode: formData.postalCode,
       country: formData.country,
-      contactNumber: user.phone,
+      contactNumber: formData.contactNumber,
     },
-  }
+  };
 
   //get check out data
   const handleCheckInChange = (e) => {
@@ -115,7 +115,11 @@ const Payment = () => {
       return;
     }
 
-    if (!formData.contactNumber.trim() || formData.contactNumber.length < 10 || isNaN(formData.contactNumber)) {
+    if (
+      !formData.contactNumber.trim() ||
+      formData.contactNumber.length < 10 ||
+      isNaN(formData.contactNumber)
+    ) {
       toast.error("Valid Contact Number is required (minimum 10 digits)");
       return;
     }
@@ -128,25 +132,31 @@ const Payment = () => {
       toast.error("Check-Out Date is required");
       return;
     }
-
+    if (!Noguests) {
+      toast.error("No of guests is required");
+      return;
+    }
 
     // If all validations pass
     console.log("Billing Details:", formData);
     setIsConfirmed(true);
     if (formData.paymentMethod === "card") {
-      handlePayment()
+      handlePayment();
     }
     toast.success("Billing details confirmed!");
   };
   //create bookings
   const createBooking = async (bookingData) => {
-
     try {
-      const response = await axios.post("http://localhost:6400/api/bookings", bookingData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/bookings",
+        bookingData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status === 201) {
         toast.success("Booking successful!");
@@ -156,45 +166,50 @@ const Payment = () => {
         return null;
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "An error occurred while booking.");
+      toast.error(
+        error.response?.data?.message || "An error occurred while booking."
+      );
       return null;
     }
   };
 
   const handleCardPayment = async () => {
     const dbDetails = {
-      userId: orderDetails?.user_id,        // user ID
-      packageId: orderDetails?.package_id,      // Package ID
+      userId: orderDetails?.user_id, // user ID
+      packageId: orderDetails?.package_id, // Package ID
       amount: orderDetails?.amount, // Payment amount
       status: "completed",
       paymentMethod: formData?.paymentMethod, // Ensure paymentMethod exists in formData
-      transactionId: orderDetails?.order_id,  // Unique transaction ID for the payment
+      transactionId: orderDetails?.order_id, // Unique transaction ID for the payment
     };
-
 
     try {
       // Make a POST request to the backend with the payment details
-      const response = await axios.post("http://localhost:6400/api/payments", dbDetails);
+      const response = await axios.post(
+        "http://localhost:3000/api/payments",
+        dbDetails
+      );
 
       // Check if the payment was successful
       if (response.status === 201) {
-        createBooking(bookingData)
+        createBooking(bookingData);
         toast.success("Payment created successfully!");
       } else {
         throw new Error("Payment creation failed");
       }
     } catch (error) {
       console.error("Error processing payment:", error);
-      toast.error(error.response?.data?.message || "An error occurred during payment processing.");
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred during payment processing."
+      );
     }
   };
 
-
   const handlePayment = async () => {
     try {
-
       // Fetch hash from backend
-      const response = await fetch("http://localhost:6400/api/payhere/hash", {
+      const response = await fetch("http://localhost:3000/api/payhere/hash", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderDetails),
@@ -235,8 +250,6 @@ const Payment = () => {
       payhere.onCompleted = function onCompleted(orderId) {
         console.log("Payment Completed. Order ID:", orderId);
         handleCardPayment();
-
-
       };
 
       payhere.onDismissed = function onDismissed() {
@@ -257,13 +270,17 @@ const Payment = () => {
   };
 
   return (
-    <div className="bg-white p-6 px-24">
+    <div className="bg-white p-6 md:px-24">
       <Navbar />
 
       <main className="grid grid-cols-1 md:grid-cols-2 gap-16 pt-22">
         {/* Left Section - Tour Details */}
         <div>
-          <img src={data.imageUrl} alt="image" className="rounded-lg h-[400px] w-full" />
+          <img
+            src={data.imageUrl}
+            alt="image"
+            className="rounded-lg h-[400px] w-full"
+          />
           <h2 className="text-2xl font-medium mt-4">{data.name}</h2>
           <div className="mt-4 space-y-3 font-medium">
             <div className="flex flex-col space-y-2">
@@ -287,9 +304,25 @@ const Payment = () => {
                 />
               </div>
             </div>
-            <div className="flex justify-between"><span className="text-gray-600">Package Type</span><span className="text-gray-800">{data.type}</span></div>
-            <div className="flex justify-between"><span className="text-gray-600">Guest</span><span className="text-blue-500">{user.firstName} {user.lastName}</span></div>
-            <div className="flex justify-between font-medium text-lg mt-4"><span>Total Amount</span><span>{data.price}</span></div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Package Type</span>
+              <span className="text-gray-800">{data.type}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">No Guests</span>
+              <input
+                type="number"
+                className="border rounded px-2 py-1 text-gray-600  w-16 text-center"
+                value={Noguests}
+                placeholder="1"
+                min="1"
+                onChange={(e) => setNoguests(Number(e.target.value))}
+              />
+            </div>
+            <div className="flex justify-between font-medium text-lg mt-4">
+              <span>Total Amount</span>
+              <span> ${Noguests * data.price}</span>
+            </div>
           </div>
         </div>
 
@@ -306,12 +339,15 @@ const Payment = () => {
             </button>
           )}
 
-          {!isConfirmed || isConfirmed && formData.paymentMethod === "card"  ? (
+          {!isConfirmed ||
+          (isConfirmed && formData.paymentMethod === "card") ? (
             <>
               <h3 className="text-xl font-medium mb-4">Billing:</h3>
               <form className="space-y-4 font-medium" onSubmit={handleConfirm}>
                 <div>
-                  <label className="block text-gray-900">Country / Region</label>
+                  <label className="block text-gray-900">
+                    Country / Region
+                  </label>
 
                   <input
                     className="w-full bg-gray-100 text-gray-500 rounded-lg p-2"
@@ -392,7 +428,9 @@ const Payment = () => {
                       checked={formData.paymentMethod === "card"}
                       onChange={handlePaymentChange}
                     />
-                    <label htmlFor="card" className="mr-4">Card</label>
+                    <label htmlFor="card" className="mr-4">
+                      Card
+                    </label>
                     <input
                       type="radio"
                       id="bank-transfer"
@@ -406,7 +444,10 @@ const Payment = () => {
                   </div>
                 </div>
                 {formData.paymentMethod === "card" && (
-                  <button type="submit" className="w-full py-3 bg-black text-white rounded-lg mt-4">
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-black text-white rounded-lg mt-4"
+                  >
                     Pay Now
                   </button>
                 )}
@@ -423,7 +464,13 @@ const Payment = () => {
           ) : (
             <>
               {/* Show payment form based on selected method */}
-              {formData.paymentMethod === "bank-transfer" && (<BankTransfer order={orderDetails} formData={formData} bookingData={bookingData} />)}
+              {formData.paymentMethod === "bank-transfer" && (
+                <BankTransfer
+                  order={orderDetails}
+                  formData={formData}
+                  bookingData={bookingData}
+                />
+              )}
             </>
           )}
         </div>
@@ -431,7 +478,6 @@ const Payment = () => {
     </div>
   );
 };
-
 
 // Bank Transfer Component
 const BankTransfer = ({ order, bookingData }) => {
@@ -442,13 +488,16 @@ const BankTransfer = ({ order, bookingData }) => {
   console.log(bookingData);
   //create bookings
   const createBooking = async (bookingData) => {
-
     try {
-      const response = await axios.post("http://localhost:6400/api/bookings", bookingData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/bookings",
+        bookingData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status === 201) {
         toast.success("Booking successful!");
@@ -458,7 +507,9 @@ const BankTransfer = ({ order, bookingData }) => {
         return null;
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "An error occurred while booking.");
+      toast.error(
+        error.response?.data?.message || "An error occurred while booking."
+      );
       return null;
     }
   };
@@ -497,18 +548,25 @@ const BankTransfer = ({ order, bookingData }) => {
     formData.append("paymentProof", paymentProof);
 
     try {
-      const response = await axios.post("http://localhost:6400/api/payments", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/payments",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       if (response.status === 201) {
-        createBooking(bookingData)
+        createBooking(bookingData);
         toast.success("Payment successfully created!");
       }
     } catch (error) {
       console.error("Error creating payment:", error);
-      toast.error(error.response?.data?.message || "An error occurred while processing the payment.");
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while processing the payment."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -546,7 +604,9 @@ const BankTransfer = ({ order, bookingData }) => {
 
         {/* Reference Number Input */}
         <div className="mt-6">
-          <label className="block text-start font-medium text-gray-700 mb-2">Reference Number</label>
+          <label className="block text-start font-medium text-gray-700 mb-2">
+            Reference Number
+          </label>
           <input
             type="text"
             placeholder="Enter Reference Number"
@@ -558,7 +618,9 @@ const BankTransfer = ({ order, bookingData }) => {
 
         {/* Upload Payment Proof Section */}
         <div className="mt-6">
-          <label className="block text-start font-medium text-gray-700 mb-2">Upload Payment Proof</label>
+          <label className="block text-start font-medium text-gray-700 mb-2">
+            Upload Payment Proof
+          </label>
           <div className="flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-500 transition">
             <input
               type="file"
@@ -567,7 +629,10 @@ const BankTransfer = ({ order, bookingData }) => {
               accept="image/*,.pdf"
               onChange={handleFileChange}
             />
-            <label htmlFor="payment-proof" className="text-gray-700 text-lg hover:text-black cursor-pointer p-6">
+            <label
+              htmlFor="payment-proof"
+              className="text-gray-700 text-lg hover:text-black cursor-pointer p-6"
+            >
               Choose a file
             </label>
           </div>
@@ -575,22 +640,26 @@ const BankTransfer = ({ order, bookingData }) => {
           {previewUrl && (
             <div className="mt-4">
               <p className="text-sm text-gray-600">Preview:</p>
-              <div className="mt-2">
+              <div className="mt-2 flex flex-col items-center text-center">
                 {paymentProof.type.startsWith("image") ? (
                   <img
                     src={previewUrl}
                     alt="Payment Proof Preview"
-                    height={100}
-                    className="max-w-full h-auto rounded-lg"
+                    height={20}
+                    className="max-w-50 h-auto rounded-lg"
                   />
                 ) : (
-                  <p className="text-gray-600">File type: {paymentProof.type}</p>
+                  <p className="text-gray-600">
+                    File type: {paymentProof.type}
+                  </p>
                 )}
               </div>
             </div>
           )}
 
-          <p className="mt-2 text-sm text-gray-600">Accepted file formats: JPG, PNG, PDF</p>
+          <p className="mt-2 text-sm text-gray-600">
+            Accepted file formats: JPG, PNG, PDF
+          </p>
         </div>
 
         <div className="mt-6">
@@ -606,7 +675,5 @@ const BankTransfer = ({ order, bookingData }) => {
     </div>
   );
 };
-
-
 
 export default Payment;

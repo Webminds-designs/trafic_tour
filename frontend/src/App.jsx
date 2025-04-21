@@ -1,5 +1,4 @@
 import "./App.css";
-import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from './context/authContext';
@@ -12,6 +11,8 @@ import AboutUs from "./Pages/AboutUs";
 import ContactUs from "./Pages/ContactUs";
 import Payment from "./components/Payment";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
+import SeachResult from "./components/SeachResult";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/packages" element={<Packages />} />
+          <Route path="/searchresult" element={<SeachResult />} />
+          
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>

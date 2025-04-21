@@ -11,7 +11,7 @@ export const createBooking = async (req, res) => {
       checkOutDate,
       paymentStatus,
       billingDetails,
-      
+    
     } = req.body;
 
     // Validate required fields
@@ -22,9 +22,29 @@ export const createBooking = async (req, res) => {
     const { firstName, lastName, address, city, postalCode, country, contactNumber } = billingDetails;
 
     // Validate billing details
-    if (!firstName || !lastName || !address || !city || !postalCode || !country || !contactNumber) {
-      return res.status(400).json({ message: "All billing details are required" });
+    if (!firstName) {
+      return res.status(400).json({ message: "First name is required" });
     }
+    if (!lastName) {
+      return res.status(400).json({ message: "Last name is required" });
+    }
+    if (!address) {
+      return res.status(400).json({ message: "Address is required" });
+    }
+    if (!city) {
+      return res.status(400).json({ message: "City is required" });
+    }
+    if (!postalCode) {
+      return res.status(400).json({ message: "Postal code is required" });
+    }
+    if (!country) {
+      return res.status(400).json({ message: "Country is required" });
+    }
+    if (!contactNumber) {
+      return res.status(400).json({ message: "Contact number is required" });
+    }
+
+
 
     // Validate package
     const packageData = await Package.findById(packageId);

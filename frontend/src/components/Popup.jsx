@@ -1,5 +1,5 @@
 import { FaBed, FaUtensils, FaCamera, FaHeart, FaTimes } from "react-icons/fa";
-import axios from 'axios';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import React, { useEffect, useState } from "react";
@@ -15,17 +15,19 @@ export default function Popup({ onClose, data }) {
   const { user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
-
- 
-  const userId= user?.id
-  const packageId = data?._id
-  console.log(user)
+  console.log(data);
+  const userId = user?.id;
+  const packageId = data?._id;
+  console.log(user);
   useEffect(() => {
     const checkFavoriteStatus = async () => {
       try {
-       
-        const response = await axios.get(`http://localhost:6400/api/favorites/${user?.id}`);
-        const favorite = response.data.find(fav => fav.packageId._id === packageId);
+        const response = await axios.get(
+          `http://localhost:3000/api/favorites/${user?.id}`
+        );
+        const favorite = response.data.find(
+          (fav) => fav.packageId._id === packageId
+        );
         setIsFavorite(!!favorite);
       } catch (error) {
         console.error("Error checking favorite status:", error);
@@ -35,11 +37,14 @@ export default function Popup({ onClose, data }) {
   }, [user?.id, packageId]);
 
   const addFavorite = async () => {
-    if(!user){
-      navigate('/signin')
+    if (!user) {
+      navigate("/signin");
     }
     try {
-      await axios.post('http://localhost:6400/api/favorites/add', { userId, packageId });
+      await axios.post("http://localhost:3000/api/favorites/add", {
+        userId,
+        packageId,
+      });
       setIsFavorite(true);
     } catch (error) {
       console.error("Error adding to favorites:", error);
@@ -47,11 +52,13 @@ export default function Popup({ onClose, data }) {
   };
 
   const removeFavorite = async () => {
-    if(!user){
-      navigate('/signin')
+    if (!user) {
+      navigate("/signin");
     }
     try {
-      await axios.delete('http://localhost:6400/api/favorites/remove', { data: { userId, packageId } });
+      await axios.delete("http://localhost:3000/api/favorites/remove", {
+        data: { userId, packageId },
+      });
       setIsFavorite(false);
     } catch (error) {
       console.error("Error removing from favorites:", error);
@@ -73,11 +80,14 @@ export default function Popup({ onClose, data }) {
     };
   }, []);
 
-
   const handleBooking = () => {
     navigate("/payment", { state: { data } });
   };
+  const [mainImage, setMainImage] = useState(data.imageUrl[0]); // Initialize with the first image
 
+  const handlePreviewClick = (image) => {
+    setMainImage(image); // Set the selected preview image as the main image
+  };
 
   return (
     <div className="fixed inset-0 bg-opacity-90 backdrop-blur-lg z-50 flex items-center justify-center p-4 sm:p-6">
@@ -97,22 +107,47 @@ export default function Popup({ onClose, data }) {
             {data.name}
           </h1>
           <p className="text-black mt-2 text-sm sm:text-base md:text-lg font-base">
-            {data.duration.nights}  NIGHTS |  {data.duration.days} DAYS TOUR
+            {data.duration.nights} NIGHTS | {data.duration.days} DAYS TOUR
           </p>
         </div>
 
         {/* Hero Image with Favorite Icon */}
         <div className="relative mt-4 sm:mt-5 rounded-lg overflow-hidden">
           <img
-            src={data.imageUrl}
+             src={mainImage}
             alt={data.name}
             className="w-full h-48 sm:h-64 object-cover"
           />
-          <div className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md cursor-pointer" onClick={isFavorite ? removeFavorite : addFavorite}>
-        <FaHeart className={`text-xs ${isFavorite ? 'text-red-500' : 'text-black'}`} />
-      </div>
+          <div
+            className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md cursor-pointer"
+            onClick={isFavorite ? removeFavorite : addFavorite}
+          >
+            <FaHeart
+              className={`text-xs ${isFavorite ? "text-red-500" : "text-black"
+                }`}
+            />
+          </div>
         </div>
-
+        {/* Preview Images */}
+        <div className="relative mt-4 sm:mt-5 rounded-lg overflow-hidden">
+      <div className="flex justify-center items-center space-x-3">
+        {data.imageUrl && data.imageUrl.length > 0 ? (
+          data.imageUrl.map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`Image ${index + 1}`}
+              className={`w-32 h-32 sm:h-32 object-cover rounded-xl cursor-pointer transition-opacity duration-300 ${
+                image === mainImage ? "" : "opacity-80"
+              }`} // Apply opacity change for non-selected images
+              onClick={() => handlePreviewClick(image)} // Change main image on click
+            />
+          ))
+        ) : (
+          <p>No images available</p> // Display message if no images exist
+        )}
+      </div>
+    </div>
         {/* Description */}
         <div className="mt-4 text-black text-sm sm:text-base text-left">
           <p>{data.description}</p>
@@ -157,54 +192,58 @@ export default function Popup({ onClose, data }) {
           <div className="mt-8 sm:mt-10 text-black text-sm sm:text-base">
             {activeTab === "INCLUDES" && (
               <>
-                <div className="flex">
+                <div className="flex flex-col md:flex-row">
                   {/* Left Side */}
-                  <div className="w-2/3 h-96 p-4 m-4 border-1 border-[#009990] rounded-2xl overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-[#009990] scrollbar-track-transparent">
+                  <div className="w-full md:w-2/3 h-96 p-4 m-4 border border-[#009990] rounded-2xl overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-[#009990] scrollbar-track-transparent">
                     {data.itinerary.map((dayItem) => (
                       <div key={dayItem._id} className="mb-8">
-                        <h2 className="text-xl font-medium">{`Day ${dayItem.day}: ${dayItem.title}`}</h2>
-
+                        <h2 className="text-lg md:text-xl font-medium">{`Day ${dayItem.day}: ${dayItem.title}`}</h2>
                         <div className="mt-4">
                           <ul className="list-disc pl-6">
-                            {(dayItem.activities && Array.isArray(dayItem.activities)) ? (
+                            {dayItem.activities &&
+                              Array.isArray(dayItem.activities) ? (
                               dayItem.activities.map((activity, index) => (
                                 <li key={index}>{activity}</li>
                               ))
                             ) : (
-                              <li>No activities available</li> 
+                              <li>No activities available</li>
                             )}
                           </ul>
                         </div>
                       </div>
                     ))}
-
                   </div>
                   {/* Right Side */}
-                  <div className="w-1/3 p-4  ">
+                  <div className="w-full md:w-1/3 p-4">
                     <div className="bg-emerald-50 rounded-2xl m-4 p-3">
-                      <h2 className="text-xl font-medium">Booking Details</h2>
+                      <h2 className="text-lg md:text-xl font-medium">
+                        Booking Details
+                      </h2>
                       <div className="flex justify-between">
-                        <div className="py-10">Standed Package</div>
-                        <div className="py-10">LKR :{data.price}</div>
+                        <div className="py-4 md:py-10">Standard Package</div>
+                        <div className="py-4 md:py-10">LKR: {data.price}</div>
                       </div>
-                      <div class="border-t border-gray-300 my-4 mt-14"></div>
+                      <div className="border-t border-gray-300 my-4"></div>
                       <div className="flex justify-between">
-                        <div>Standed Package</div>
-                        <div>LKR :{data.price}</div>
+                        <div>Standard Package</div>
+                        <div>LKR: {data.price}</div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <div>Sites</div>
-                  <div>
+                <div className="p-4">
+                  <h2 className="text-lg font-medium">Sites</h2>
+                  <p>
                     {data.places_to_visit && data.places_to_visit.length > 0
-                      ? data.places_to_visit.join(', ')
-                      : 'No places to visit available'}
-                  </div>
+                      ? data.places_to_visit.join(", ")
+                      : "No places to visit available"}
+                  </p>
                 </div>
-                <div className="text-center mt-8 sm:mt-10">
-                  <button onClick={handleBooking} className="bg-[#009990] text-white px-4 sm:px-6 md:px-8 lg:px-56 py-1 rounded-lg text-sm sm:text-base">
+                <div className="text-center mt-6 md:mt-8">
+                  <button
+                    onClick={handleBooking}
+                    className="bg-[#009990] text-white px-6 py-2 rounded-lg text-sm md:text-base w-full md:w-auto md:px-20"
+                  >
                     BOOK NOW
                   </button>
                 </div>

@@ -35,7 +35,7 @@ const AnimatedTextGSAP = ({ text = "" }) => {
 
   return (
     <div ref={containerRef} className="p-8 bg-white text-gray-800">
-      <p className="max-w-2xl text-left text-2xl leading-relaxed">
+      <p className="w-full text-left md:text-4xl text-xl leading-relaxed">
         {/* Split text by spaces to get words */}
         {text.split(" ").map((word, index) => (
           <span key={index} className="word inline-block mr-2">

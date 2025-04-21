@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import PackageCard from "../components/PackageCard";
 import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/lepord.png";
@@ -16,7 +17,7 @@ const Packages = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await axios.get("http://localhost:6400/api/packages");
+        const response = await axios.get("http://localhost:3000/api/packages");
         setPackages(response.data.packages);
         // Assuming the response contains an array of packages
       } catch (err) {
@@ -49,13 +50,87 @@ const Packages = () => {
       targetSectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+  const navigate = useNavigate();
+
+  const allActivities = [
+    "Wildlife",
+    "Snorkeling",
+    "Historical Sites",
+    "Hiking",
+    "Surfing",
+    "Camping",
+    "Scuba Diving",
+    "Cycling",
+    "Kayaking",
+    "Rock Climbing",
+    "Paragliding",
+    "Jet Skiing",
+    "Fishing",
+    "Caving",
+    "Stargazing",
+    "Eco Tours",
+    "Museums",
+    "Cultural Festivals",
+    "Hot Springs",
+  ];
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedActivities, setSelectedActivities] = useState([]);
+  const [destination, setDestination] = useState("");
+  const [tripDuration, setTripDuration] = useState("");
+
+  // Filter activities based on search term
+  const filteredActivities = allActivities.filter((activity) =>
+    activity.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Toggle activity selection
+  const toggleActivity = (activity) => {
+    setSelectedActivities((prev) =>
+      prev.includes(activity)
+        ? prev.filter((item) => item !== activity)
+        : [...prev, activity]
+    );
+  };
+
+  // Handle form submission
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    // Construct query parameters
+    const params = {
+      place: destination.trim(),
+      days: tripDuration ? parseInt(tripDuration) : "", // Convert trip duration to number
+      activity: selectedActivities.join(","),
+    };
+
+    console.log("Search Params:", params); // Debugging log
+
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/packages/find/search",
+        { params }
+      );
+
+      console.log("API Response:", response.data); // Debugging log
+
+      if (response.data.packages && response.data.packages.length > 0) {
+        navigate("/searchresult", {
+          state: { packages: response.data.packages },
+        });
+      } else {
+        alert("No packages found.");
+      }
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+      alert("Error fetching packages. Please try again.");
+    }
+  };
 
   return (
     <>
       <Navbar />
-      <div
-        className=" w-full mt-30"
-      >
+      <div className=" w-full pt-30 bg-gray-100">
         <div className="text-black">
           {/* Header Section */}
           <div className="flex flex-col lg:flex-row justify-between items-center px-4 sm:px-6 lg:px-20">
@@ -69,26 +144,52 @@ const Packages = () => {
             </div>
             <div className="text-right  px-4 lg:px-7 pt-6">
               <p className="text-xs sm:text-sm font-base">
-                Embark on an unforgettable journey through Sri Lanka. {" "}
-                <br />
-                Where every experience is designed to inspire, relax, and <br /> awaken your sense of adventure.
+                Embark on an unforgettable journey through Sri Lanka. <br />
+                Where every experience is designed to inspire, relax, and <br />{" "}
+                awaken your sense of adventure.
               </p>
             </div>
           </div>
 
           {/* Packages Section Bar */}
-          <div className="flex flex-col items-center mt-6 lg:mt-10 font-base">
-            <div className="bg-black text-white flex w-full max-w-7xl  rounded-3xl overflow-x-auto">
+          <div className="flex flex-col items-center mt-6 lg:mt-10 font-base w-full">
+            {/* Dropdown for Mobile View */}
+            <div className="w-full md:hidden px-3">
+              <div className="relative">
+                <select
+                  className="w-full p-3 rounded-3xl bg-black text-white appearance-none
+             border  outline-none cursor-pointer hover:bg-gray-100 focus:ring-2 "
+                  onChange={(e) => handleSectionClick(e.target.value)}
+                  value={selectedSection}
+                >
+                  {sections.map((section, index) => (
+                    <option
+                      key={index}
+                      value={section}
+                      className={
+                        selectedSection === section
+                          ? "bg-teal-600 text-black"
+                          : "bg-black text-white"
+                      }
+                    >
+                      {section}
+                    </option>
+                  ))}
+                </select>
 
-
+                {/* Custom dropdown arrow */}
+                <div className="absolute text-white inset-y-0 right-4 flex items-center pointer-events-none">
+                  ⌄
+                </div>
+              </div>
+            </div>
+            {/* Horizontal Bar for Larger Screens */}
+            <div className="hidden md:flex bg-black text-white w-full max-w-7xl rounded-3xl overflow-x-auto">
               {sections.map((section, index) => (
                 <div
                   key={index}
                   className={`flex-1 text-center py-3 lg:py-4 text-xs sm:text-sm cursor-pointer transition-all duration-300 
-                        ${selectedSection === section
-                      ? "bg-white text-black "
-                      : "  "
-                    }`}
+          ${selectedSection === section ? "bg-teal-600 text-black" : ""}`}
                   onClick={() => handleSectionClick(section)}
                 >
                   {section}
@@ -96,12 +197,11 @@ const Packages = () => {
               ))}
             </div>
           </div>
-
           {/* Packages Grid */}
           <div className="mt-10 lg:mt-30 mb-14 lg:mb-28 px-4 sm:px-6 lg:px-20">
             <div className="flex justify-between">
               <div className="font-xl md:text-2xl text-xl">
-                Experience the thrill of  Sri Lanka's
+                Experience the thrill of Sri Lanka's
                 <br></br>
                 wilderness.
               </div>
@@ -114,64 +214,88 @@ const Packages = () => {
                 </button>
               </div>
             </div>
-            <div className=" bg-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-10 lg:mt-20">
+            <div className="  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-10 lg:mt-20">
               {/* All Packages */}
-              {selectedSection === "All Packages" ? (<>
-                {packages
-                  .map((packageItem) => (
+              {selectedSection === "All Packages" ? (
+                <>
+                  {packages.map((packageItem) => (
                     <PackageCard
                       key={packageItem.name}
                       packageItem={packageItem} // Pass the entire package object
-                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
+                      onExplore={() =>
+                        console.log(`Exploring ${packageItem.name}`)
+                      }
                     />
                   ))}
-              </>) : null}
+                </>
+              ) : null}
 
               {/*Romantic and Relaxation */}
-              {selectedSection === "Romantic and Relaxation" ? (<>
-                {packages
-                  .filter((packageItem) => packageItem.type === "Romantic and Relaxation")
-                  .map((packageItem) => (
-                    <PackageCard
-                      key={packageItem.name}
-                      packageItem={packageItem} // Pass the entire package object
-                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
-                    />
-                  ))}
-              </>) : null}
+              {selectedSection === "Romantic and Relaxation" ? (
+                <>
+                  {packages
+                    .filter(
+                      (packageItem) =>
+                        packageItem.type === "Romantic and Relaxation"
+                    )
+                    .map((packageItem) => (
+                      <PackageCard
+                        key={packageItem.name}
+                        packageItem={packageItem} // Pass the entire package object
+                        onExplore={() =>
+                          console.log(`Exploring ${packageItem.name}`)
+                        }
+                      />
+                    ))}
+                </>
+              ) : null}
 
-  {/*Advanture and Wildlife */}
-  {selectedSection === "Advanture and Wildlife" ? (<>
-                {packages
-                  .filter((packageItem) => packageItem.type === "Adventure and Wildlife")
-                  .map((packageItem) => (
-                    <PackageCard
-                      key={packageItem.name}
-                      packageItem={packageItem} // Pass the entire package object
-                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
-                    />
-                  ))}
-              </>) : null}
+              {/*Advanture and Wildlife */}
+              {selectedSection === "Advanture and Wildlife" ? (
+                <>
+                  {packages
+                    .filter(
+                      (packageItem) =>
+                        packageItem.type === "Adventure and Wildlife"
+                    )
+                    .map((packageItem) => (
+                      <PackageCard
+                        key={packageItem.name}
+                        packageItem={packageItem} // Pass the entire package object
+                        onExplore={() =>
+                          console.log(`Exploring ${packageItem.name}`)
+                        }
+                      />
+                    ))}
+                </>
+              ) : null}
 
-                {/*Educational and Cultural */}
-  {selectedSection === "Educational and Cultural" ? (<>
-                {packages
-                  .filter((packageItem) => packageItem.type === "Educational and Cultural")
-                  .map((packageItem) => (
-                    <PackageCard
-                      key={packageItem.name}
-                      packageItem={packageItem} // Pass the entire package object
-                      onExplore={() => console.log(`Exploring ${packageItem.name}`)}
-                    />
-                  ))}
-              </>) : null}
+              {/*Educational and Cultural */}
+              {selectedSection === "Educational and Cultural" ? (
+                <>
+                  {packages
+                    .filter(
+                      (packageItem) =>
+                        packageItem.type === "Educational and Cultural"
+                    )
+                    .map((packageItem) => (
+                      <PackageCard
+                        key={packageItem.name}
+                        packageItem={packageItem} // Pass the entire package object
+                        onExplore={() =>
+                          console.log(`Exploring ${packageItem.name}`)
+                        }
+                      />
+                    ))}
+                </>
+              ) : null}
             </div>
           </div>
 
           {/* Find Best Package Section */}
           <div
             ref={targetSectionRef}
-            className="relative w-full h-[400px] lg:h-screen bg-cover bg-center mt-10 lg:mt-30 mb-20 lg:mb-50"
+            className="relative w-full h-screen md:h-[400px] lg:h-screen bg-cover bg-center mt-10 lg:mt-30 mb-20 lg:mb-50"
             style={{
               backgroundImage: `url(${backgroundImage})`,
               backgroundPosition: "center",
@@ -182,74 +306,104 @@ const Packages = () => {
               <h2 className="text-lg lg:text-xl font-bold mb-4">
                 FIND THE BEST PACKAGE
               </h2>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  console.log("Form submitted");
-                  console.log("Destination:", e.target.destination.value);
-                  console.log("Travel Dates:", e.target.travelDate.value);
-                  console.log("Trip Duration:", e.target.tripDuration.value);
-                  console.log("Number of Travelers:", e.target.travelers.value);
-                }}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Destination Field */}
-                  <div>
-                    <label className="text-sm font-medium" htmlFor="destination">
-                      Destination
-                    </label>
-                    <input
-                      type="text"
-                      id="destination"
-                      name="destination"
-                      placeholder="SIGIRIYA, ELLA, ETC"
-                      className="w-full p-2 mt-1  rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
-                  </div>
-
-                  {/* Travel Activities*/}
-                  <div>
-                    <label className="text-sm font-medium" htmlFor="travelDate">
-                      Activities & Interests
-                    </label>
-                    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                      <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Wildlife</div>
-                      <div className="px-4 py-2 bg-teal-200 rounded-full text-gray-900">Snorkeling</div>
-                      <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Historical Sites</div>
-                      <div className="px-4 py-2 bg-gray-200 rounded-full text-gray-700">Hiking</div>
+              <form onSubmit={handleSearch}>
+                <div className="flex flex-col md:flex-row gap-4">
+                  {/* Left Section - Destination & Trip Duration */}
+                  <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
+                    {/* Destination Field */}
+                    <div>
+                      <label
+                        className="text-sm font-medium"
+                        htmlFor="destination"
+                      >
+                        Destination
+                      </label>
+                      <input
+                        type="text"
+                        id="destination"
+                        placeholder="SIGIRIYA, ELLA, ETC"
+                        value={destination}
+                        onChange={(e) => setDestination(e.target.value)}
+                        className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      />
                     </div>
 
+                    {/* Trip Duration Field */}
+                    <div>
+                      <label
+                        className="text-sm font-medium"
+                        htmlFor="tripDuration"
+                      >
+                        Trip Duration (Days)
+                      </label>
+                      <input
+                        type="number"
+                        id="tripDuration"
+                        placeholder="Enter number of days"
+                        value={tripDuration}
+                        onChange={(e) => setTripDuration(e.target.value)}
+                        className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
                   </div>
 
-                  {/* Trip Duration Field */}
-                  <div>
-                    <label className="text-sm font-medium" htmlFor="tripDuration">
-                      Trip Duration
-                    </label>
-                    <input
-                      type="text"
-                      id="tripDuration"
-                      name="tripDuration"
-                      placeholder="10 DAYS"
-                      className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
-                  </div>
+                  {/* Right Section - Activities */}
+                  <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
+                    <div>
+                      <label className="text-sm font-medium">
+                        Activities & Interests
+                      </label>
+                      <div className="w-full space-y-3">
+                        {/* Search Input */}
+                        <input
+                          type="text"
+                          placeholder="Search activities..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full p-2 mt-1 rounded-3xl bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        />
 
-                  {/* trip Activities */}
-                  <div>
-                    <label className="text-sm font-medium" htmlFor="travelers">
-                      Number of traveles
-                    </label>
-                    <select
-                      id="travelers"
-                      name="travelers"
-                      className="w-full p-2 mt-1 rounded-3xl text-gray-500 bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    >
-                      <option value="2 Adult">2 Adult</option>
-                      <option value="1 Adult">1 Adult</option>
-                      <option value="3 Adult">3 Adult</option>
-                      <option value="FAMILY PACKAGE">Family Package</option>
-                    </select>
+                        {/* Activity List */}
+                        <div className="flex flex-wrap gap-2">
+                          {(searchTerm
+                            ? filteredActivities
+                            : allActivities.slice(0, 8)
+                          ).map((activity) => (
+                            <div
+                              key={activity}
+                              onClick={() => toggleActivity(activity)}
+                              className={`px-4 py-2 rounded-full cursor-pointer transition ${
+                                selectedActivities.includes(activity)
+                                  ? "bg-teal-500 text-white"
+                                  : "bg-gray-200 text-gray-700"
+                              }`}
+                            >
+                              {activity}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Selected Activities */}
+                        {selectedActivities.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-4">
+                            {selectedActivities.map((activity) => (
+                              <div
+                                key={activity}
+                                className="px-3 py-1 bg-teal-500 text-white rounded-full flex items-center"
+                              >
+                                {activity}
+                                <button
+                                  onClick={() => toggleActivity(activity)}
+                                  className="ml-2 text-white font-bold"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -257,12 +411,11 @@ const Packages = () => {
                 <div className="flex justify-center">
                   <button
                     type="submit"
-                    className="w-1/2 flex text-center bg-teal-600 text-white py-2 mt-6 justify-center rounded-3xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full sm:w-3/4 md:w-1/2 flex text-center bg-teal-600 text-white py-2 mt-6 justify-center rounded-3xl hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
                   >
                     FIND
                   </button>
                 </div>
-
               </form>
             </div>
           </div>
