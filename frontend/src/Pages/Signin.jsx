@@ -15,6 +15,7 @@ import { AuthContext } from "../context/authContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import logoBlack from "../assets/logoBlack.png";
+import api from "../services/api"; // Import your API service
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -49,17 +50,25 @@ const Signin = () => {
       const userData = { email };
 
       // Check if the email already exists in your system
-      const emailCheckResponse = await axios.post(
-        "http://localhost:3000/api/user/findemail",
-        userData
-      );
+      // const emailCheckResponse = await axios.post(
+      //   "http://localhost:3000/api/user/findemail",
+      //   userData
+      // );
+
+      const emailCheckResponse = await api.post("/user/findemail", userData, {
+        withCredentials: true, // Ensure cookies are included in the request
+      });
 
       // If email exists, perform Google login
       if (emailCheckResponse.data.exists) {
-        const loginResponse = await axios.post(
-          "http://localhost:3000/api/user/Googlelogin",
-          userData
-        );
+        // const loginResponse = await axios.post(
+        //   "http://localhost:3000/api/user/Googlelogin",
+        //   userData
+        // );
+
+        const loginResponse = await api.post("/user/Googlelogin", userData, {
+          withCredentials: true, // Ensure cookies are included in the request
+        });
 
         localStorage.setItem("user", JSON.stringify(loginResponse.data.user));
         setUser(loginResponse.data.user);
@@ -76,9 +85,15 @@ const Signin = () => {
           lastName: lastNameString,
         };
 
-        const registrationResponse = await axios.post(
-          "http://localhost:3000/api/user/Googleregister",
-          registrationData
+        // const registrationResponse = await axios.post(
+        //   "http://localhost:3000/api/user/Googleregister",
+        //   registrationData
+        // );
+
+        const registrationResponse = await api.post(
+          "/user/Googleregister",
+          registrationData,
+          { withCredentials: true } // Ensure cookies are included in the request
         );
 
         // Check if registration was successful
@@ -89,9 +104,15 @@ const Signin = () => {
             email,
           };
 
-          const subscriptionResponse = await axios.post(
-            "http://localhost:3000/api/subscriptions/signup",
-            subscriptionData
+          // const subscriptionResponse = await axios.post(
+          //   "http://localhost:3000/api/subscriptions/signup",
+          //   subscriptionData
+          // );
+
+          const subscriptionResponse = await api.post(
+            "/subscriptions/signup",
+            subscriptionData,
+            { withCredentials: true } // Ensure cookies are included in the request
           );
 
           // If subscription is successful
@@ -119,12 +140,21 @@ const Signin = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/user/login",
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/user/login",
+      //   {
+      //     email,
+      //     password,
+      //   }
+      // );
+
+      const response = await api.post(
+        "/user/login",
         {
           email,
           password,
-        }
+        },
+        { withCredentials: true } // Ensure cookies are included in the request
       );
 
       console.log("Login Successful:", response.data);

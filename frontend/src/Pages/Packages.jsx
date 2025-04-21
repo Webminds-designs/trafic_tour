@@ -5,6 +5,7 @@ import PackageCard from "../components/PackageCard";
 import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/lepord.png";
 import Footer from "../components/Footer";
+import api from "../services/api";
 
 const Packages = () => {
   const [selectedSection, setSelectedSection] = useState("All Packages");
@@ -17,7 +18,8 @@ const Packages = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/packages");
+        // const response = await axios.get("http://localhost:3000/api/packages");
+        const response = await api.get("/packages"); // Use your API service
         setPackages(response.data.packages);
         // Assuming the response contains an array of packages
       } catch (err) {
@@ -107,10 +109,14 @@ const Packages = () => {
     console.log("Search Params:", params); // Debugging log
 
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/packages/find/search",
-        { params }
-      );
+      // const response = await axios.get(
+      //   "http://localhost:3000/api/packages/find/search",
+      //   { params }
+      // );
+
+      const response = await api.get("/packages/find/search", {
+        params,
+      });
 
       console.log("API Response:", response.data); // Debugging log
 
