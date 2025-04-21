@@ -15,7 +15,7 @@ export default function Popup({ onClose, data }) {
   const { user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
-
+  console.log(data);
   const userId = user?.id;
   const packageId = data?._id;
   console.log(user);
@@ -83,6 +83,11 @@ export default function Popup({ onClose, data }) {
   const handleBooking = () => {
     navigate("/payment", { state: { data } });
   };
+  const [mainImage, setMainImage] = useState(data.imageUrl[0]); // Initialize with the first image
+
+  const handlePreviewClick = (image) => {
+    setMainImage(image); // Set the selected preview image as the main image
+  };
 
   return (
     <div className="fixed inset-0 bg-opacity-90 backdrop-blur-lg z-50 flex items-center justify-center p-4 sm:p-6">
@@ -109,7 +114,7 @@ export default function Popup({ onClose, data }) {
         {/* Hero Image with Favorite Icon */}
         <div className="relative mt-4 sm:mt-5 rounded-lg overflow-hidden">
           <img
-            src={data.imageUrl}
+             src={mainImage}
             alt={data.name}
             className="w-full h-48 sm:h-64 object-cover"
           />
@@ -118,13 +123,31 @@ export default function Popup({ onClose, data }) {
             onClick={isFavorite ? removeFavorite : addFavorite}
           >
             <FaHeart
-              className={`text-xs ${
-                isFavorite ? "text-red-500" : "text-black"
-              }`}
+              className={`text-xs ${isFavorite ? "text-red-500" : "text-black"
+                }`}
             />
           </div>
         </div>
-
+        {/* Preview Images */}
+        <div className="relative mt-4 sm:mt-5 rounded-lg overflow-hidden">
+      <div className="flex justify-center items-center space-x-3">
+        {data.imageUrl && data.imageUrl.length > 0 ? (
+          data.imageUrl.map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`Image ${index + 1}`}
+              className={`w-32 h-32 sm:h-32 object-cover rounded-xl cursor-pointer transition-opacity duration-300 ${
+                image === mainImage ? "" : "opacity-80"
+              }`} // Apply opacity change for non-selected images
+              onClick={() => handlePreviewClick(image)} // Change main image on click
+            />
+          ))
+        ) : (
+          <p>No images available</p> // Display message if no images exist
+        )}
+      </div>
+    </div>
         {/* Description */}
         <div className="mt-4 text-black text-sm sm:text-base text-left">
           <p>{data.description}</p>
@@ -154,11 +177,10 @@ export default function Popup({ onClose, data }) {
               <div
                 key={tab}
                 className={`flex-1  py-2 text-sm sm:text-base cursor-pointer transition-all duration-300 
-                                    ${
-                                      activeTab === tab
-                                        ? "bg-white text-[#009990]"
-                                        : ""
-                                    }`}
+                                    ${activeTab === tab
+                    ? "bg-white text-[#009990]"
+                    : ""
+                  }`}
                 onClick={() => setActiveTab(tab)}
               >
                 {tab}
@@ -179,7 +201,7 @@ export default function Popup({ onClose, data }) {
                         <div className="mt-4">
                           <ul className="list-disc pl-6">
                             {dayItem.activities &&
-                            Array.isArray(dayItem.activities) ? (
+                              Array.isArray(dayItem.activities) ? (
                               dayItem.activities.map((activity, index) => (
                                 <li key={index}>{activity}</li>
                               ))

@@ -47,7 +47,7 @@ const ItinerarySchema = new Schema({
 const PackageSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  imageUrl: { type: String, required: false },
+  imageUrl: [{ type: String, required: false }],
   duration: {
     days: { type: Number, required: true },
     nights: { type: Number, required: true },

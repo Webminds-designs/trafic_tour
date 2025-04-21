@@ -10,16 +10,16 @@ import { toast } from "react-toastify";
 const PackageManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [showeditModal, setEditShowModal] = useState(false);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState([]);
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
-  const [imageprev, setImageprev] = useState(null);
+  const [imageprev, setImageprev] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    imageUrl: "",
+    imageUrl: [],
     duration: { days: "", nights: "" },
     price: "",
     type: "",
@@ -66,16 +66,14 @@ const PackageManagement = () => {
   }, []);
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imagePrev = URL.createObjectURL(file);
-      setImageprev(imagePrev); // Update preview
-      setImage(file); // Store the actual file
-      setFormData((prev) => ({
-        ...prev,
-        imageUrl: "",
-      }));
-    }
+    const files = Array.from(e.target.files);
+    const previews = files.map((file) => URL.createObjectURL(file));
+
+    setImage((prev) => [...prev, ...files]);
+    setImageprev((prev) => [...prev, ...previews]);
+
+    // Clear single imageUrl if any
+
   };
 
   const closeModal = () => {
@@ -152,6 +150,16 @@ const PackageManagement = () => {
     setFormData({ ...formData, itinerary: updatedItinerary });
   };
 
+  useEffect(() => {
+    // Filter only URLs (strings), excluding File objects
+    const previewLinks = imageprev.filter((img) => typeof img === "string" || img instanceof String);
+
+    setFormData((prev) => ({
+      ...prev,
+      imageUrl: previewLinks,
+    }));
+  }, [imageprev]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -210,15 +218,26 @@ const PackageManagement = () => {
       );
       formDataToSend.append("itinerary", JSON.stringify(formData.itinerary));
 
-      if (image) {
-        console.log("Adding New Image File:", image);
-        formDataToSend.append("image", image);
+      if (image && image.length > 0) {
+        console.log("Adding New Image Files:", image);
+
+        // Loop through the images and append each one to the FormData
+        image.forEach((imageFile) => {
+          formDataToSend.append("image", imageFile);
+        });
       }
 
-      if (selectedPackage?.imageUrl) {
-        console.log("Retaining Existing Image:", selectedPackage.imageUrl);
-        formDataToSend.append("oldimageUrl", selectedPackage.imageUrl);
+      if (selectedPackage && selectedPackage.imageUrl.length > 0) {
+        console.log("Retaining 1 Existing Images:", selectedPackage.imageUrl);
+        console.log(formData.imageUrl)
+        formData.imageUrl.forEach((url) => {
+          formDataToSend.append("imageUrl", url);
+        });
       }
+
+
+      // Log the formData after images are added
+      console.log("Form Data after images:", formDataToSend);
 
       let response;
 
@@ -243,7 +262,7 @@ const PackageManagement = () => {
       setFormData({
         name: "",
         description: "",
-        imageUrl: "",
+        imageUrl: [],
         duration: { days: "", nights: "" },
         price: "",
         type: "",
@@ -268,26 +287,34 @@ const PackageManagement = () => {
     }
   };
 
+
   //edit package
   const handleEditPackage = (pkg) => {
     setSelectedPackage(pkg);
 
+    const validImageUrls = Array.isArray(pkg.imageUrl) ? pkg.imageUrl : [];
+
     setFormData({
       name: pkg.name || "",
       description: pkg.description || "",
-      imageUrl: pkg.imageUrl || "",
+      imageUrl: validImageUrls,
       duration: pkg.duration || { days: "", nights: "" },
       price: pkg.price || "",
       type: pkg.type || "",
       places_to_visit: pkg.places_to_visit || [],
       itinerary:
-        pkg.itinerary.length > 0
+        Array.isArray(pkg.itinerary) && pkg.itinerary.length > 0
           ? pkg.itinerary
           : [{ day: 1, title: "", activities: [] }],
     });
 
+    setImageprev(validImageUrls); // This sets preview only once when editing starts
+    setImage([]); // Reset newly uploaded files
     setEditShowModal(true);
+
+
   };
+
 
   const confirmDelete = (packageId) => {
     setSelectedPackage(packageId);
@@ -315,6 +342,50 @@ const PackageManagement = () => {
     }
   };
 
+  const handleRemoveImage = (indexToRemove) => {
+    const previewToRemove = imageprev[indexToRemove];
+    console.log("Files before removal:", image); // Log initial files
+    console.log("Removing image at index:", indexToRemove);
+
+    // Remove the preview from imageprev
+    setImageprev((prev) => {
+      const updatedPrev = prev.filter((_, index) => index !== indexToRemove);
+      console.log("Updated imageprev:", updatedPrev); // Debug log updated imageprev
+      return updatedPrev;
+    });
+
+    // Remove the corresponding image from the 'image' array (actual File objects)
+    setImage((prev) => {
+      const updatedImages = prev.filter((_, index) => index !== indexToRemove); // Remove the File object
+      console.log("Updated image array:", updatedImages); // Debug log updated image
+      return updatedImages;
+    });
+
+    // If it's an existing Cloudinary image (string starting with "http"), remove it from imageUrl in formData
+    if (typeof previewToRemove === "string" && previewToRemove.startsWith("http")) {
+      setFormData((prev) => ({
+        ...prev,
+        imageUrl: prev.imageUrl.filter((url) => url !== previewToRemove),
+      }));
+      console.log("Removed Cloudinary URL:", previewToRemove); // Debug log Cloudinary removal
+    }
+    // If it's a new File object (not a Cloudinary URL), remove it from formData's imageUrl if it exists
+    else if (previewToRemove instanceof File) {
+      const fileURL = URL.createObjectURL(previewToRemove);
+      setFormData((prev) => ({
+        ...prev,
+        imageUrl: prev.imageUrl.filter(
+          (url) => url !== fileURL // Compare using the created object URL
+        ),
+      }));
+      console.log("Removed File object URL:", fileURL); // Debug log file object removal
+    }
+
+    // Final debug log after state update
+    console.log("Files after removal:", image);
+  };
+
+
   return (
     <div className="flex h-full bg-gray-200 font-figtree">
       <Sidebar />
@@ -337,7 +408,7 @@ const PackageManagement = () => {
                 className=" relative bg-white rounded-2xl w-72 p-3 gap-y-10"
               >
                 <img
-                  src={pkg.imageUrl}
+                  src={pkg.imageUrl[0]}
                   alt={pkg.name}
                   className="w-72 h-64 object-cover rounded-2xl"
                 />
@@ -396,20 +467,29 @@ const PackageManagement = () => {
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 lg:p-10 relative max-w-6xl w-full max-h-[95vh] overflow-y-auto">
             <div className="flex flex-col">
+
               {/* Image Upload - Top Left */}
               <div className="flex justify-start mb-4">
-                <div className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center relative rounded-md">
-                  {image ? (
-                    <img
-                      src={imageprev}
-                      alt="Uploaded"
-                      className="w-full h-full object-cover rounded-md"
-                    />
-                  ) : (
-                    <label className="w-full h-full flex items-center justify-center cursor-pointer">
+                <div className="w-full flex flex-wrap gap-2">
+                  {imageprev.map((preview, index) => (
+                    <div
+                      key={index}
+                      className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center relative rounded-md overflow-hidden"
+                    >
+                      <img
+                        src={preview}
+                        alt={`Preview ${index}`}
+                        className="w-full h-full object-cover rounded-md"
+                      />
+                    </div>
+                  ))}
+
+                  {imageprev.length < 5 && (
+                    <label className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer rounded-md">
                       <input
                         type="file"
                         accept="image/*"
+                        multiple
                         className="hidden"
                         onChange={handleImageUpload}
                       />
@@ -418,7 +498,6 @@ const PackageManagement = () => {
                   )}
                 </div>
               </div>
-
               <div className="grid grid-cols-3 gap-3 items-center">
                 <label className="text-black col-span-1">Package Name</label>
                 <input
@@ -616,9 +695,8 @@ const PackageManagement = () => {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${
-                  loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
-                }`}
+                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
+                  }`}
                 disabled={loading}
               >
                 {loading ? "Saving..." : "Save changes"}
@@ -633,30 +711,44 @@ const PackageManagement = () => {
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 lg:p-10 relative max-w-6xl w-full max-h-[95vh] overflow-y-auto">
             <div className="flex flex-col">
+
               {/* Image Upload - Top Left */}
-              <div className="flex justify-start m-4">
-                <div className="w-36 h-36 bg-gray-200 border-2  border-gray-400 flex items-center justify-center relative rounded-md">
-                  <div className="flex justify-start mb-4">
-                    <div className="w-36 h-36 bg-gray-200 border-2 mt-3 border-dashed border-gray-400 flex items-center justify-center relative rounded-md">
-                      <label className="w-full h-full flex items-center justify-center cursor-pointer">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleImageUpload}
-                        />
-                        {imageprev || formData.imageUrl ? (
-                          <img
-                            src={imageprev || formData.imageUrl}
-                            alt="Uploaded"
-                            className="w-full h-full object-cover rounded-md"
-                          />
-                        ) : (
-                          <FaCamera className="text-gray-500 text-xl" />
-                        )}
-                      </label>
+              <div className="flex justify-start mb-4">
+                <div className="w-full flex flex-wrap gap-2">
+                  {imageprev.slice(0, 5).map((preview, index) => (
+                    <div
+                      key={index}
+                      className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center relative rounded-md overflow-hidden"
+                    >
+                      <img
+                        src={typeof preview === "string" ? preview : URL.createObjectURL(preview)}
+                        alt={`Preview ${index}`}
+                        className="w-full h-full object-cover rounded-md"
+                      />
+
+                      {/* Delete Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-1 right-1 bg-gray-500 opacity-55 rounded-full px-3 p-1 hover:bg-opacity-100"
+                      >
+                        <span className="text-white font-bold text-xl opacity-100">×</span>
+                      </button>
                     </div>
-                  </div>
+                  ))}
+
+                  {imageprev.length < 5 && (
+                    <label className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer rounded-md">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handleImageUpload}
+                      />
+                      <FaCamera className="text-gray-500 text-xl" />
+                    </label>
+                  )}
                 </div>
               </div>
 
@@ -857,9 +949,8 @@ const PackageManagement = () => {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${
-                  loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
-                }`}
+                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
+                  }`}
                 disabled={loading}
               >
                 {loading ? "Saving..." : "Save changes"}
