@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/Road.jpg";
 import { toast } from "react-toastify";
+import api from "../services/api"; // Adjust the import path as necessary
 
 const FindPackages = () => {
   const navigate = useNavigate();
@@ -63,10 +64,12 @@ const FindPackages = () => {
     console.log("Search Params:", params); // Debugging log
 
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/packages/find/search",
-        { params }
-      );
+      // const response = await axios.get(
+      //   "http://localhost:3000/api/packages/find/search",
+      //   { params }
+      // );
+
+      const response = await api.get("/packages/find/search", { params }); // Use the api instance
 
       console.log("API Response:", response.data); // Debugging log
 
