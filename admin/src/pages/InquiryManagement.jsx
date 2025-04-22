@@ -71,20 +71,23 @@ const InquiryManagement = () => {
   // Handle reply submission
   const handleReply = async (emailId) => {
     try {
-      // await axios.post("http://localhost:3000/api/send-email/reply", {
-      //   emailId,
-      //   replyText,
-      // });
-      await api.post(
-        "/send-email/reply",
+      await axios.post(
+        "https://srilankatraffictours.com/api/send-email/reply",
         {
           emailId,
           replyText,
-        },
-        {
-          withCredentials: true,
         }
       );
+      // await api.post(
+      //   "/send-email/reply",
+      //   {
+      //     emailId,
+      //     replyText,
+      //   },
+      //   {
+      //     withCredentials: true,
+      //   }
+      // );
       alert("Reply sent successfully!");
       setReplyText("");
     } catch (error) {
