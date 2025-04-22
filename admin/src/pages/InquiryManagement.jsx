@@ -20,19 +20,35 @@ const InquiryManagement = () => {
   });
 
   // Fetch all emails
+  // useEffect(() => {
+  //   axios
+  //     .get("https://srilankatraffictours.com/api/send-email/all")
+  //     .then((res) => {
+  //       setEmails(res.data);
+  //       if (res.data.length > 0) {
+  //         setSelectedInquiry(res.data[0]); // Set first inquiry as default selected
+  //       }
+  //     })
+  //     .catch((err) => console.error("Error fetching emails:", err));
+  // }, []);
+
   useEffect(() => {
-    axios
-      .get("/send-email/all", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setEmails(res.data);
-        if (res.data.length > 0) {
-          setSelectedInquiry(res.data[0]); // Set first inquiry as default selected
+    const fetchEmails = async () => {
+      try {
+        const response = await api.get("/send-email/all", {
+          withCredentials: true,
+        });
+        setEmails(response.data);
+        if (response.data.length > 0) {
+          setSelectedInquiry(response.data[0]); // Set first inquiry as default selected
         }
-      })
-      .catch((err) => console.error("Error fetching emails:", err));
+      } catch (error) {
+        console.error("Error fetching emails:", error);
+      }
+    };
+    fetchEmails();
   }, []);
+
   // Function to generate Gravatar URL based on email
   const getGravatarUrl = (email, size = 40) => {
     const emailHash = md5(email.trim().toLowerCase()); // Hash email to lowercase
@@ -71,23 +87,27 @@ const InquiryManagement = () => {
   // Handle reply submission
   const handleReply = async (emailId) => {
     try {
-      await axios.post(
-        "https://srilankatraffictours.com/api/send-email/reply",
+      if (!replyText) {
+        alert("Please enter a reply message.");
+        return;
+      }
+      const response = await api.post(
+        "/send-email/reply",
         {
           emailId,
-          replyText,
+          reply: replyText,
+        },
+        {
+          withCredentials: true,
         }
       );
-      // await api.post(
-      //   "/send-email/reply",
-      //   {
-      //     emailId,
-      //     replyText,
-      //   },
-      //   {
-      //     withCredentials: true,
-      //   }
-      // );
+      console.log("Reply sent:", response.data);
+      setReplies((prevReplies) => ({
+        ...prevReplies,
+        [emailId]: [...(prevReplies[emailId] || []), replyText],
+      }));
+      setReplyText(""); // Clear the reply input field
+
       alert("Reply sent successfully!");
       setReplyText("");
     } catch (error) {
