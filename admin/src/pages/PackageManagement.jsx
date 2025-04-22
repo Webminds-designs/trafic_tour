@@ -6,6 +6,7 @@ import { BiSolidPackage } from "react-icons/bi";
 import axios from "axios";
 import { FaCamera } from "react-icons/fa";
 import { toast } from "react-toastify";
+import api from "../services/api";
 
 const PackageManagement = () => {
   const [showModal, setShowModal] = useState(false);
@@ -38,7 +39,10 @@ const PackageManagement = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/packages");
+        // const response = await axios.get("http://localhost:3000/api/packages");
+        const response = await api.get("/packages", {
+          withCredentials: true,
+        });
         setPackages(response.data.packages);
         // Assuming the response contains an array of packages
       } catch (err) {
@@ -73,7 +77,6 @@ const PackageManagement = () => {
     setImageprev((prev) => [...prev, ...previews]);
 
     // Clear single imageUrl if any
-
   };
 
   const closeModal = () => {
@@ -152,7 +155,9 @@ const PackageManagement = () => {
 
   useEffect(() => {
     // Filter only URLs (strings), excluding File objects
-    const previewLinks = imageprev.filter((img) => typeof img === "string" || img instanceof String);
+    const previewLinks = imageprev.filter(
+      (img) => typeof img === "string" || img instanceof String
+    );
 
     setFormData((prev) => ({
       ...prev,
@@ -229,12 +234,11 @@ const PackageManagement = () => {
 
       if (selectedPackage && selectedPackage.imageUrl.length > 0) {
         console.log("Retaining 1 Existing Images:", selectedPackage.imageUrl);
-        console.log(formData.imageUrl)
+        console.log(formData.imageUrl);
         formData.imageUrl.forEach((url) => {
           formDataToSend.append("imageUrl", url);
         });
       }
-
 
       // Log the formData after images are added
       console.log("Form Data after images:", formDataToSend);
@@ -242,18 +246,33 @@ const PackageManagement = () => {
       let response;
 
       if (selectedPackage) {
-        response = await axios.put(
-          `http://localhost:3000/api/packages/${selectedPackage._id}`,
+        // response = await axios.put(
+        //   `http://localhost:3000/api/packages/${selectedPackage._id}`,
+        //   formDataToSend,
+        //   { headers: { "Content-Type": "multipart/form-data" } }
+        // );
+
+        response = await api.put(
+          `/packages/${selectedPackage._id}`,
           formDataToSend,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "multipart/form-data" },
+          }
         );
         toast.success("Package updated successfully!");
       } else {
-        response = await axios.post(
-          "http://localhost:3000/api/packages",
-          formDataToSend,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
+        // response = await axios.post(
+        //   "http://localhost:3000/api/packages",
+        //   formDataToSend,
+        //   { headers: { "Content-Type": "multipart/form-data" } }
+        // );
+
+        response = await api.post("/packages", formDataToSend, {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
         toast.success("Package added successfully!");
       }
 
@@ -287,7 +306,6 @@ const PackageManagement = () => {
     }
   };
 
-
   //edit package
   const handleEditPackage = (pkg) => {
     setSelectedPackage(pkg);
@@ -311,10 +329,7 @@ const PackageManagement = () => {
     setImageprev(validImageUrls); // This sets preview only once when editing starts
     setImage([]); // Reset newly uploaded files
     setEditShowModal(true);
-
-
   };
-
 
   const confirmDelete = (packageId) => {
     setSelectedPackage(packageId);
@@ -326,9 +341,13 @@ const PackageManagement = () => {
     if (!selectedPackage) return;
 
     try {
-      await axios.delete(
-        `http://localhost:3000/api/packages/${selectedPackage}`
-      );
+      // await axios.delete(
+      //   `http://localhost:3000/api/packages/${selectedPackage}`
+      // );
+
+      await api.delete(`/packages/${selectedPackage}`, {
+        withCredentials: true,
+      });
 
       // Update state to remove deleted package
       setPackages((prevPackages) =>
@@ -362,7 +381,10 @@ const PackageManagement = () => {
     });
 
     // If it's an existing Cloudinary image (string starting with "http"), remove it from imageUrl in formData
-    if (typeof previewToRemove === "string" && previewToRemove.startsWith("http")) {
+    if (
+      typeof previewToRemove === "string" &&
+      previewToRemove.startsWith("http")
+    ) {
       setFormData((prev) => ({
         ...prev,
         imageUrl: prev.imageUrl.filter((url) => url !== previewToRemove),
@@ -384,7 +406,6 @@ const PackageManagement = () => {
     // Final debug log after state update
     console.log("Files after removal:", image);
   };
-
 
   return (
     <div className="flex h-full bg-gray-200 font-figtree">
@@ -467,7 +488,6 @@ const PackageManagement = () => {
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 lg:p-10 relative max-w-6xl w-full max-h-[95vh] overflow-y-auto">
             <div className="flex flex-col">
-
               {/* Image Upload - Top Left */}
               <div className="flex justify-start mb-4">
                 <div className="w-full flex flex-wrap gap-2">
@@ -695,8 +715,9 @@ const PackageManagement = () => {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
-                  }`}
+                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${
+                  loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
+                }`}
                 disabled={loading}
               >
                 {loading ? "Saving..." : "Save changes"}
@@ -711,7 +732,6 @@ const PackageManagement = () => {
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-4 sm:p-6 md:p-8 lg:p-10 relative max-w-6xl w-full max-h-[95vh] overflow-y-auto">
             <div className="flex flex-col">
-
               {/* Image Upload - Top Left */}
               <div className="flex justify-start mb-4">
                 <div className="w-full flex flex-wrap gap-2">
@@ -721,7 +741,11 @@ const PackageManagement = () => {
                       className="w-36 h-36 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center relative rounded-md overflow-hidden"
                     >
                       <img
-                        src={typeof preview === "string" ? preview : URL.createObjectURL(preview)}
+                        src={
+                          typeof preview === "string"
+                            ? preview
+                            : URL.createObjectURL(preview)
+                        }
                         alt={`Preview ${index}`}
                         className="w-full h-full object-cover rounded-md"
                       />
@@ -732,7 +756,9 @@ const PackageManagement = () => {
                         onClick={() => handleRemoveImage(index)}
                         className="absolute top-1 right-1 bg-gray-500 opacity-55 rounded-full px-3 p-1 hover:bg-opacity-100"
                       >
-                        <span className="text-white font-bold text-xl opacity-100">×</span>
+                        <span className="text-white font-bold text-xl opacity-100">
+                          ×
+                        </span>
                       </button>
                     </div>
                   ))}
@@ -949,8 +975,9 @@ const PackageManagement = () => {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
-                  }`}
+                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${
+                  loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
+                }`}
                 disabled={loading}
               >
                 {loading ? "Saving..." : "Save changes"}
