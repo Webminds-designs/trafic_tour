@@ -222,9 +222,18 @@ const Footer = () => {
               {
                 title: "Policies",
                 links: [
-                  { name: "Privacy Policy", url: "/policies?tab=Privacy%20Policy" },
-                  { name: "Return & Refund Policy", url: "/policies?tab=Return%20%26%20Refund%20Policy" },
-                  { name: "Terms & Conditions", url: "/policies?tab=Terms%20%26%20Conditions" },
+                  {
+                    name: "Privacy Policy",
+                    url: "/policies?tab=Privacy%20Policy",
+                  },
+                  {
+                    name: "Return & Refund Policy",
+                    url: "/policies?tab=Return%20%26%20Refund%20Policy",
+                  },
+                  {
+                    name: "Terms & Conditions",
+                    url: "/policies?tab=Terms%20%26%20Conditions",
+                  },
                 ],
               },
               {

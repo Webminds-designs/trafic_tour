@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/authContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import api from "../services/api";
 
 const Payment = () => {
   const location = useLocation();
@@ -148,15 +149,21 @@ const Payment = () => {
   //create bookings
   const createBooking = async (bookingData) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/bookings",
-        bookingData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/bookings",
+      //   bookingData,
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
+
+      const response = await api.post("/bookings", bookingData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.status === 201) {
         toast.success("Booking successful!");
@@ -185,10 +192,16 @@ const Payment = () => {
 
     try {
       // Make a POST request to the backend with the payment details
-      const response = await axios.post(
-        "http://localhost:3000/api/payments",
-        dbDetails
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/payments",
+      //   dbDetails
+      // );
+
+      const response = await api.post("/payments", dbDetails, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       // Check if the payment was successful
       if (response.status === 201) {
@@ -209,10 +222,14 @@ const Payment = () => {
   const handlePayment = async () => {
     try {
       // Fetch hash from backend
-      const response = await fetch("http://localhost:3000/api/payhere/hash", {
-        method: "POST",
+      // const response = await fetch("http://localhost:3000/api/payhere/hash", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(orderDetails),
+      // });
+
+      const response = await api.post("/payhere/hash", orderDetails, {
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderDetails),
       });
 
       const data = await response.json();
@@ -489,15 +506,21 @@ const BankTransfer = ({ order, bookingData }) => {
   //create bookings
   const createBooking = async (bookingData) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/bookings",
-        bookingData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/bookings",
+      //   bookingData,
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
+
+      const response = await api.post("/bookings", bookingData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.status === 201) {
         toast.success("Booking successful!");
@@ -548,15 +571,22 @@ const BankTransfer = ({ order, bookingData }) => {
     formData.append("paymentProof", paymentProof);
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/payments",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/payments",
+      //   formData,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //   }
+      // );
+
+      const response = await api.post("/payments", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       if (response.status === 201) {
         createBooking(bookingData);
         toast.success("Payment successfully created!");
