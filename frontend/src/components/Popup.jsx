@@ -9,6 +9,7 @@ import carIcon from "../assets/car.png";
 import copeIcon from "../assets/cope.png";
 import userIcon from "../assets/people.png";
 import { useContext } from "react";
+import api from "../services/api";
 
 export default function Popup({ onClose, data }) {
   const [activeTab, setActiveTab] = useState("INCLUDES");
@@ -22,9 +23,16 @@ export default function Popup({ onClose, data }) {
   useEffect(() => {
     const checkFavoriteStatus = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/favorites/${user?.id}`
-        );
+        // const response = await axios.get(
+        //   `http://localhost:3000/api/favorites/${user?.id}`
+        // );
+
+        const response = await api.get(`/favorites/${user?.id}`);
+        if (!response || !response.data) {
+          console.error("Invalid response:", response);
+          return;
+        }
+
         const favorite = response.data.find(
           (fav) => fav.packageId._id === packageId
         );
@@ -41,7 +49,11 @@ export default function Popup({ onClose, data }) {
       navigate("/signin");
     }
     try {
-      await axios.post("http://localhost:3000/api/favorites/add", {
+      // await axios.post("http://localhost:3000/api/favorites/add", {
+      //   userId,
+      //   packageId,
+      // });
+      await api.post("/favorites/add", {
         userId,
         packageId,
       });
@@ -56,7 +68,10 @@ export default function Popup({ onClose, data }) {
       navigate("/signin");
     }
     try {
-      await axios.delete("http://localhost:3000/api/favorites/remove", {
+      // await axios.delete("http://localhost:3000/api/favorites/remove", {
+      //   data: { userId, packageId },
+      // });
+      await api.delete("/favorites/remove", {
         data: { userId, packageId },
       });
       setIsFavorite(false);
@@ -114,7 +129,7 @@ export default function Popup({ onClose, data }) {
         {/* Hero Image with Favorite Icon */}
         <div className="relative mt-4 sm:mt-5 rounded-lg overflow-hidden">
           <img
-             src={mainImage}
+            src={mainImage}
             alt={data.name}
             className="w-full h-48 sm:h-64 object-cover"
           />
@@ -123,31 +138,32 @@ export default function Popup({ onClose, data }) {
             onClick={isFavorite ? removeFavorite : addFavorite}
           >
             <FaHeart
-              className={`text-xs ${isFavorite ? "text-red-500" : "text-black"
-                }`}
+              className={`text-xs ${
+                isFavorite ? "text-red-500" : "text-black"
+              }`}
             />
           </div>
         </div>
         {/* Preview Images */}
         <div className="relative mt-4 sm:mt-5 rounded-lg overflow-hidden">
-      <div className="flex justify-center items-center space-x-3">
-        {data.imageUrl && data.imageUrl.length > 0 ? (
-          data.imageUrl.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Image ${index + 1}`}
-              className={`w-32 h-32 sm:h-32 object-cover rounded-xl cursor-pointer transition-opacity duration-300 ${
-                image === mainImage ? "" : "opacity-80"
-              }`} // Apply opacity change for non-selected images
-              onClick={() => handlePreviewClick(image)} // Change main image on click
-            />
-          ))
-        ) : (
-          <p>No images available</p> // Display message if no images exist
-        )}
-      </div>
-    </div>
+          <div className="flex justify-center items-center space-x-3">
+            {data.imageUrl && data.imageUrl.length > 0 ? (
+              data.imageUrl.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  alt={`Image ${index + 1}`}
+                  className={`w-32 h-32 sm:h-32 object-cover rounded-xl cursor-pointer transition-opacity duration-300 ${
+                    image === mainImage ? "" : "opacity-80"
+                  }`} // Apply opacity change for non-selected images
+                  onClick={() => handlePreviewClick(image)} // Change main image on click
+                />
+              ))
+            ) : (
+              <p>No images available</p> // Display message if no images exist
+            )}
+          </div>
+        </div>
         {/* Description */}
         <div className="mt-4 text-black text-sm sm:text-base text-left">
           <p>{data.description}</p>
@@ -177,10 +193,11 @@ export default function Popup({ onClose, data }) {
               <div
                 key={tab}
                 className={`flex-1  py-2 text-sm sm:text-base cursor-pointer transition-all duration-300 
-                                    ${activeTab === tab
-                    ? "bg-white text-[#009990]"
-                    : ""
-                  }`}
+                                    ${
+                                      activeTab === tab
+                                        ? "bg-white text-[#009990]"
+                                        : ""
+                                    }`}
                 onClick={() => setActiveTab(tab)}
               >
                 {tab}
@@ -201,7 +218,7 @@ export default function Popup({ onClose, data }) {
                         <div className="mt-4">
                           <ul className="list-disc pl-6">
                             {dayItem.activities &&
-                              Array.isArray(dayItem.activities) ? (
+                            Array.isArray(dayItem.activities) ? (
                               dayItem.activities.map((activity, index) => (
                                 <li key={index}>{activity}</li>
                               ))
