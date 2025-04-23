@@ -7,6 +7,8 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import { toast } from "react-toastify";
 
+import api from "../services/api"; // Adjust the import path as needed
+
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -21,7 +23,12 @@ const UserManagement = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/user");
+        // const response = await axios.get("http://localhost:3000/api/user");
+
+        const response = await api.get("/user", {
+          withCredentials: true, // Include credentials in the request
+        });
+
         console.log("API Response:", response.data); // Check full response
 
         // Verify if the response contains expected user fields
@@ -108,7 +115,11 @@ const UserManagement = () => {
     if (!selectedUser) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/user/${selectedUser}`);
+      // await axios.delete(`http://localhost:3000/api/user/${selectedUser}`);
+
+      await api.delete(`/user/${selectedUser}`, {
+        withCredentials: true, // Include credentials in the request
+      });
 
       // Remove user from state
       setUsers((prevUsers) =>
@@ -144,10 +155,15 @@ const UserManagement = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/user/newregister",
-        formDataToSend
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/user/newregister",
+      //   formDataToSend
+      // );
+
+      await api.post("/user/newregister", formDataToSend, {
+        withCredentials: true, // Include credentials in the request
+      });
+
       setShowModal(false);
       toast.success("User registered successfully!");
     } catch (err) {
@@ -189,15 +205,22 @@ const UserManagement = () => {
         }
       });
 
-      const response = await axios.post(
-        "http://localhost:3000/api/user/update",
-        formDataToSend,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/user/update",
+      //   formDataToSend,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //   }
+      // );
+
+      const response = await api.post("/user/update", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true, // Include credentials in the request
+      });
 
       return response.data;
     } catch (error) {
