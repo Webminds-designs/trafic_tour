@@ -59,7 +59,9 @@ const BookingManagement = () => {
                   key={booking.id}
                   className="cursor-pointer hover:bg-gray-100"
                   onClick={() =>
-                    navigate(`/bookings/${booking._id}`, { state: { booking } })
+                    navigate(`/admin/bookings/${booking._id}`, {
+                      state: { booking },
+                    })
                   }
                 >
                   <td className="flex items-center py-2 px-4">

@@ -41,8 +41,7 @@ const Signin = () => {
 
       const response = await api.post(
         "/user/login",
-        {  email,
-           password,},
+        { email, password },
         {
           withCredentials: true,
         }
@@ -60,7 +59,7 @@ const Signin = () => {
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
       toast.success("Login Successful");
-      navigate("/dashboard");
+      navigate("/admin/dashboard");
     } catch (err) {
       console.error(
         "Login Failed:",
