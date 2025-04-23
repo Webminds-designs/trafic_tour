@@ -265,14 +265,14 @@ const Signin = () => {
           </button>
         </form>
         {/* Dots design */}
-        <div className="flex items-center my-6">
+        <div className="flex items-center justify-center my-6">
           <div className="flex items-center justify-center space-x-2">
             {Array(12)
               .fill()
               .map((_, index) => (
                 <span
                   key={index}
-                  className="w-1 h-1 md:mx-[5px] mx-[5px]  bg-gray-300 rounded-full"
+                  className="w-1 h-1 md:mx-[5px] mx-[3px]  bg-gray-300 rounded-full"
                 ></span>
               ))}
           </div>
@@ -284,7 +284,7 @@ const Signin = () => {
               .map((_, index) => (
                 <span
                   key={index}
-                  className="w-1 h-1 md:mx-[5px] mx-[5px] bg-gray-300 rounded-full"
+                  className="w-1 h-1 md:mx-[5px] mx-[3px] bg-gray-300 rounded-full"
                 ></span>
               ))}
           </div>

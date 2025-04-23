@@ -47,7 +47,7 @@ const PolicyTabs = () => {
                     </div>
                     <div className="text-xs sm:text-sm font-base">
                         Explore our terms, privacy practices, and return policies. <br />
-                        At Trafictours, transparency and trust are the foundation <br />
+                        At Traffictours, transparency and trust are the foundation <br />
                         of every unforgettable journey we offer.
                     </div>
                 </div>
@@ -77,7 +77,9 @@ const PolicyTabs = () => {
                                 <strong>Effective Date:</strong> {formattedDate}
                             </p>
                             <p className="text-gray-700 leading-relaxed mb-4">
-                                Taric Tour Travels  is committed to safeguarding your privacy. This Privacy Policy outlines how we collect, use, disclose, and protect your personal information when you visit our website [insert website URL] or engage with our services.
+
+                                Traffic Tour Travels  is committed to safeguarding your privacy. This Privacy Policy outlines how we collect, use, disclose, and protect your personal information when you visit our website <a href="https://srilankatraffictours.com/">srilankatraffictours.com</a> or engage with our services.
+
                             </p>
 
                             <h3 className="text-xl font-semibold mb-2">1. Information We Collect</h3>
@@ -137,7 +139,7 @@ const PolicyTabs = () => {
                                 If you have any questions about this Privacy Policy, please contact us at:
                             </p>
                             <ul className="list-none text-gray-700 leading-relaxed">
-                                <li>Taric Tour Travels</li>
+                                <li>Tarfic Tour Travels</li>
                                 <li> 232/1/1, 2nd Floor, 'Laksiri Building', High Level Road,
                                     Waththegedara, Maharagama</li>
                                 <li>Email:traffictoures999@gmail.com</li>
@@ -154,7 +156,7 @@ const PolicyTabs = () => {
                                 <strong>Effective Date:</strong> {formattedDate}
                             </p>
                             <p className="text-gray-700 leading-relaxed mb-4">
-                                At Taric Tour Travels, we understand that travel plans can change. This Return & Refund Policy outlines the conditions under which refunds are applicable, the procedures to follow when initiating a refund, and the timelines for processing those refunds.
+                                At Traffic Tour Travels, we understand that travel plans can change. This Return & Refund Policy outlines the conditions under which refunds are applicable, the procedures to follow when initiating a refund, and the timelines for processing those refunds.
                             </p>
 
                             <h3 className="text-xl font-semibold mb-2">1. Booking Cancellations by Client</h3>
@@ -190,7 +192,7 @@ const PolicyTabs = () => {
                                 For return and refund inquiries, please contact:
                             </p>
                             <ul className="list-none text-gray-700 leading-relaxed">
-                                <li>Taric Tour Travels</li>
+                                <li>Tafic Tour Travels</li>
                                 <li> 232/1/1, 2nd Floor, 'Laksiri Building', High Level Road,
                                     Waththegedara, Maharagama</li>
                                 <li>Email:traffictoures999@gmail.com</li>
@@ -207,7 +209,9 @@ const PolicyTabs = () => {
                                 <strong>Effective Date:</strong> {formattedDate}
                             </p>
                             <p className="text-gray-700 leading-relaxed mb-4">
-                                These Terms and Conditions ("Terms") govern your use of the services provided by Taric Tour Travels . By booking our services, you agree to comply with and be bound by these Terms. Please read them carefully.
+
+                                These Terms and Conditions ("Terms") govern your use of the services provided by Tafic Tour Travels . By booking our services, you agree to comply with and be bound by these Terms. Please read them carefully.
+
                             </p>
 
                             <h3 className="text-xl font-semibold mb-2">1. Booking and Payment</h3>
