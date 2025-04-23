@@ -136,7 +136,7 @@ const Packages = () => {
 
 // Hover animation for images
 const hoverVariants = {
-  hover: { scale: 1.05, transition: { duration: 0.3 } },
+  hover: { scale: 1.05, transition: { duration: 0.8 } },
 };
   return (
     <>
@@ -277,6 +277,12 @@ const hoverVariants = {
                         packageItem.type === "Romantic and Relaxation"
                     )
                     .map((packageItem) => (
+                      <motion.div
+                      key={packageItem.name}
+                      initial="hidden"
+                      whileInView="visible"
+                      variants={textVariants}
+                      transition={{ duration: 0.8, delay:  0.3 }}>
                       <PackageCard
                         key={packageItem.name}
                         packageItem={packageItem} // Pass the entire package object
@@ -284,6 +290,7 @@ const hoverVariants = {
                           console.log(`Exploring ${packageItem.name}`)
                         }
                       />
+                      </motion.div>
                     ))}
                 </>
               ) : null}
@@ -297,6 +304,12 @@ const hoverVariants = {
                         packageItem.type === "Adventure and Wildlife"
                     )
                     .map((packageItem) => (
+                      <motion.div
+                      key={packageItem.name}
+                      initial="hidden"
+                      whileInView="visible"
+                      variants={textVariants}
+                      transition={{ duration: 0.8, delay:  0.3 }}>
                       <PackageCard
                         key={packageItem.name}
                         packageItem={packageItem} // Pass the entire package object
@@ -304,6 +317,7 @@ const hoverVariants = {
                           console.log(`Exploring ${packageItem.name}`)
                         }
                       />
+                      </motion.div>
                     ))}
                 </>
               ) : null}
@@ -317,6 +331,12 @@ const hoverVariants = {
                         packageItem.type === "Educational and Cultural"
                     )
                     .map((packageItem) => (
+                      <motion.div
+                      key={packageItem.name}
+                      initial="hidden"
+                      whileInView="visible"
+                      variants={textVariants}
+                      transition={{ duration: 0.8, delay:  0.3 }}>
                       <PackageCard
                         key={packageItem.name}
                         packageItem={packageItem} // Pass the entire package object
@@ -324,6 +344,7 @@ const hoverVariants = {
                           console.log(`Exploring ${packageItem.name}`)
                         }
                       />
+                    </motion.div>
                     ))}
                 </>
               ) : null}
