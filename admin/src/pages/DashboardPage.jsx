@@ -106,7 +106,7 @@ const DashboardPage = () => {
               <h2 className="text-xl text-[#003135] font-semibold">
                 Recently Added Packages
               </h2>
-              <Link to="/packages">
+              <Link to="/admin/packages">
                 <div className="text-gray-600 text-sm underline">
                   manage tour packages
                 </div>
@@ -126,7 +126,7 @@ const DashboardPage = () => {
                   <div className="flex-1 text-center sm:text-left">
                     <h3 className="font-semibold text-xl">{pkg.name}</h3>
                     <p className="text-gray-600 text-sm">{pkg.description}</p>
-                    <Link to="/packages">
+                    <Link to="/admin/packages">
                       <button className="mt-4 bg-[#009990] text-white px-4 py-2 rounded-2xl text-sm cursor-pointer">
                         View Package
                       </button>
@@ -143,7 +143,7 @@ const DashboardPage = () => {
               <h2 className="text-xl font-semibold text-[#003135]">
                 New Activity
               </h2>
-              <Link to="/UserManagement">
+              <Link to="/admin/UserManagement">
                 <div className="text-gray-600 text-sm underline">see all</div>
               </Link>
             </div>
@@ -166,7 +166,7 @@ const DashboardPage = () => {
                       <p className="text-gray-500 text-sm">User</p>
                     </div>
                   </div>
-                  <Link to="/UserManagement">
+                  <Link to="/admin/UserManagement">
                     <div className="text-sm text-[#003135]">View</div>
                   </Link>
                 </div>

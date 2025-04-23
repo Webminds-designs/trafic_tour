@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/lepord.png";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
+import api from "../services/api";
 
 const Packages = () => {
   const [selectedSection, setSelectedSection] = useState("All Packages");
@@ -18,7 +19,8 @@ const Packages = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/packages");
+        // const response = await axios.get("http://localhost:3000/api/packages");
+        const response = await api.get("/packages"); // Use the api instance
         setPackages(response.data.packages);
         // Assuming the response contains an array of packages
       } catch (err) {
@@ -108,10 +110,11 @@ const Packages = () => {
     console.log("Search Params:", params); // Debugging log
 
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/packages/find/search",
-        { params }
-      );
+      // const response = await axios.get(
+      //   "http://localhost:3000/api/packages/find/search",
+      //   { params }
+      // );
+      const response = await api.get("/packages/find/search", { params }); // Use the api instance
 
       console.log("API Response:", response.data); // Debugging log
 
@@ -128,16 +131,16 @@ const Packages = () => {
     }
   };
 
- // Animation variants for text
- const textVariants = {
-  hidden: { y: 50, opacity: 0 },
-  visible: { y: 0, opacity: 1 },
-};
+  // Animation variants for text
+  const textVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  };
 
-// Hover animation for images
-const hoverVariants = {
-  hover: { scale: 1.05, transition: { duration: 0.8 } },
-};
+  // Hover animation for images
+  const hoverVariants = {
+    hover: { scale: 1.05, transition: { duration: 0.8 } },
+  };
   return (
     <>
       <Navbar />
@@ -145,11 +148,13 @@ const hoverVariants = {
         <div className="text-black">
           {/* Header Section */}
           <div className="flex flex-col lg:flex-row justify-between items-center px-4 sm:px-6 lg:px-20">
-            <motion.div className="text-left pt-10 lg:pt-20 pb-6 lg:pb-14 "
-             initial="hidden"
-             whileInView="visible"
-             variants={textVariants}
-             transition={{ duration: 0.8 }}>
+            <motion.div
+              className="text-left pt-10 lg:pt-20 pb-6 lg:pb-14 "
+              initial="hidden"
+              whileInView="visible"
+              variants={textVariants}
+              transition={{ duration: 0.8 }}
+            >
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-base m-1">
                 <span className="border-b-2">Travel</span>
               </h1>
@@ -158,11 +163,13 @@ const hoverVariants = {
               </h1>
             </motion.div>
             <div className="text-right  px-4 lg:px-7 pt-6">
-              <motion.p className="text-xs sm:text-sm font-base" 
-               initial="hidden"
-               whileInView="visible"
-               variants={textVariants}
-               transition={{ duration: 0.8 }}>
+              <motion.p
+                className="text-xs sm:text-sm font-base"
+                initial="hidden"
+                whileInView="visible"
+                variants={textVariants}
+                transition={{ duration: 0.8 }}
+              >
                 Embark on an unforgettable journey through Sri Lanka. <br />
                 Where every experience is designed to inspire, relax, and <br />{" "}
                 awaken your sense of adventure.
@@ -203,11 +210,13 @@ const hoverVariants = {
               </div>
             </div>
             {/* Horizontal Bar for Larger Screens */}
-            <motion.div className="hidden md:flex bg-black text-white w-full max-w-7xl rounded-3xl overflow-x-auto"
-            initial="hidden"
-            whileInView="visible"
-            variants={textVariants}
-            transition={{ duration: 0.8 }}>
+            <motion.div
+              className="hidden md:flex bg-black text-white w-full max-w-7xl rounded-3xl overflow-x-auto"
+              initial="hidden"
+              whileInView="visible"
+              variants={textVariants}
+              transition={{ duration: 0.8 }}
+            >
               {sections.map((section, index) => (
                 <div
                   key={index}
@@ -223,11 +232,13 @@ const hoverVariants = {
           {/* Packages Grid */}
           <div className="mt-10 lg:mt-30 mb-14 lg:mb-28 px-4 sm:px-6 lg:px-20">
             <div className="flex justify-between">
-              <motion.div className="font-xl md:text-2xl text-xl"
-               initial="hidden"
-               whileInView="visible"
-               variants={textVariants}
-               transition={{ duration: 0.8, delay:  0.3 }}>
+              <motion.div
+                className="font-xl md:text-2xl text-xl"
+                initial="hidden"
+                whileInView="visible"
+                variants={textVariants}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
                 Experience the thrill of Sri Lanka's
                 <br></br>
                 wilderness.
@@ -239,7 +250,7 @@ const hoverVariants = {
                   initial="hidden"
                   whileInView="visible"
                   variants={textVariants}
-                  transition={{ duration: 0.8, delay:  0.3 }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
                 >
                   Find the best package
                 </motion.button>
@@ -250,19 +261,20 @@ const hoverVariants = {
               {selectedSection === "All Packages" ? (
                 <>
                   {packages.map((packageItem) => (
-                     <motion.div
-                     key={packageItem.name}
-                     initial="hidden"
-                     whileInView="visible"
-                     variants={textVariants}
-                     transition={{ duration: 0.8, delay:  0.3 }}>
-                    <PackageCard
+                    <motion.div
                       key={packageItem.name}
-                      packageItem={packageItem} // Pass the entire package object
-                      onExplore={() =>
-                        console.log(`Exploring ${packageItem.name}`)
-                      }
-                    />
+                      initial="hidden"
+                      whileInView="visible"
+                      variants={textVariants}
+                      transition={{ duration: 0.8, delay: 0.3 }}
+                    >
+                      <PackageCard
+                        key={packageItem.name}
+                        packageItem={packageItem} // Pass the entire package object
+                        onExplore={() =>
+                          console.log(`Exploring ${packageItem.name}`)
+                        }
+                      />
                     </motion.div>
                   ))}
                 </>
@@ -278,18 +290,19 @@ const hoverVariants = {
                     )
                     .map((packageItem) => (
                       <motion.div
-                      key={packageItem.name}
-                      initial="hidden"
-                      whileInView="visible"
-                      variants={textVariants}
-                      transition={{ duration: 0.8, delay:  0.3 }}>
-                      <PackageCard
                         key={packageItem.name}
-                        packageItem={packageItem} // Pass the entire package object
-                        onExplore={() =>
-                          console.log(`Exploring ${packageItem.name}`)
-                        }
-                      />
+                        initial="hidden"
+                        whileInView="visible"
+                        variants={textVariants}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                      >
+                        <PackageCard
+                          key={packageItem.name}
+                          packageItem={packageItem} // Pass the entire package object
+                          onExplore={() =>
+                            console.log(`Exploring ${packageItem.name}`)
+                          }
+                        />
                       </motion.div>
                     ))}
                 </>
@@ -305,18 +318,19 @@ const hoverVariants = {
                     )
                     .map((packageItem) => (
                       <motion.div
-                      key={packageItem.name}
-                      initial="hidden"
-                      whileInView="visible"
-                      variants={textVariants}
-                      transition={{ duration: 0.8, delay:  0.3 }}>
-                      <PackageCard
                         key={packageItem.name}
-                        packageItem={packageItem} // Pass the entire package object
-                        onExplore={() =>
-                          console.log(`Exploring ${packageItem.name}`)
-                        }
-                      />
+                        initial="hidden"
+                        whileInView="visible"
+                        variants={textVariants}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                      >
+                        <PackageCard
+                          key={packageItem.name}
+                          packageItem={packageItem} // Pass the entire package object
+                          onExplore={() =>
+                            console.log(`Exploring ${packageItem.name}`)
+                          }
+                        />
                       </motion.div>
                     ))}
                 </>
@@ -332,19 +346,20 @@ const hoverVariants = {
                     )
                     .map((packageItem) => (
                       <motion.div
-                      key={packageItem.name}
-                      initial="hidden"
-                      whileInView="visible"
-                      variants={textVariants}
-                      transition={{ duration: 0.8, delay:  0.3 }}>
-                      <PackageCard
                         key={packageItem.name}
-                        packageItem={packageItem} // Pass the entire package object
-                        onExplore={() =>
-                          console.log(`Exploring ${packageItem.name}`)
-                        }
-                      />
-                    </motion.div>
+                        initial="hidden"
+                        whileInView="visible"
+                        variants={textVariants}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                      >
+                        <PackageCard
+                          key={packageItem.name}
+                          packageItem={packageItem} // Pass the entire package object
+                          onExplore={() =>
+                            console.log(`Exploring ${packageItem.name}`)
+                          }
+                        />
+                      </motion.div>
                     ))}
                 </>
               ) : null}
