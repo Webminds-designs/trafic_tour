@@ -10,16 +10,16 @@ import { useLocation } from "react-router-dom";
 
 
 const Navbar = ({ fontColor }) => {
-    const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [active, setActive] = useState("Home");
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu toggle
   const location = useLocation();
   return (
     <nav
-      className={`flex items-center justify-between px-1 md:px-4 py-4 md:py-8 bg-transparent absolute top-0 left-0 w-full z-10 font-CodeNext-regular`}
+      className={`flex items-center justify-between px-1 md:px-3 py-4 md:py-8 bg-transparent absolute top-0 left-0 w-full z-10 font-CodeNext-regular`}
     >
       {/* Logo Section */}
-      <div className="flex items-center space-x-4 md:space-x-8">
+      <div className="flex items-center space-x-4 md:space-x-8 -bg-conic-120 ">
         {fontColor === "text-white" ? (
           <img src={logo} alt="logo" className="w-16 md:w-24" />
         ) : (
@@ -94,7 +94,7 @@ const Navbar = ({ fontColor }) => {
         </div>
 
         <Link to="/profile">
-        <div  className="w-10 h-10 cursor-pointer rounded-full flex items-center justify-center bg-black overflow-hidden">
+        <div  className="w-10 h-10 cursor-pointer rounded-full flex items-center justify-center bg-black overflow-hidden mr-4">
     {user?.profileUrl ? (
         <img
             src={user.profileUrl}

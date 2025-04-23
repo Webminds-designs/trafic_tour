@@ -10,6 +10,7 @@ import Navbar from "../components/Navbar";
 import axios from "axios";
 import { toast } from "react-toastify";
 import api from "../services/api";
+import { motion } from "framer-motion";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -75,6 +76,17 @@ const ContactUs = () => {
       console.error(error);
     }
   };
+
+  // Animation variants for text
+  const textVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  };
+
+  // Hover animation for images
+  const hoverVariants = {
+    hover: { scale: 1.05, transition: { duration: 0.3 } },
+  };
   return (
     <>
       <Navbar />
@@ -84,10 +96,22 @@ const ContactUs = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 lg:gap-40 items-start">
             {/* Left Column: Header and Contact Info */}
             <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-base mb-4">
+              <motion.h1
+                className="text-4xl md:text-5xl lg:text-6xl font-base mb-4"
+                initial="hidden"
+                whileInView="visible"
+                variants={textVariants}
+                transition={{ duration: 0.6 }}
+              >
                 Let's Connect
-              </h1>
-              <div className="mt-8 md:mt-12">
+              </motion.h1>
+              <motion.div
+                className="mt-8 md:mt-12"
+                initial="hidden"
+                whileInView="visible"
+                variants={textVariants}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
                 <div className="flex">
                   {" "}
                   <p className="text-base md:text-lg font-base">
@@ -101,11 +125,17 @@ const ContactUs = () => {
                 <p className="text-[#009990] font-base">
                   Mon - Sat, 8:00 AM - 5:00 PM (SLT) UTC +5:30
                 </p>
-              </div>
+              </motion.div>
             </div>
 
             {/* Right Column: Contact Form */}
-            <div className="p-4 md:p-6 rounded-md -mt-8 md:-mt-12">
+            <motion.div
+              className="p-4 md:p-6 rounded-md -mt-8 md:-mt-12"
+              initial="hidden"
+              whileInView="visible"
+              variants={textVariants}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            >
               <form
                 onSubmit={handleSubmit}
                 className="p-4 md:p-6 rounded-lg font-base"
@@ -190,7 +220,7 @@ const ContactUs = () => {
                   </button>
                 </div>
               </form>
-            </div>
+            </motion.div>
           </div>
           {/* Divider Text */}
           <div className="text-center my-20 md:my-36 font-base text-4xl md:text-5xl lg:text-5xl">
@@ -199,7 +229,12 @@ const ContactUs = () => {
           {/* Image Gallery */}
           <div className="flex flex-wrap gap-8 mb-20">
             {/* First Row */}
-            <div className="relative">
+            <motion.div className="relative"
+             initial="hidden"
+             whileInView="visible"
+             whileHover="hover"
+             variants={{ ...textVariants, ...hoverVariants }}
+             transition={{ duration: 0.8 }}>
               <img
                 src={riverstone}
                 alt="Riverstone"
@@ -208,8 +243,13 @@ const ContactUs = () => {
               <p className="absolute bottom-2 left-2 text-white font-base text-lg">
                 Riverstone
               </p>
-            </div>
-            <div className="relative">
+            </motion.div>
+            <motion.div className="relative"
+             initial="hidden"
+             whileInView="visible"
+             whileHover="hover"
+             variants={{ ...textVariants, ...hoverVariants }}
+             transition={{ duration: 0.8, delay: 0.3 }}>
               <img
                 src={piduruthalagala}
                 alt="Piduruthalagala Rock"
@@ -218,8 +258,13 @@ const ContactUs = () => {
               <p className="absolute top-2 right-2 text-white font-base text-lg">
                 Piduruthalagala Rock
               </p>
-            </div>
-            <div className="relative">
+              </motion.div>
+              <motion.div className="relative"
+             initial="hidden"
+             whileInView="visible"
+             whileHover="hover"
+             variants={{ ...textVariants, ...hoverVariants }}
+             transition={{ duration: 0.8, delay: 0.6 }}>
               <img
                 src={ruwanweliseya}
                 alt="Ruwanweli Seya"
@@ -228,9 +273,15 @@ const ContactUs = () => {
               <p className="absolute bottom-2 right-2 text-white font-base text-lg">
                 Ruwanweli Seya
               </p>
-            </div>
+              </motion.div>
 
             {/* Second Row */}
+            <motion.div 
+             initial="hidden"
+             whileInView="visible"
+             whileHover="hover"
+             variants={{ ...textVariants, ...hoverVariants }}
+             transition={{ duration: 0.8 }}>
             <div className="relative flex items-center justify-center w-75 h-75 rounded-full hover:scale-105 transition-transform">
               {/* Gradient Border */}
               <div
@@ -253,8 +304,15 @@ const ContactUs = () => {
                 className="w-16 h-16 rounded-full object-cover"
               />
             </div>
+            </motion.div>
 
-            <div className="relative">
+            <motion.div 
+            className="relative"
+             initial="hidden"
+             whileInView="visible"
+             whileHover="hover"
+             variants={{ ...textVariants, ...hoverVariants }}
+             transition={{ duration: 0.8 ,delay: 0.3 }}>
               <img
                 src={dambulla}
                 alt="Dambulla Rock Temple"
@@ -263,9 +321,15 @@ const ContactUs = () => {
               <p className="absolute top-2 left-2 text-white font-base text-lg">
                 Dambulla Rock Temple
               </p>
-            </div>
+              </motion.div>
 
-            <div className="relative">
+             <motion.div 
+            className="relative"
+             initial="hidden"
+             whileInView="visible"
+             whileHover="hover"
+             variants={{ ...textVariants, ...hoverVariants }}
+             transition={{ duration: 0.8 ,delay: 0.6 }}>
               <img
                 src={girihanduseya}
                 alt="Girihandu Seya"
@@ -274,7 +338,7 @@ const ContactUs = () => {
               <p className="absolute bottom-2 left-2 text-white font-base text-lg">
                 Girihandu Seya
               </p>
-            </div>
+              </motion.div>
           </div>
         </div>
       </div>
