@@ -77,7 +77,9 @@ const PolicyTabs = () => {
                                 <strong>Effective Date:</strong> {formattedDate}
                             </p>
                             <p className="text-gray-700 leading-relaxed mb-4">
+
                                 Traffic Tour Travels  is committed to safeguarding your privacy. This Privacy Policy outlines how we collect, use, disclose, and protect your personal information when you visit our website <a href="https://srilankatraffictours.com/">srilankatraffictours.com</a> or engage with our services.
+
                             </p>
 
                             <h3 className="text-xl font-semibold mb-2">1. Information We Collect</h3>
@@ -207,7 +209,9 @@ const PolicyTabs = () => {
                                 <strong>Effective Date:</strong> {formattedDate}
                             </p>
                             <p className="text-gray-700 leading-relaxed mb-4">
+
                                 These Terms and Conditions ("Terms") govern your use of the services provided by Tafic Tour Travels . By booking our services, you agree to comply with and be bound by these Terms. Please read them carefully.
+
                             </p>
 
                             <h3 className="text-xl font-semibold mb-2">1. Booking and Payment</h3>

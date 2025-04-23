@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import { Send, Paperclip } from "lucide-react";
 import md5 from "md5";
+import api from "../services/api";
 
 const InquiryManagement = () => {
   const [emails, setEmails] = useState([]);
@@ -21,7 +22,9 @@ const InquiryManagement = () => {
   // Fetch all emails
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/send-email/all")
+      .get("/send-email/all", {
+        withCredentials: true,
+      })
       .then((res) => {
         setEmails(res.data);
         if (res.data.length > 0) {
@@ -68,10 +71,20 @@ const InquiryManagement = () => {
   // Handle reply submission
   const handleReply = async (emailId) => {
     try {
-      await axios.post("http://localhost:3000/api/send-email/reply", {
-        emailId,
-        replyText,
-      });
+      // await axios.post("http://localhost:3000/api/send-email/reply", {
+      //   emailId,
+      //   replyText,
+      // });
+      await api.post(
+        "/send-email/reply",
+        {
+          emailId,
+          replyText,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       alert("Reply sent successfully!");
       setReplyText("");
     } catch (error) {
