@@ -16,7 +16,7 @@ const Navbar = ({ fontColor }) => {
   const location = useLocation();
   return (
     <nav
-      className={`flex items-center justify-between px-1 md:px-3 py-4 md:py-8 bg-transparent absolute top-0 left-0 w-full z-10 font-CodeNext-regular`}
+      className={`flex items-center  justify-between px-1 md:px-3 py-4 md:py-8 md:bg-transparent absolute top-0 left-0 w-full z-10 font-CodeNext-regular`}
     >
       {/* Logo Section */}
       <div className="flex items-center space-x-4 md:space-x-8 -bg-conic-120 ">
@@ -58,6 +58,12 @@ const Navbar = ({ fontColor }) => {
             </li>
           );
         })}
+        <Link to="/profile">
+  <div className={` md:hidden text-sm font-base flex justify-center top-16 ${fontColor} left-0 w-full bg-transparent z-10`}>
+    profile
+  </div>
+</Link>
+
       </ul>
 
       {/* Right Section */}

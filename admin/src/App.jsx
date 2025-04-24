@@ -28,7 +28,7 @@ function App() {
             {/* Protected Admin Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="users" element={<UserManagement />} />
+              <Route path="UserManagement" element={<UserManagement />} />
               <Route path="packages" element={<PackageManagement />} />
               <Route path="inquiries" element={<InquiryManagement />} />
               <Route path="bookings" element={<BookingManagement />} />

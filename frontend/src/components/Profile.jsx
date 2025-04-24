@@ -10,7 +10,6 @@ import Footer from "../components/Footer";
 import heart from "../assets/heart.png";
 import hidden from "../assets/hidden.png";
 import eye from "../assets/eye.png";
-import userpic from "../assets/user.png";
 import Navbar from "./Navbar.jsx";
 import Bookings from "./Bookings.jsx";
 import { toast } from "react-toastify";
@@ -420,7 +419,8 @@ const Profile = () => {
             >
               {isProfileEditing && <input {...getInputProps()} />}{" "}
               {/* Show input only when editing */}
-              <img
+             
+                <img
                 src={
                   imagePreview ||
                   (formData?.profileUrl?.includes("=s96-c")
@@ -431,6 +431,8 @@ const Profile = () => {
                 className="rounded-full w-32 h-32 md:w-48 md:h-48 object-cover"
                 onError={() => console.log("Image failed to load")}
               />
+             
+             
             </div>
 
             <div className="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
@@ -483,7 +485,6 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          {/* tabs */}
           {/* tabs */}
           <div className="flex flex-col items-center mt-6 lg:mt-10 font-base w-full">
             {/* Dropdown for Mobile View (only visible on mobile) */}

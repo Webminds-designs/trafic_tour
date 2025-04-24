@@ -163,7 +163,7 @@ const Signup = () => {
       console.log("Subscription response:", subscriptionResponse.data);
 
       console.log("Email subscribed successfully!");
-      signInWithGoogle();
+    
     } catch (err) {
       console.error(
         "Error during registration: ",
