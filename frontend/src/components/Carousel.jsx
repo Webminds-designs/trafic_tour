@@ -146,6 +146,7 @@ export default function Carousel() {
             key={index}
             src={slide.background}
             alt={slide.title}
+             loading="lazy"
             className={`object-cover rounded-2xl transition-transform -left-4/4 duration-700 ease-in-out transform cursor-pointer 
         ${
           index === currentIndex

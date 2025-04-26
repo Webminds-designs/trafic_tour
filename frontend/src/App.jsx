@@ -14,13 +14,14 @@ import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRou
 import SeachResult from "./components/SeachResult";
 import ErrorBoundary from "./components/ErrorBoundary";
 import PolicyTabs from "./components/PolicyTabs";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
         <ToastContainer position="top-center" containerStyle={{ top: 60 }} />
-
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />

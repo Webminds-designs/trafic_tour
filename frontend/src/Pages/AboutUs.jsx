@@ -128,6 +128,7 @@ const AboutUs = () => {
                             whileHover="hover"
                             variants={{ ...textVariants, ...hoverVariants }}
                             transition={{ duration: 0.8 }}
+                            loading="lazy"
                         />
                         <motion.img
                             src={girl}
@@ -138,6 +139,7 @@ const AboutUs = () => {
                             whileHover="hover"
                             variants={{ ...textVariants, ...hoverVariants }}
                             transition={{ duration: 0.8, delay: 0.3 }}
+                            loading="lazy"
                         />
                         <motion.img
                             src={devil}
@@ -148,6 +150,7 @@ const AboutUs = () => {
                             whileHover="hover"
                             variants={{ ...textVariants, ...hoverVariants }}
                             transition={{ duration: 0.8, delay: 0.6 }}
+                            loading="lazy"
                         />
                     </div>
                 </div>
@@ -180,6 +183,7 @@ const AboutUs = () => {
                                     className="w-full md:w-50 h-50 object-cover rounded-lg"
                                     whileHover="hover"
                                     variants={hoverVariants}
+                                    loading="lazy"
                                 />
                                 <div className="w-full md:w-2/3 pl-0 md:pl-6 flex flex-col justify-center mt-4 md:mt-0">
                                     <h2 className="text-2xl md:text-3xl lg:text-4xl font-base mb-2 text-left">{item.title}</h2>
@@ -225,6 +229,7 @@ const AboutUs = () => {
                                 className="w-full md:w-3/4 lg:w-full h-auto rounded-lg"
                                 whileHover="hover"
                                 variants={hoverVariants}
+                                loading="lazy"
                             />
                         </motion.div>
                     </div>
@@ -263,6 +268,7 @@ const AboutUs = () => {
                                     className="w-full h-60 md:h-80 object-cover"
                                     whileHover="hover"
                                     variants={hoverVariants}
+                                    loading="lazy"
                                 />
                                 <div className="text-center p-4">
                                     <h3 className="text-lg font-base">{person.name}</h3>

@@ -28,6 +28,7 @@ const PackageCard = ({ packageItem, onExplore }) => {
         src={imageUrl[0]}
         alt={name}
         className="w-full h-120 object-cover rounded-lg"
+        loading="lazy"
       />
 
       {/* Card Content */}
@@ -57,6 +58,7 @@ const PackageCard = ({ packageItem, onExplore }) => {
               src={packageItem.imageUrl[0]}
               alt={packageItem.name}
               className="w-full h-48 object-cover rounded-lg"
+              loading="lazy"
             />
           </div>
         </Popup>

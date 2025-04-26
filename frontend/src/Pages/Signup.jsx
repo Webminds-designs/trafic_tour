@@ -182,12 +182,12 @@ const Signup = () => {
         className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
       >
         <div className="absolute top-4 left-4 text-[16px] font-semibold">
-          <img src={logoBlack} alt="logo" className="w-16 md:w-28" />
+          <img src={logoBlack} alt="logo" className="w-16 md:w-28" loading="lazy"/>
         </div>
         <div className="bg-gradient-to-b from-[#acc6c0] via-[#c9d9d7] to-white backdrop-blur-lg backdrop-brightness-75 bg-opacity-90 p-4 px-8  mt-10 rounded-3xl shadow-lg max-w-md w-full z-100">
           <div className="flex justify-center ">
             <div className="mt-4 bg-white p-4 rounded-2xl shadow-xl">
-              <img src={user} width={30} alt="User" />
+              <img src={user} width={30} alt="User" loading="lazy"/>
             </div>
           </div>
           <h2 className="text-2xl font-semibold text-center mb-2">
@@ -209,6 +209,7 @@ const Signup = () => {
                   alt="email"
                   width={20}
                   className="absolute left-2 opacity-80"
+                  loading="lazy"
                 />
                 <input
                   type="email"
@@ -229,6 +230,7 @@ const Signup = () => {
                   alt="lock"
                   width={20}
                   className="absolute left-2 opacity-80"
+                  loading="lazy"
                 />
                 <input
                   type={passwordVisible ? "text" : "password"}
@@ -244,6 +246,7 @@ const Signup = () => {
                   alt="hidden"
                   width={20}
                   className="absolute right-2 opacity-80"
+                  loading="lazy"
                 />
               </label>
             </div>
@@ -255,6 +258,7 @@ const Signup = () => {
                   alt="lock"
                   width={20}
                   className="absolute left-2 opacity-80"
+                  loading="lazy"
                 />
                 <input
                   type={conpasswordVisible ? "text" : "password"}
@@ -270,6 +274,7 @@ const Signup = () => {
                   alt="hidden"
                   width={20}
                   className="absolute right-2 opacity-80"
+                  loading="lazy"
                 />
               </label>
               <div className=" flex justify-between text-right mt-5">
@@ -322,7 +327,7 @@ const Signup = () => {
               className="bg-white   shadow-lg border-1 border-gray-100 rounded-lg w-full h-[40px] flex items-center justify-center p-2"
               onClick={signInWithGoogle} // Trigger Firebase Google login on click
             >
-              <img src={google} alt="Google Logo" className="w-6 h-6" />
+              <img src={google} alt="Google Logo" className="w-6 h-6" loading="lazy"/>
               <div
                 className="m-2 text-gray-900
             "
