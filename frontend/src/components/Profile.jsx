@@ -430,6 +430,7 @@ const Profile = () => {
                 alt="Profile"
                 className="rounded-full w-32 h-32 md:w-48 md:h-48 object-cover"
                 onError={() => console.log("Image failed to load")}
+                loading="lazy"
               />
              
              
@@ -685,6 +686,7 @@ const Profile = () => {
                       alt="hidden"
                       width={20}
                       className="absolute right-5 md:mt-3 mt-12 opacity-50"
+                      loading="lazy"
                     />
                   </div>
                 )}
@@ -712,6 +714,7 @@ const Profile = () => {
                     alt="hidden"
                     width={20}
                     className="absolute right-5 md:mt-3 mt-12 opacity-50"
+                    loading="lazy"
                   />
                 </div>
 
@@ -738,6 +741,7 @@ const Profile = () => {
                     alt="hidden"
                     width={20}
                     className="absolute right-5 md:mt-3 mt-12 opacity-50"
+                    loading="lazy"
                   />
                 </div>
 
@@ -775,9 +779,10 @@ const Profile = () => {
                         src={packageItem?.packageId.imageUrl}
                         alt={packageItem?.packageId.description}
                         className="w-full h-92 object-cover rounded-xl"
+                        loading="lazy"
                       />
                       <button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                        <img src={heart} alt="heart" width={20} />
+                        <img src={heart} alt="heart" width={20} loading="lazy"/>
                       </button>
                       <div className="p-4">
                         <h3 className="font-bold text-lg">
@@ -821,6 +826,7 @@ const Profile = () => {
                       src={packageItem?.packageId.imageUrl}
                       alt={packageItem?.packageId.name}
                       className="w-full h-92 object-cover rounded-xl"
+                      loading="lazy"
                     />
                     <button
                       onClick={() => removeFavorite(packageItem?.packageId._id)}
@@ -863,6 +869,7 @@ const Profile = () => {
                         src={packageItem?.packageId.imageUrl}
                         alt={packageItem?.packageId.description}
                         className="w-full h-92 object-cover rounded-xl"
+                        loading="lazy"
                       />
 
                       {/* Favorite (Heart) Button */}

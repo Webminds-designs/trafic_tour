@@ -239,6 +239,7 @@ const ContactUs = () => {
                 src={riverstone}
                 alt="Riverstone"
                 className="rounded-lg w-[300px] h-[300px] object-cover aspect-[4/3]"
+                loading="lazy"
               />
               <p className="absolute bottom-2 left-2 text-white font-base text-lg">
                 Riverstone
@@ -254,6 +255,7 @@ const ContactUs = () => {
                 src={piduruthalagala}
                 alt="Piduruthalagala Rock"
                 className="rounded-lg w-[300px] h-[300px] object-cover"
+                loading="lazy"
               />
               <p className="absolute top-2 right-2 text-white font-base text-lg">
                 Piduruthalagala Rock
@@ -269,6 +271,7 @@ const ContactUs = () => {
                 src={ruwanweliseya}
                 alt="Ruwanweli Seya"
                 className="rounded-lg w-[450px] h-[300px] object-cover aspect-[4/3]"
+                loading="lazy"
               />
               <p className="absolute bottom-2 right-2 text-white font-base text-lg">
                 Ruwanweli Seya
@@ -302,6 +305,7 @@ const ContactUs = () => {
                 src={Instagram}
                 alt="Instagram"
                 className="w-16 h-16 rounded-full object-cover"
+                loading="lazy"
               />
             </div>
             </motion.div>
@@ -317,6 +321,7 @@ const ContactUs = () => {
                 src={dambulla}
                 alt="Dambulla Rock Temple"
                 className="rounded-lg w-[450px] h-[300px] object-cover aspect-[4/3]"
+                loading="lazy"
               />
               <p className="absolute top-2 left-2 text-white font-base text-lg">
                 Dambulla Rock Temple
@@ -334,6 +339,7 @@ const ContactUs = () => {
                 src={girihanduseya}
                 alt="Girihandu Seya"
                 className="rounded-lg w-[300px] h-[300px] object-cover aspect-[4/3]"
+                loading="lazy"
               />
               <p className="absolute bottom-2 left-2 text-white font-base text-lg">
                 Girihandu Seya

@@ -21,6 +21,7 @@ const Hero = () => {
         autoPlay
         loop
         muted
+       preload="none"
       ></video>
 
       <motion.div className="absolute font-codeNext-r h-2/3 flex flex-col items-start justify-end z-10 text-start w-full md:w-1/2 lg:w-[600px] px-4 md:px-24 gap-8 my-6 "
