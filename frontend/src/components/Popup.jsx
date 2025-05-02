@@ -211,7 +211,7 @@ export default function Popup({ onClose, data }) {
               <>
                 <div className="flex flex-col md:flex-row">
                   {/* Left Side */}
-                  <div className="w-full md:w-2/3 h-96 p-4 m-4 border border-[#009990] rounded-2xl overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-[#009990] scrollbar-track-transparent">
+                  <div className="w-full md:w-2/3 h-96 p-4 md:m-4 border border-[#009990] rounded-2xl overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-[#009990] scrollbar-track-transparent">
                     {data.itinerary.map((dayItem) => (
                       <div key={dayItem._id} className="mb-8">
                         <h2 className="text-lg md:text-xl font-medium">{`Day ${dayItem.day}: ${dayItem.title}`}</h2>

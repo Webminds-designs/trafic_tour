@@ -21,6 +21,7 @@ const Hero = () => {
         autoPlay
         loop
         muted
+       preload="none"
       ></video>
 
       <motion.div
