@@ -34,24 +34,22 @@ const PackageManagement = () => {
       },
     ],
   });
-
+  const fetchPackages = async () => {
+    try {
+      // const response = await axios.get("http://localhost:3000/api/packages");
+      const response = await api.get("/packages", {
+        withCredentials: true,
+      });
+      setPackages(response.data.packages);
+      // Assuming the response contains an array of packages
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   //get packages details
   useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        // const response = await axios.get("http://localhost:3000/api/packages");
-        const response = await api.get("/packages", {
-          withCredentials: true,
-        });
-        setPackages(response.data.packages);
-        // Assuming the response contains an array of packages
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPackages();
   }, []);
 
@@ -261,6 +259,7 @@ const PackageManagement = () => {
           }
         );
         toast.success("Package updated successfully!");
+        setShowModal(false)
       } else {
         // response = await axios.post(
         //   "http://localhost:3000/api/packages",
@@ -274,6 +273,7 @@ const PackageManagement = () => {
         });
 
         toast.success("Package added successfully!");
+        setShowModal(false)
       }
 
       console.log("Server Response:", response.data);
@@ -303,6 +303,8 @@ const PackageManagement = () => {
       }
     } finally {
       setLoading(false); // Stop loading
+      await fetchPackages();
+
     }
   };
 
@@ -715,9 +717,8 @@ const PackageManagement = () => {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${
-                  loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
-                }`}
+                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
+                  }`}
                 disabled={loading}
               >
                 {loading ? "Saving..." : "Save changes"}
@@ -975,9 +976,8 @@ const PackageManagement = () => {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${
-                  loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
-                }`}
+                className={`px-2 py-1 text-white rounded-3xl cursor-pointer ${loading ? "bg-gray-500 cursor-not-allowed" : "bg-black"
+                  }`}
                 disabled={loading}
               >
                 {loading ? "Saving..." : "Save changes"}

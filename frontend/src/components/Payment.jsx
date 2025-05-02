@@ -677,6 +677,7 @@ const BankTransfer = ({ order, bookingData }) => {
                     alt="Payment Proof Preview"
                     height={20}
                     className="max-w-50 h-auto rounded-lg"
+                    loading="lazy"
                   />
                 ) : (
                   <p className="text-gray-600">

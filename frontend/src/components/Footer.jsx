@@ -138,7 +138,7 @@ const Footer = () => {
             <div className="flex items-center mb-4 justify-center sm:justify-start">
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
-                  <img src={star} alt="start" width={20} />
+                  <img src={star} alt="start" width={20} loading="lazy" />
                 ))}
               </div>
               <span className="ml-2 text-lg font-light">5/5 on</span>
@@ -159,6 +159,7 @@ const Footer = () => {
                         src={review.image}
                         alt="Profile"
                         className="w-12 h-12 rounded-2xl mr-4"
+                        loading="lazy"
                       />
                       <div className="m-2">
                         <p className="font-normal ">{review.name}</p>
@@ -169,6 +170,7 @@ const Footer = () => {
                             width={15}
                             height={15}
                             className="m-2"
+                            loading="lazy"
                           />
                           <span className="m-1"> {review.location}</span>
                         </p>
@@ -280,6 +282,7 @@ const Footer = () => {
                       width={10}
                       height={10}
                       className="m-2"
+                      loading="lazy"
                     />{" "}
                   </div>
                   +94 76 785 7066
@@ -294,6 +297,7 @@ const Footer = () => {
                       width={10}
                       height={10}
                       className="m-2"
+                      loading="lazy"
                     />{" "}
                   </div>{" "}
                   traffictoures999@gmail.com
@@ -343,8 +347,17 @@ const Footer = () => {
               </div>
             </div>
             <div className="font-light text-center md:text-left mt-2">
-              made by <span className="font-normal">Webminds</span>
+              made by{" "}
+              <a
+                href="https://webmindsdesigns.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-normal  duration-200"
+              >
+                Webminds
+              </a>
             </div>
+
           </div>
         </div>
       </div>
