@@ -49,7 +49,7 @@ const Navbar = ({ fontColor }) => {
       <ul
         className={`${isMenuOpen ? "block z-50" : "hidden"} ${
           isMenuOpen ? "bg-white/90 backdrop-blur-3xl" : "bg-transparent"
-        } md:flex lg:space-x-12  text-sm font-base absolute md:static top-18 text-[#fcfffe] md:${fontColor} left-0 w-full md:w-auto bg-transparentmd:bg-transparent z-10`}
+        } md:flex lg:space-x-12  text-sm font-base absolute md:static top-18 text-[#000000] md:${fontColor} left-0 w-full md:w-auto bg-transparentmd:bg-transparent z-10`}
       >
         {["Home", "Packages", "About Us", "Contact Us"].map((item) => {
           const path =
