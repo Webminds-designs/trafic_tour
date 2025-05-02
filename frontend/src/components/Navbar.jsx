@@ -8,7 +8,6 @@ import PropTypes from "prop-types";
 import plane from "../assets/airplane.png";
 import { useLocation } from "react-router-dom";
 
-
 const Navbar = ({ fontColor }) => {
   const { user } = useContext(AuthContext);
   const [active, setActive] = useState("Home");
@@ -17,13 +16,23 @@ const Navbar = ({ fontColor }) => {
   return (
     <nav
       className={`flex items-center justify-between px-1 md:px-3 py-4 md:py-8 absolute top-0 left-0 w-full z-10 font-CodeNext-regular
-      ${isMenuOpen ? 'bg-white/90 backdrop-blur-3xl' : 'bg-transparent'} 
+      ${isMenuOpen ? "bg-white/90 backdrop-blur-3xl" : "bg-transparent"} 
       md:bg-transparent md:backdrop-blur-none`}
     >
       {/* Logo Section */}
       <div className="flex items-center space-x-4 md:space-x-8 -bg-conic-120 ">
         {fontColor === "text-white" ? (
-          <img src={isMenuOpen ? logoBlack : fontColor === "text-white" ? logo : logoBlack} alt="logo" className="w-16 md:w-24" />
+          <img
+            src={
+              isMenuOpen
+                ? logoBlack
+                : fontColor === "text-white"
+                ? logo
+                : logoBlack
+            }
+            alt="logo"
+            className="w-16 md:w-24"
+          />
         ) : (
           <img src={logoBlack} alt="logo" className="w-16 md:w-24" />
         )}
@@ -38,19 +47,25 @@ const Navbar = ({ fontColor }) => {
 
       {/* Nav Links */}
       <ul
-        className={`${isMenuOpen ? "block z-50" : "hidden"
-          } ${isMenuOpen ? 'bg-white/90 backdrop-blur-3xl' : 'bg-transparent'} md:flex lg:space-x-12  text-sm font-base absolute md:static top-18 text-black md:${fontColor} left-0 w-full md:w-auto bg-transparentmd:bg-transparent z-10`}
+        className={`${isMenuOpen ? "block z-50" : "hidden"} ${
+          isMenuOpen ? "bg-white/90 backdrop-blur-3xl" : "bg-transparent"
+        } md:flex lg:space-x-12  text-sm font-base absolute md:static top-18 text-[#fcfffe] md:${fontColor} left-0 w-full md:w-auto bg-transparentmd:bg-transparent z-10`}
       >
         {["Home", "Packages", "About Us", "Contact Us"].map((item) => {
-          const path = item === "Home" ? "/" : `/${item.toLowerCase().replace(" ", "-")}`;
+          const path =
+            item === "Home" ? "/" : `/${item.toLowerCase().replace(" ", "-")}`;
           const isActive = location.pathname === path;
 
           return (
-            <li key={item} className={` text-center py-2 md:py-0 hover:font-semibold z-100`}>
+            <li
+              key={item}
+              className={` text-center py-2 md:py-0 hover:font-semibold z-100`}
+            >
               <Link
                 to={path}
-                className={`      block px-4 py-2 md:inline-block ${isActive ? "underline underline-offset-4  " : ""
-                  }`}
+                className={`      block px-4 py-2 md:inline-block ${
+                  isActive ? "underline underline-offset-4  " : ""
+                }`}
                 onClick={() => setIsMenuOpen(false)} // Close menu on click
               >
                 {item}
@@ -59,11 +74,12 @@ const Navbar = ({ fontColor }) => {
           );
         })}
         <Link to="/profile">
-          <div className={`  md:hidden text-sm font-base flex justify-center top-16 text-black left-0 w-full pb-6 z-10`}>
+          <div
+            className={`  md:hidden text-sm font-base flex justify-center top-16 text-black left-0 w-full pb-6 z-10`}
+          >
             profile
           </div>
         </Link>
-
       </ul>
 
       {/* Right Section */}
@@ -71,24 +87,27 @@ const Navbar = ({ fontColor }) => {
         <div className="group relative inline-block">
           <Link to="/packages">
             <button
-              className={`relative overflow-hidden px-10 py-2 text-sm rounded-3xl font-base cursor-pointer ${fontColor === "text-white"
+              className={`relative overflow-hidden px-10 py-2 text-sm rounded-3xl font-base cursor-pointer ${
+                fontColor === "text-white"
                   ? "bg-white text-black"
                   : "bg-black text-white"
-                }`}
+              }`}
             >
               {/* Animated overlay */}
               <span
-                className={`absolute inset-0 ${fontColor === "text-white" ? "bg-black" : "bg-white"
-                  } transform -translate-x-full transition-transform duration-600 group-hover:translate-x-0 p-2 flex justify-end`}
+                className={`absolute inset-0 ${
+                  fontColor === "text-white" ? "bg-black" : "bg-white"
+                } transform -translate-x-full transition-transform duration-600 group-hover:translate-x-0 p-2 flex justify-end`}
               >
                 <img src={plane} alt="plane" className="w-6 h-6" />
               </span>
               {/* Button text */}
               <span
-                className={`relative z-10 transition-all duration-800 ${fontColor === "text-white"
+                className={`relative z-10 transition-all duration-800 ${
+                  fontColor === "text-white"
                     ? "group-hover:text-white"
                     : "group-hover:text-black"
-                  } group-hover:-translate-x-2`}
+                } group-hover:-translate-x-2`}
               >
                 Book Now
               </span>
@@ -109,7 +128,6 @@ const Navbar = ({ fontColor }) => {
             )}
           </div>
         </Link>
-
       </div>
     </nav>
   );
