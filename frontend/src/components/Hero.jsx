@@ -1,5 +1,5 @@
 import React from "react";
-import video from "../assets/TRafficFinal.mp4";
+import video from "../assets/0501.mp4";
 import { motion } from "framer-motion";
 
 const Hero = () => {
@@ -23,11 +23,13 @@ const Hero = () => {
         muted
       ></video>
 
-      <motion.div className="absolute font-codeNext-r h-2/3 flex flex-col items-start justify-end z-10 text-start w-full md:w-1/2 lg:w-[600px] px-4 md:px-24 gap-8 my-6 "
+      <motion.div
+        className="absolute font-codeNext-r h-2/3 flex flex-col items-start justify-end z-10 text-start w-full md:w-1/2 lg:w-[600px] px-4 md:px-24 gap-8 my-6 "
         initial="hidden"
         whileInView="visible"
         variants={textVariants}
-        transition={{ duration: 0.5 }}>
+        transition={{ duration: 0.5 }}
+      >
         <h1 className=" text-5xl md:text-5xl font-bold  text-white">
           A window to new <span className="border-b-1">adventures</span>
         </h1>
