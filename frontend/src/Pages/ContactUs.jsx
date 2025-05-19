@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { IoMailOutline } from "react-icons/io5";
+import { useState } from "react";
+// import { IoMailOutline } from "react-icons/io5";
 import riverstone from "../assets/riverstone.png";
 import piduruthalagala from "../assets/piduruthalagala.png";
 import ruwanweliseya from "../assets/ruwanweliseya.png";
@@ -7,7 +7,7 @@ import dambulla from "../assets/dambulla.png";
 import girihanduseya from "../assets/girihanduseya.png";
 import Instagram from "../assets/instergram.jpg";
 import Navbar from "../components/Navbar";
-import axios from "axios";
+// import axios from "axios";
 import { toast } from "react-toastify";
 import api from "../services/api";
 import { motion } from "framer-motion";
@@ -103,7 +103,7 @@ const ContactUs = () => {
                 variants={textVariants}
                 transition={{ duration: 0.6 }}
               >
-                Let's Connect
+                Let&#39;s Connect
               </motion.h1>
               <motion.div
                 className="mt-8 md:mt-12"
@@ -119,7 +119,7 @@ const ContactUs = () => {
                   </p>
                 </div>
                 <p className="text-[#009990] mb-4 md:mb-6 font-base">
-                  traffictours@companyname.com
+                  info@srilankatraffictours.com
                 </p>
                 <p className="text-base md:text-lg font-base">Working Hours</p>
                 <p className="text-[#009990] font-base">
@@ -229,12 +229,14 @@ const ContactUs = () => {
           {/* Image Gallery */}
           <div className="flex flex-wrap gap-8 mb-20">
             {/* First Row */}
-            <motion.div className="relative"
-             initial="hidden"
-             whileInView="visible"
-             whileHover="hover"
-             variants={{ ...textVariants, ...hoverVariants }}
-             transition={{ duration: 0.8 }}>
+            <motion.div
+              className="relative"
+              initial="hidden"
+              whileInView="visible"
+              whileHover="hover"
+              variants={{ ...textVariants, ...hoverVariants }}
+              transition={{ duration: 0.8 }}
+            >
               <img
                 src={riverstone}
                 alt="Riverstone"
@@ -245,12 +247,14 @@ const ContactUs = () => {
                 Riverstone
               </p>
             </motion.div>
-            <motion.div className="relative"
-             initial="hidden"
-             whileInView="visible"
-             whileHover="hover"
-             variants={{ ...textVariants, ...hoverVariants }}
-             transition={{ duration: 0.8, delay: 0.3 }}>
+            <motion.div
+              className="relative"
+              initial="hidden"
+              whileInView="visible"
+              whileHover="hover"
+              variants={{ ...textVariants, ...hoverVariants }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            >
               <img
                 src={piduruthalagala}
                 alt="Piduruthalagala Rock"
@@ -260,13 +264,15 @@ const ContactUs = () => {
               <p className="absolute top-2 right-2 text-white font-base text-lg">
                 Piduruthalagala Rock
               </p>
-              </motion.div>
-              <motion.div className="relative"
-             initial="hidden"
-             whileInView="visible"
-             whileHover="hover"
-             variants={{ ...textVariants, ...hoverVariants }}
-             transition={{ duration: 0.8, delay: 0.6 }}>
+            </motion.div>
+            <motion.div
+              className="relative"
+              initial="hidden"
+              whileInView="visible"
+              whileHover="hover"
+              variants={{ ...textVariants, ...hoverVariants }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
               <img
                 src={ruwanweliseya}
                 alt="Ruwanweli Seya"
@@ -276,47 +282,49 @@ const ContactUs = () => {
               <p className="absolute bottom-2 right-2 text-white font-base text-lg">
                 Ruwanweli Seya
               </p>
-              </motion.div>
-
-            {/* Second Row */}
-            <motion.div 
-             initial="hidden"
-             whileInView="visible"
-             whileHover="hover"
-             variants={{ ...textVariants, ...hoverVariants }}
-             transition={{ duration: 0.8 }}>
-            <div className="relative flex items-center justify-center w-75 h-75 rounded-full hover:scale-105 transition-transform">
-              {/* Gradient Border */}
-              <div
-                className="absolute inset-0 rounded-full border-[1px] border-transparent p-[3px]"
-                style={{
-                  background:
-                    "linear-gradient(45deg, #991DB6 0%, #FF3A80 50%, #FCC631 100%)",
-                  WebkitMask:
-                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "destination-out",
-                  maskComposite: "exclude",
-                }}
-              ></div>
-
-              {/* Instagram Image */}
-              <img
-                src={Instagram}
-                alt="Instagram"
-                className="w-16 h-16 rounded-full object-cover"
-                loading="lazy"
-              />
-            </div>
             </motion.div>
 
-            <motion.div 
-            className="relative"
-             initial="hidden"
-             whileInView="visible"
-             whileHover="hover"
-             variants={{ ...textVariants, ...hoverVariants }}
-             transition={{ duration: 0.8 ,delay: 0.3 }}>
+            {/* Second Row */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              whileHover="hover"
+              variants={{ ...textVariants, ...hoverVariants }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="relative flex items-center justify-center w-75 h-75 rounded-full hover:scale-105 transition-transform">
+                {/* Gradient Border */}
+                <div
+                  className="absolute inset-0 rounded-full border-[1px] border-transparent p-[3px]"
+                  style={{
+                    background:
+                      "linear-gradient(45deg, #991DB6 0%, #FF3A80 50%, #FCC631 100%)",
+                    WebkitMask:
+                      "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "destination-out",
+                    maskComposite: "exclude",
+                  }}
+                ></div>
+
+                {/* Instagram Image */}
+                <img
+                  src={Instagram}
+                  alt="Instagram"
+                  className="w-16 h-16 rounded-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="relative"
+              initial="hidden"
+              whileInView="visible"
+              whileHover="hover"
+              variants={{ ...textVariants, ...hoverVariants }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            >
               <img
                 src={dambulla}
                 alt="Dambulla Rock Temple"
@@ -326,15 +334,16 @@ const ContactUs = () => {
               <p className="absolute top-2 left-2 text-white font-base text-lg">
                 Dambulla Rock Temple
               </p>
-              </motion.div>
+            </motion.div>
 
-             <motion.div 
-            className="relative"
-             initial="hidden"
-             whileInView="visible"
-             whileHover="hover"
-             variants={{ ...textVariants, ...hoverVariants }}
-             transition={{ duration: 0.8 ,delay: 0.6 }}>
+            <motion.div
+              className="relative"
+              initial="hidden"
+              whileInView="visible"
+              whileHover="hover"
+              variants={{ ...textVariants, ...hoverVariants }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
               <img
                 src={girihanduseya}
                 alt="Girihandu Seya"
@@ -344,7 +353,7 @@ const ContactUs = () => {
               <p className="absolute bottom-2 left-2 text-white font-base text-lg">
                 Girihandu Seya
               </p>
-              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -41,6 +41,10 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
+  "https://srilankatraffictours.com",
+  "https://www.srilankatraffictours.com",
+  "http://srilankatraffictours.com",
+  "http://www.srilankatraffictours.com",
 ];
 
 app.use(
@@ -77,13 +81,13 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         styleSrc: [
-          "'self'", 
+          "'self'",
           "'unsafe-inline'", // This allows inline styles (not recommended unless necessary)
-          'fonts.googleapis.com', // Allow styles from Google Fonts
+          "fonts.googleapis.com", // Allow styles from Google Fonts
         ],
         fontSrc: [
-          "'self'", 
-          'fonts.gstatic.com', // Allow fonts from Google Fonts
+          "'self'",
+          "fonts.gstatic.com", // Allow fonts from Google Fonts
         ],
         frameAncestors: ["'self'"], // Blocks clickjacking
       },
@@ -92,14 +96,19 @@ app.use(
   })
 );
 
-app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true }));
-app.use(helmet.frameguard({ action: "sameorigin" })); 
+app.use(
+  helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true })
+);
+app.use(helmet.frameguard({ action: "sameorigin" }));
 // Custom security headers
 
 app.use((req, res, next) => {
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, private"
+  );
   res.setHeader("Pragma", "no-cache");
   res.setHeader("Expires", "0");
   next();
@@ -142,7 +151,6 @@ app.use((req, res, next) => {
 
   next();
 });
-
 
 // Start the server
 app.listen(PORT, () => {
