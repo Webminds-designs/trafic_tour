@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "../context/authContext.jsx";
 import { Link } from "react-router-dom";
 import { FaUser, FaBars } from "react-icons/fa"; // Added FaBars for mobile menu
@@ -10,7 +10,7 @@ import { useLocation } from "react-router-dom";
 
 const Navbar = ({ fontColor }) => {
   const { user } = useContext(AuthContext);
-  const [active, setActive] = useState("Home");
+  // const [active, setActive] = useState("Home");
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu toggle
   const location = useLocation();
   return (

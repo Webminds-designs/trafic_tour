@@ -9,7 +9,7 @@ import Instagram from "../assets/instergram.jpg";
 import Navbar from "../components/Navbar";
 // import axios from "axios";
 import { toast } from "react-toastify";
-import api from "../services/api";
+import emailjs from "emailjs-com"; // Import EmailJS
 import { motion } from "framer-motion";
 
 const ContactUs = () => {
@@ -42,38 +42,30 @@ const ContactUs = () => {
     }
 
     try {
-      // const response = await axios.post(
-      //   "http://localhost:3000/api/send-email",
-      //   {
-      //     from: email,
-      //     to: "contact.deneth@gmail.com", // Replace with actual email
-      //     subject,
-      //     text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nMessage: ${message}`,
-      //   }
-      // );
+      const result = await emailjs.send(
+        "YOUR_SERVICE_ID", // Replace with your EmailJS service ID
+        "YOUR_TEMPLATE_ID", // Replace with your EmailJS template ID
+        {
+          from_name: `${firstName} ${lastName}`,
+          reply_to: email,
+          subject,
+          message,
+        },
+        "YOUR_PUBLIC_KEY" // Replace with your EmailJS public key
+      );
 
-      const response = await api.post("/send-email", {
-        from: email,
-        to: "contact.deneth@gmail.com", // Replace with actual email
-        subject,
-        text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nMessage: ${message}`,
+      console.log(result.text);
+      toast.success("Email sent successfully!");
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        subject: "",
+        message: "",
       });
-
-      if (response.status === 200) {
-        toast.success("Email sent successfully!");
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          subject: "",
-          message: "",
-        });
-      } else {
-        toast.error("Failed to send email. Please try again later.");
-      }
     } catch (error) {
-      toast.error("An error occurred. Please try again later.");
       console.error(error);
+      toast.error("An error occurred. Please try again later.");
     }
   };
 
