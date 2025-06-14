@@ -9,7 +9,8 @@ import Instagram from "../assets/instergram.jpg";
 import Navbar from "../components/Navbar";
 // import axios from "axios";
 import { toast } from "react-toastify";
-import emailjs from "emailjs-com"; // Import EmailJS
+import emailjs from "@emailjs/browser";
+
 import { motion } from "framer-motion";
 
 const ContactUs = () => {
