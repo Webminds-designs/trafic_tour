@@ -1,5 +1,5 @@
-import React from "react";
-import video from "../assets/0501.mp4";
+// import React from "react";
+import video from "../assets/finalvideo.mp4";
 import { motion } from "framer-motion";
 
 const Hero = () => {
@@ -10,9 +10,9 @@ const Hero = () => {
   };
 
   // Hover animation for images
-  const hoverVariants = {
-    hover: { scale: 1.05, transition: { duration: 0.3 } },
-  };
+  // const hoverVariants = {
+  //   hover: { scale: 1.05, transition: { duration: 0.3 } },
+  // };
   return (
     <section className="flex flex-col items-start justify-end h-screen bg-hero-pattern bg-cover bg-center bg-no-repeat bg-black">
       <video
@@ -21,7 +21,7 @@ const Hero = () => {
         autoPlay
         loop
         muted
-       preload="none"
+        preload="none"
       ></video>
 
       <motion.div
